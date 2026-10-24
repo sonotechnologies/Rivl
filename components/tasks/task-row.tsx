@@ -125,7 +125,7 @@ export function TaskRow({
               {meta.length ? <span className={`truncate text-caption ${overdue ? "text-danger" : "text-muted"}`}>{meta.join(" · ")}</span> : null}
             </div>
           </Link>
-          <PointsPill points={points} />
+          <PointsPill points={task.difficulty ? points : null} />
         </div>
       </div>
       {isCompleting ? (

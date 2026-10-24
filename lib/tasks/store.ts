@@ -1,6 +1,7 @@
 "use client";
 
 import { createStore, del, get, set } from "idb-keyval";
+import { ai, isAIError } from "@/lib/ai/client";
 import { createClient } from "@/lib/supabase/client";
 import { SUBTASK_COLUMNS, TASK_COLUMNS, type Subtask, type SubtaskPatch, type Task, type TaskPatch } from "./types";
 
@@ -17,7 +18,8 @@ import { SUBTASK_COLUMNS, TASK_COLUMNS, type Subtask, type SubtaskPatch, type Ta
 type TaskInsert = Pick<Task, "id" | "user_id" | "title"> & TaskPatch;
 type SubtaskInsert = Pick<Subtask, "id" | "task_id" | "title" | "position"> & SubtaskPatch;
 
-type Op = { opId: string; at: string } & (
+/** `rescore`: the task whose AI rating may change once this write lands. */
+type Op = { opId: string; at: string; rescore?: string } & (
   | { kind: "task.insert"; row: TaskInsert }
   | { kind: "task.update"; id: string; patch: TaskPatch }
   | { kind: "task.delete"; id: string }
@@ -26,7 +28,7 @@ type Op = { opId: string; at: string } & (
   | { kind: "subtask.delete"; id: string }
 );
 
-type OpInput = Op extends infer O ? (O extends Op ? Omit<O, "opId" | "at"> : never) : never;
+type OpInput = Op extends infer O ? (O extends Op ? Omit<O, "opId" | "at" | "rescore"> : never) : never;
 
 type Snapshot = { tasks: Task[]; subtasks: Subtask[]; fetchedAt: string | null };
 
@@ -119,6 +121,10 @@ class TaskStore {
   private listeners = new Set<() => void>();
   private client: ReturnType<typeof createClient> | undefined;
   private timer: ReturnType<typeof setTimeout> | undefined;
+  /** Tasks waiting for an AI rating, and tasks already tried this session. */
+  private toScore = new Set<string>();
+  private scoreTried = new Set<string>();
+  private scoring = false;
 
   constructor(private userId: string) {
     this.view = { loaded: false, tasks: [], subtasks: [], online: true, pending: 0, syncing: false, error: null };
@@ -189,6 +195,7 @@ class TaskStore {
   async sync() {
     await this.flush();
     if (this.outbox.length === 0) await this.fetch();
+    void this.score();
   }
 
   // ── Internals ───────────────────────────────────────────────────────────
@@ -206,12 +213,31 @@ class TaskStore {
   }
 
   private push(input: OpInput) {
-    const op = { ...input, opId: crypto.randomUUID(), at: new Date().toISOString() } as Op;
+    const op = { ...input, opId: crypto.randomUUID(), at: new Date().toISOString(), rescore: this.affectsRating(input) } as Op;
     if (!this.compact(op)) this.outbox.push(op);
     void this.persistOutbox();
     this.emit({ error: null });
     clearTimeout(this.timer);
     this.timer = setTimeout(() => void this.sync(), 300);
+  }
+
+  /** The AI rates title and steps, so only changes to those need a new rating. */
+  private affectsRating(op: OpInput): string | undefined {
+    const parentOf = (subtaskId: string) => this.view.subtasks.find((s) => s.id === subtaskId)?.task_id;
+    switch (op.kind) {
+      case "task.insert":
+        return op.row.id;
+      case "task.update":
+        return op.patch.title !== undefined ? op.id : undefined;
+      case "subtask.insert":
+        return op.row.task_id;
+      case "subtask.update":
+        return op.patch.title !== undefined || op.patch.est_minutes !== undefined ? parentOf(op.id) : undefined;
+      case "subtask.delete":
+        return parentOf(op.id);
+      default:
+        return undefined;
+    }
   }
 
   /** Folds a write into a pending insert of the same row, so offline edits sync as one request. */
@@ -223,7 +249,7 @@ class TaskStore {
       const i = pendingInsert(op.kind === "task.update" ? "task.insert" : "subtask.insert", op.id);
       if (i === -1) return false;
       const target = this.outbox[i] as Extract<Op, { row: unknown }>;
-      this.outbox[i] = { ...target, row: { ...target.row, ...op.patch } } as Op;
+      this.outbox[i] = { ...target, row: { ...target.row, ...op.patch }, rescore: target.rescore ?? op.rescore } as Op;
       return true;
     }
     if (op.kind === "task.delete" || op.kind === "subtask.delete") {
@@ -265,6 +291,10 @@ class TaskStore {
         if (isNetworkError(error)) break; // Try again when we're back online.
         this.outbox.shift();
         this.flushedSinceFetch++;
+        if (!error && op.rescore) {
+          this.toScore.add(op.rescore);
+          this.scoreTried.delete(op.rescore);
+        }
         if (error) {
           // The server refused it (validation or permissions). Roll it back.
           console.error("Rivl sync rejected", op, error);
@@ -298,6 +328,37 @@ class TaskStore {
     // A retried insert that already landed is a success.
     if (error?.code === "23505" && op.kind.endsWith(".insert")) return null;
     return error;
+  }
+
+  /** Asks the server to rate new or changed tasks, one at a time, and shows the result. */
+  private async score() {
+    if (this.scoring || !navigator.onLine) return;
+    // Tasks that arrived unrated (e.g. created on another device) get one try per session.
+    for (const t of this.snapshot.tasks) {
+      if (t.difficulty === null && !t.completed_at && !this.scoreTried.has(t.id)) this.toScore.add(t.id);
+    }
+    this.scoring = true;
+    try {
+      for (const id of [...this.toScore]) {
+        this.toScore.delete(id);
+        this.scoreTried.add(id);
+        // Still waiting to reach the server: it'll be queued again once it lands.
+        if (this.outbox.some((o) => ("row" in o && o.row.id === id) || ("id" in o && o.id === id))) continue;
+        const result = await ai.score(id);
+        if (isAIError(result)) {
+          if (result.error === "offline") this.toScore.add(id);
+          continue;
+        }
+        this.snapshot = {
+          ...this.snapshot,
+          tasks: this.snapshot.tasks.map((t) => (t.id === id ? { ...t, difficulty: result.difficulty, difficulty_reason: result.reason } : t)),
+        };
+        if (idb) await set(key(this.userId, "snapshot"), this.snapshot, idb);
+        this.emit();
+      }
+    } finally {
+      this.scoring = false;
+    }
   }
 
   private async fetch() {

@@ -13,7 +13,9 @@ function isTimeZone(tz: string) {
   }
 }
 
-type Preferences =Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle }>;
+type Preferences = Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle; wake_time: string; sleep_time: string }>;
+
+const isTime = (v: unknown): v is string => typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
 
 async function updateOwnProfile(values: Record<string, unknown>) {
   const supabase = await createClient();
@@ -28,6 +30,8 @@ export async function savePreferences(prefs: Preferences) {
   if (isTheme(prefs.theme)) values.theme = prefs.theme;
   if (isAccent(prefs.accent)) values.accent = prefs.accent;
   if (isCoach(prefs.coach_style)) values.coach_style = prefs.coach_style;
+  if (isTime(prefs.wake_time)) values.wake_time = prefs.wake_time;
+  if (isTime(prefs.sleep_time)) values.sleep_time = prefs.sleep_time;
   if (Object.keys(values).length === 0) return { error: "Nothing to save." };
   return updateOwnProfile(values);
 }

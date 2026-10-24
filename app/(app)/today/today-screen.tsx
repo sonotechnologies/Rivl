@@ -27,7 +27,7 @@ function countSubtasks(subtasks: Subtask[]) {
 }
 
 export function TodayScreen() {
-  const { profile, openQuickAdd, completing } = useApp();
+  const { profile, openQuickAdd, openPlan, completing } = useApp();
   const view = useTasks();
   const [doneOpen, setDoneOpen] = useState(false);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
@@ -102,6 +102,20 @@ export function TodayScreen() {
       </div>
 
       <CoachBubble coach={profile.coach_style}>{coachLine(profile.coach_style, moment)}</CoachBubble>
+
+      {nowOpen > 0 ? (
+        <button
+          type="button"
+          onClick={openPlan}
+          disabled={!view.online}
+          className="flex h-11 items-center justify-center gap-1.5 rounded-full border-[1.5px] border-accent text-[0.9375rem] font-semibold text-accent-text disabled:opacity-50"
+        >
+          <span className="material-symbol text-lg" aria-hidden>
+            auto_awesome
+          </span>
+          Plan my day
+        </button>
+      ) : null}
 
       <SyncStatus />
 

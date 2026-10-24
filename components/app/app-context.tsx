@@ -11,8 +11,9 @@ type AppContextValue = {
   profile: Profile;
   store: TaskStore;
   /** Which bottom sheet is open: quick add, or options for a task id. */
-  sheet: { kind: "add" } | { kind: "options"; taskId: string } | null;
+  sheet: { kind: "add" } | { kind: "options"; taskId: string } | { kind: "plan" } | null;
   openQuickAdd: () => void;
+  openPlan: () => void;
   openOptions: (taskId: string) => void;
   closeSheet: () => void;
   toast: Toast | null;
@@ -69,6 +70,7 @@ export function AppProvider({ profile, children }: { profile: Profile; children:
       store,
       sheet,
       openQuickAdd: () => setSheet({ kind: "add" }),
+      openPlan: () => setSheet({ kind: "plan" }),
       openOptions: (taskId) => setSheet({ kind: "options", taskId }),
       closeSheet: () => setSheet(null),
       toast,

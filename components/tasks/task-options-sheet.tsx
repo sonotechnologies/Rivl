@@ -4,8 +4,7 @@ import Link from "next/link";
 import { useApp, useTasks } from "@/components/app/app-context";
 import { Sheet } from "@/components/ui/sheet";
 import { addDays, todayISO } from "@/lib/dates";
-import { DIFFICULTY_LABELS, pointsFor } from "@/lib/tasks/points";
-import { DifficultyPicker } from "./task-bits";
+import { Rating } from "./task-bits";
 
 const item = "flex h-13 w-full items-center gap-3 px-4 text-left text-[0.9375rem] font-medium";
 
@@ -19,14 +18,13 @@ export function TaskOptionsSheet({ taskId }: { taskId: string }) {
       title={
         <>
           {task.title}
-          <div className="mt-1 font-sans text-[0.8125rem] font-normal text-muted">
-            {task.difficulty ? DIFFICULTY_LABELS[task.difficulty] : "Not rated"} · {pointsFor(task.difficulty)} pts
+          <div className="mt-1.5 font-sans font-normal">
+            <Rating difficulty={task.difficulty} reason={task.difficulty_reason} />
           </div>
         </>
       }
       onClose={closeSheet}
     >
-      <DifficultyPicker value={task.difficulty} onChange={(difficulty) => store.updateTask(task.id, { difficulty })} />
       <div className="flex flex-col overflow-hidden rounded-card border border-line bg-bg">
         <button
           type="button"

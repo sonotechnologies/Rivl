@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useApp, useTasks } from "@/components/app/app-context";
-import { ChoiceButton, DifficultyPicker, PointsPill } from "@/components/tasks/task-bits";
+import { ChoiceButton, Pips, PointsPill, Rating } from "@/components/tasks/task-bits";
+import { useBreakdown } from "@/components/tasks/use-breakdown";
 import { addDays, todayISO } from "@/lib/dates";
-import { DIFFICULTY_LABELS, pointsFor } from "@/lib/tasks/points";
+import { pointsFor } from "@/lib/tasks/points";
 import type { Recurrence, Subtask, Task } from "@/lib/tasks/types";
 
 const REPEAT: { id: Recurrence | null; label: string }[] = [
@@ -119,26 +120,27 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
             disabled={completing.has(task.id)}
             onClick={() => {
               complete(task.id);
-              showToast(`+${pointsFor(task.difficulty)} pts`, "check_circle");
+              showToast(task.difficulty ? `+${pointsFor(task.difficulty)} pts` : "Done!", "check_circle");
             }}
             className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent font-semibold text-on-accent disabled:opacity-70"
           >
             <span className="material-symbol text-xl" aria-hidden>
               check
             </span>
-            Complete · +{pointsFor(task.difficulty)} pts
+            Complete{task.difficulty ? ` · +${pointsFor(task.difficulty)} pts` : ""}
           </button>
         )}
       </section>
 
       <section className="flex flex-col gap-3">
-        <div className="flex items-baseline justify-between">
-          <h2 className={label}>
-            Difficulty · <span className="normal-case">{task.difficulty ? DIFFICULTY_LABELS[task.difficulty] : "Not rated"}</span>
-          </h2>
-          <PointsPill points={pointsFor(task.difficulty)} />
+        <div className="flex items-center justify-between">
+          <h2 className={label}>Difficulty</h2>
+          <div className="flex items-center gap-2">
+            <Pips difficulty={task.difficulty} />
+            <PointsPill points={task.difficulty ? pointsFor(task.difficulty) : null} />
+          </div>
         </div>
-        <DifficultyPicker value={task.difficulty} onChange={(difficulty) => save({ difficulty })} />
+        <Rating difficulty={task.difficulty} reason={task.difficulty_reason} />
       </section>
 
       <section className="flex flex-col gap-3">
@@ -200,7 +202,7 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
         ) : null}
       </section>
 
-      <Subtasks taskId={task.id} subtasks={subtasks} />
+      <Subtasks task={task} subtasks={subtasks} />
 
       <section className="flex flex-col gap-3">
         <h2 className={label}>Category</h2>
@@ -269,8 +271,11 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
   );
 }
 
-function Subtasks({ taskId, subtasks }: { taskId: string; subtasks: Subtask[] }) {
+function Subtasks({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
+  const taskId = task.id;
   const { store } = useApp();
+  const { online } = useTasks();
+  const { breakdown, busy } = useBreakdown();
   const [title, setTitle] = useState("");
   const [minutes, setMinutes] = useState("");
   const done = subtasks.filter((s) => s.done).length;
@@ -333,6 +338,19 @@ function Subtasks({ taskId, subtasks }: { taskId: string; subtasks: Subtask[] })
             </li>
           ))}
         </ul>
+      ) : null}
+      {subtasks.length === 0 && !task.completed_at ? (
+        <button
+          type="button"
+          disabled={!online || busy}
+          onClick={() => breakdown(task.id, task.title, task.notes)}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-full border-[1.5px] border-accent text-[0.9375rem] font-semibold text-accent-text disabled:opacity-50"
+        >
+          <span className={`material-symbol text-lg ${busy ? "motion-safe:animate-pulse" : ""}`} aria-hidden>
+            auto_awesome
+          </span>
+          {busy ? "Breaking it down…" : online ? "Break it down with AI" : "Break it down (needs a connection)"}
+        </button>
       ) : null}
       <form onSubmit={add} className="flex gap-2">
         <input

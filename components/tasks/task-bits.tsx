@@ -1,50 +1,57 @@
 import { DIFFICULTIES, DIFFICULTY_LABELS, pointsFor } from "@/lib/tasks/points";
 import type { Difficulty } from "@/lib/tasks/types";
 
-/** Five dots, filled up to the difficulty. */
+/** Five dots, filled up to the difficulty. Shimmers while the AI is still rating. */
 export function Pips({ difficulty }: { difficulty: Difficulty | null }) {
   const d = difficulty ?? 0;
   return (
-    <span className="flex gap-[3px]" role="img" aria-label={d ? `Difficulty ${d} of 5, ${DIFFICULTY_LABELS[difficulty!]}` : "Not rated yet"}>
+    <span
+      className={`flex gap-[3px] ${d ? "" : "motion-safe:animate-pulse"}`}
+      role="img"
+      aria-label={d ? `Difficulty ${d} of 5, ${DIFFICULTY_LABELS[difficulty!]}` : "Rating difficulty"}
+    >
       {DIFFICULTIES.map((n) => (
-        <span key={n} className={`size-1.5 rounded-full ${n <= d ? "bg-accent-text" : "bg-line"}`} />
+        <span key={n} className={`size-1.5 rounded-full ${n <= d ? "bg-accent-text" : d ? "bg-line" : "bg-muted/40"}`} />
       ))}
     </span>
   );
 }
 
-/** Accent pill with a tabular point value. */
-export function PointsPill({ points, muted = false, prefix = "" }: { points: number; muted?: boolean; prefix?: string }) {
+/** Accent pill with a tabular point value; "…" while the task is still being rated. */
+export function PointsPill({ points, muted = false, prefix = "" }: { points: number | null; muted?: boolean; prefix?: string }) {
   return (
     <span
-      className={`rounded-full px-2.5 py-1 font-display text-[0.8125rem] leading-none font-bold tabular-nums ${muted ? "bg-surface-2 text-muted" : "bg-accent text-on-accent"}`}
+      aria-label={points === null ? "Points pending" : undefined}
+      className={`min-w-9 rounded-full px-2.5 py-1 text-center font-display text-[0.8125rem] leading-none font-bold tabular-nums ${muted || points === null ? "bg-surface-2 text-muted" : "bg-accent text-on-accent"}`}
     >
-      {prefix}
-      {points}
+      {points === null ? "…" : `${prefix}${points}`}
     </span>
   );
 }
 
-/** Row of 1–5 buttons. */
-export function DifficultyPicker({ value, onChange }: { value: Difficulty | null; onChange: (d: Difficulty) => void }) {
+/** "Medium · 20 pts" plus the AI's one-line reason. */
+export function Rating({ difficulty, reason }: { difficulty: Difficulty | null; reason: string | null }) {
+  if (!difficulty) {
+    return (
+      <p className="flex items-center gap-2 text-body-sm text-muted">
+        <span className="material-symbol text-base text-accent-text motion-safe:animate-pulse" aria-hidden>
+          auto_awesome
+        </span>
+        Rating this task…
+      </p>
+    );
+  }
   return (
-    <div role="radiogroup" aria-label="Difficulty" className="grid grid-cols-5 gap-1.5">
-      {DIFFICULTIES.map((n) => {
-        const on = n === value;
-        return (
-          <button
-            key={n}
-            type="button"
-            role="radio"
-            aria-checked={on}
-            aria-label={`${n}, ${DIFFICULTY_LABELS[n]}, ${pointsFor(n)} points`}
-            onClick={() => onChange(n)}
-            className={`h-11 rounded-chip font-display text-body font-bold ${on ? "border-[1.5px] border-accent bg-accent text-on-accent" : "border border-line bg-bg text-ink"}`}
-          >
-            {n}
-          </button>
-        );
-      })}
+    <div className="flex items-start gap-2">
+      <span className="material-symbol mt-0.5 text-base text-accent-text" aria-hidden>
+        auto_awesome
+      </span>
+      <p className="text-body-sm text-muted">
+        <span className="font-semibold text-ink">
+          {DIFFICULTY_LABELS[difficulty]} · {pointsFor(difficulty)} pts.
+        </span>{" "}
+        {reason}
+      </p>
     </div>
   );
 }

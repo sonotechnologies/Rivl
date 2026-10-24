@@ -1,5 +1,6 @@
 "use client";
 
+import { PlanSheet } from "@/components/tasks/plan-sheet";
 import { QuickAddSheet } from "@/components/tasks/quick-add-sheet";
 import { TaskOptionsSheet } from "@/components/tasks/task-options-sheet";
 import { useApp } from "./app-context";
@@ -31,6 +32,7 @@ export function AppChrome() {
       ) : null}
       {sheet?.kind === "add" ? <QuickAddSheet /> : null}
       {sheet?.kind === "options" ? <TaskOptionsSheet taskId={sheet.taskId} /> : null}
+      {sheet?.kind === "plan" ? <PlanSheet /> : null}
     </>
   );
 }

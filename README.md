@@ -6,7 +6,7 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build steps 1–2 of 12 from the build brief.
+Build steps 1–3 of 12 from the build brief.
 
 **1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
@@ -24,7 +24,16 @@ Build steps 1–2 of 12 from the build brief.
 - [x] Repeating tasks and daily habits: the database schedules the next one when you finish (overdue habits skip ahead)
 - [x] Offline: tasks live in IndexedDB with an outbox that syncs when you're back; a service worker keeps screens available
 
-Not yet: AI difficulty scoring and Plan my day (step 3), real points with caps and streaks (step 4), board, feed and friends.
+**3. AI**
+- [x] One server route, `/api/ai`: verifies the user, enforces 10 AI actions a day (reset at local midnight), JSON-only model calls
+- [x] Difficulty scoring: automatic, free, cached by a hash of title + steps; users can no longer set difficulty themselves
+- [x] Anti-farming: a same-day duplicate scores 1; tasks are rescored at most 5 times
+- [x] Task breakdown (quick add toggle or task detail): 3–8 steps with minute estimates
+- [x] Plan my day: time blocks between your wake and wind-down times, a tip in your coach's voice, "Use this plan" sets the times
+- [x] Gemini Flash first, Groq as fallback, falling through retired model ids; if both fail, difficulty defaults to 2 and actions are refunded
+- [x] Guardrails: no medical, legal or financial advice, unsafe tasks refused, emails/phones/links stripped before sending
+
+Not yet: real points with caps and streaks (step 4), board, feed, friends, coach recap and nudges.
 Until step 4, the points on Today are the base points of what you've finished; the server will apply bonuses and caps.
 
 ## Getting started
@@ -33,7 +42,7 @@ Until step 4, the points on Today are the base points of what you've finished; t
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
    - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
-3. `cp .env.example .env.local` and fill in the project URL and publishable key.
+3. `cp .env.example .env.local` and fill in the project URL and publishable key, plus `SUPABASE_SECRET_KEY` and `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) for AI. In Vercel, add the same as environment variables.
 4. `npm install`, then `npm run dev`.
 
 `/` and `/brand` work without Supabase; sign-in shows a setup note until the env vars are set.
@@ -61,7 +70,7 @@ Accent-coloured text in dark mode uses each accent's base hex, except Nova, whic
 ```
 app/            routes: / · /login · /auth/* · (app)/ today, add, task/[id], board, feed, me · /settings · /brand
 components/     brand/ (Logo, AppIcon, CoachBubble) · ui/ (Button) · install prompt · theme sync
-lib/            theme, dates, auth data access, Supabase clients, tasks/ (offline store, types, points)
+lib/            theme, dates, auth data access, Supabase clients, tasks/ (offline store, types, points), ai/ (providers, prompts, redaction)
 public/sw.js    service worker (app shell and visited screens; task data syncs via lib/tasks/store.ts)
 supabase/       SQL migrations
 design/         Claude Design handoff bundle (prototypes, chats, design brief)

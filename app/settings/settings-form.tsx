@@ -119,6 +119,40 @@ export function SettingsForm({ profile }: { profile: Profile }) {
         ) : null}
       </section>
 
+      <section className="flex flex-col gap-4" aria-labelledby="your-day">
+        <div>
+          <h2 id="your-day" className={sectionTitle}>
+            Your day
+          </h2>
+          <p className="mt-1 text-body-sm text-muted">Plan my day schedules tasks between these times.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {(
+            [
+              ["wake_time", "Wake up", profile.wake_time],
+              ["sleep_time", "Wind down", profile.sleep_time],
+            ] as const
+          ).map(([key, text, value]) => (
+            <label key={key} className="flex flex-col gap-1.5 text-body-sm font-medium">
+              {text}
+              <input
+                type="time"
+                defaultValue={value.slice(0, 5)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (!v) return;
+                  startTransition(async () => {
+                    const { error } = await savePreferences({ [key]: v });
+                    setPrefError(error);
+                  });
+                }}
+                className={field}
+              />
+            </label>
+          ))}
+        </div>
+      </section>
+
       <section className="flex flex-col gap-4" aria-labelledby="profile">
         <h2 id="profile" className={sectionTitle}>
           Profile

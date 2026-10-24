@@ -33,9 +33,9 @@ export type Subtask = {
   created_at: string;
 };
 
-/** Fields the client may write; everything else is set by the database. */
+/** Fields the client may write. Difficulty is rated by the AI on the server; everything else is set by the database. */
 export type TaskPatch = Partial<
-  Pick<Task, "title" | "notes" | "due_on" | "due_time" | "category" | "difficulty" | "recurrence_rule" | "is_shared" | "completed_at">
+  Pick<Task, "title" | "notes" | "due_on" | "due_time" | "category" | "recurrence_rule" | "is_shared" | "completed_at">
 >;
 export type SubtaskPatch = Partial<Pick<Subtask, "title" | "est_minutes" | "done" | "position">>;
 
