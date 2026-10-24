@@ -14,18 +14,19 @@ const DUE = [
 ] as const;
 
 export function QuickAddSheet() {
-  const { store, closeSheet, showToast } = useApp();
+  const { store, closeSheet, showToast, profile } = useApp();
   const { online } = useTasks();
   const { breakdown } = useBreakdown();
   const [title, setTitle] = useState("");
   const [due, setDue] = useState<(typeof DUE)[number]["id"]>("today");
   const [splitIt, setSplitIt] = useState(false);
+  const [shared, setShared] = useState(profile.share_by_default);
 
   function submit(e: FormEvent) {
     e.preventDefault();
     const clean = title.trim().slice(0, 140);
     if (!clean) return;
-    const id = store.createTask({ title: clean, due_on: DUE.find((d) => d.id === due)!.date() });
+    const id = store.createTask({ title: clean, due_on: DUE.find((d) => d.id === due)!.date(), is_shared: shared });
     closeSheet();
     if (splitIt && online) {
       showToast("Breaking it down…", "auto_awesome");
@@ -73,7 +74,20 @@ export function QuickAddSheet() {
             <span className={`absolute top-0.5 size-5 rounded-full transition-[left] duration-150 ${splitIt && online ? "left-[18px] bg-on-accent" : "left-0.5 bg-muted"}`} />
           </span>
         </button>
-        <p className="-mt-1 text-caption text-muted">The AI rates how hard it is, so points stay fair.</p>
+        <div className="-mt-1 flex items-center justify-between gap-3">
+          <p className="text-caption text-muted">The AI rates how hard it is, so points stay fair.</p>
+          <button
+            type="button"
+            aria-pressed={shared}
+            onClick={() => setShared((v) => !v)}
+            className={`flex h-9 flex-none items-center gap-1 rounded-full border px-3 text-caption font-semibold ${shared ? "border-accent text-accent-text" : "border-line text-muted"}`}
+          >
+            <span className={`material-symbol text-base ${shared ? "" : "icon-outline"}`} aria-hidden>
+              {shared ? "group" : "lock"}
+            </span>
+            {shared ? "Shared" : "Private"}
+          </button>
+        </div>
         <button
           type="submit"
           disabled={!title.trim()}

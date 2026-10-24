@@ -1,9 +1,13 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./env";
 
 export async function createClient() {
+  // Request time only: the auth client reads the clock to check token expiry,
+  // which runtime prefetches aren't allowed to do.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {

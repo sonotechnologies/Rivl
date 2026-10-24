@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useApp, useTasks } from "@/components/app/app-context";
 import { ChoiceButton, Pips, PointsPill, Rating } from "@/components/tasks/task-bits";
 import { useBreakdown } from "@/components/tasks/use-breakdown";
 import { addDays, todayISO } from "@/lib/dates";
+import { feed, PROOF_POINTS } from "@/lib/feed";
 import { expectedPoints, pointsFor } from "@/lib/tasks/points";
 import type { Recurrence, Subtask, Task } from "@/lib/tasks/types";
 
@@ -251,6 +252,8 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
         <Switch checked={task.is_shared} labelledBy="share-label" onChange={(is_shared) => save({ is_shared })} />
       </section>
 
+      {done && task.is_shared ? <ProofButton taskId={task.id} /> : null}
+
       <button
         type="button"
         onClick={() => {
@@ -396,5 +399,56 @@ function Switch({ checked, onChange, labelledBy }: { checked: boolean; onChange:
         />
       </span>
     </button>
+  );
+}
+
+/** Photo proof for a finished, shared task: +10 and the verified tick on the feed. */
+function ProofButton({ taskId }: { taskId: string }) {
+  const { profile, showToast } = useApp();
+  const { online } = useTasks();
+  const [post, setPost] = useState<{ id: string; verified: boolean } | null | undefined>(undefined);
+  const [busy, setBusy] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (online) void feed.postForTask(taskId).then(setPost);
+  }, [online, taskId]);
+
+  if (!post) return null;
+  return (
+    <>
+      <input
+        ref={input}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (!f) return;
+          setBusy(true);
+          try {
+            await feed.addProof(post.id, profile.id, f);
+            showToast(post.verified ? "Photo updated." : `Verified. +${PROOF_POINTS} pts`, "verified");
+            setPost({ ...post, verified: true });
+          } catch (err) {
+            showToast(err instanceof Error && err.message.includes("too big") ? err.message : "Couldn't upload the photo. Try again.", "close");
+          } finally {
+            setBusy(false);
+          }
+        }}
+      />
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => input.current?.click()}
+        className="flex min-h-11 items-center justify-center gap-2 rounded-full border border-dashed border-line font-semibold"
+      >
+        <span className="material-symbol text-xl text-accent-text" aria-hidden>
+          {post.verified ? "verified" : "add_a_photo"}
+        </span>
+        {busy ? "Uploading…" : post.verified ? "Verified · replace photo" : `Add photo proof · +${PROOF_POINTS} pts`}
+      </button>
+    </>
   );
 }

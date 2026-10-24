@@ -64,7 +64,14 @@ Build steps 1–7 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] Settled by trigger (first to N), when either player opens the app, and every 5 minutes via pg_cron
 - [x] Board carousel from the design (scores, VS, progress bars, time left, accept/decline/cancel), `/challenge/new`, and the full-screen trophy moment
 
-Not yet: feed (step 8), coach recap and nudges, push, focus timer.
+**8. Feed**
+- [x] Finishing a task marked Shared posts it for your friends (title and points only; notes and steps stay private). Quick add has a Shared/Private toggle; "Share wins by default" lives in Settings → Privacy
+- [x] 🔥 👏 😂 💪 reactions, toggled optimistically
+- [x] Photo proof from the feed or the task screen: compressed to WebP under 1 MB, stored in the private `proofs` bucket, +10 points and a verified tick
+- [x] "Looks sus": two flags put a post's points on hold until the owner adds a photo
+- [x] `/api/cron/cleanup-proofs` runs daily (vercel.json) and deletes photos older than 7 days; the tick and points stay
+
+Not yet: coach recap and nudges, push, focus timer.
 
 ## Getting started
 
@@ -72,7 +79,7 @@ Not yet: feed (step 8), coach recap and nudges, push, focus timer.
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
    - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
-3. `cp .env.example .env.local` and fill in the project URL and publishable key, plus `SUPABASE_SECRET_KEY` and `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) for AI. In Vercel, add the same as environment variables.
+3. `cp .env.example .env.local` and fill in the project URL and publishable key, plus `SUPABASE_SECRET_KEY` and `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) for AI, and `CRON_SECRET` (any long random string) for the daily photo cleanup. In Vercel, add the same as environment variables.
 4. `npm install`, then `npm run dev`.
 
 `/` and `/brand` work without Supabase; sign-in shows a setup note until the env vars are set.

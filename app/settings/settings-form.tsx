@@ -17,6 +17,7 @@ export function SettingsForm({ profile }: { profile: Profile }) {
   const [accent, setAccent] = useState<Accent>(profile.accent);
   const [coach, setCoach] = useState<CoachStyle>(profile.coach_style);
   const [goal, setGoal] = useState(profile.weekly_goal);
+  const [shareDefault, setShareDefault] = useState(profile.share_by_default);
   const [prefError, setPrefError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -184,6 +185,41 @@ export function SettingsForm({ profile }: { profile: Profile }) {
               <span className="text-caption text-muted">{label}</span>
             </button>
           ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4" aria-labelledby="privacy">
+        <h2 id="privacy" className={sectionTitle}>
+          Privacy
+        </h2>
+        <div className="flex items-start justify-between gap-4 rounded-card border border-line bg-surface p-4">
+          <div>
+            <p className="text-body font-semibold" id="share-default">
+              Share wins by default
+            </p>
+            <p className="mt-1 text-body-sm text-muted">
+              New tasks start shared, so friends see the title and points when you finish. You can still switch each task. Notes and steps are never shared.
+            </p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={shareDefault}
+            aria-labelledby="share-default"
+            onClick={() => {
+              const next = !shareDefault;
+              setShareDefault(next);
+              startTransition(async () => {
+                const { error } = await savePreferences({ share_by_default: next });
+                setPrefError(error);
+              });
+            }}
+            className="grid h-11 w-14 flex-none place-items-center"
+          >
+            <span className={`relative h-7 w-12 rounded-full transition-colors ${shareDefault ? "bg-accent" : "bg-surface-2 ring-1 ring-line"}`}>
+              <span className={`absolute top-0.5 size-6 rounded-full transition-[left] duration-150 ${shareDefault ? "left-[22px] bg-on-accent" : "left-0.5 bg-muted"}`} />
+            </span>
+          </button>
         </div>
       </section>
 
