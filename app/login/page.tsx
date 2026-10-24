@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Logo } from "@/components/brand/logo";
+import { isGoogleAuthEnabled } from "@/lib/supabase/env";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Sign in" };
@@ -14,7 +15,9 @@ export default function LoginPage() {
       </Link>
       <div className="flex flex-col gap-2">
         <h1 className="font-display text-heading font-bold tracking-[-0.02em]">Sign in</h1>
-        <p className="text-body text-muted">No passwords. Pick Google or get a link by email.</p>
+        <p className="text-body text-muted">
+          {isGoogleAuthEnabled ? "No passwords. Pick Google or get a link by email." : "No passwords. We\u2019ll email you a sign-in link."}
+        </p>
       </div>
       <Suspense fallback={<div className="h-56 animate-pulse rounded-card bg-surface" />}>
         <LoginForm />

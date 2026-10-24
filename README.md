@@ -20,7 +20,7 @@ Build step 1 of 12 (**Foundation**) from the build brief:
 1. Create a Supabase project and run `supabase/migrations/20261024000000_profiles.sql` (SQL editor, or `supabase db push`).
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
-   - Providers: enable Google (client ID and secret from Google Cloud) and Email.
+   - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
 3. `cp .env.example .env.local` and fill in the project URL and publishable key.
 4. `npm install`, then `npm run dev`.
 

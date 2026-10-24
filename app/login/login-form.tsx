@@ -5,7 +5,7 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { safeNext } from "@/lib/safe-next";
 import { createClient } from "@/lib/supabase/client";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { isGoogleAuthEnabled, isSupabaseConfigured } from "@/lib/supabase/env";
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; email: string } | { kind: "error"; message: string };
 
@@ -66,15 +66,19 @@ export function LoginForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Button variant="ghost" onClick={signInWithGoogle} disabled={busy}>
-        Continue with Google
-      </Button>
+      {isGoogleAuthEnabled ? (
+        <>
+          <Button variant="ghost" onClick={signInWithGoogle} disabled={busy}>
+            Continue with Google
+          </Button>
 
-      <div className="flex items-center gap-3 text-caption text-muted" aria-hidden>
-        <span className="h-px flex-1 bg-line" />
-        or
-        <span className="h-px flex-1 bg-line" />
-      </div>
+          <div className="flex items-center gap-3 text-caption text-muted" aria-hidden>
+            <span className="h-px flex-1 bg-line" />
+            or
+            <span className="h-px flex-1 bg-line" />
+          </div>
+        </>
+      ) : null}
 
       <form onSubmit={sendMagicLink} className="flex flex-col gap-3">
         <label htmlFor="email" className="text-body-sm font-medium">
