@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { COACH_TINTS } from "@/components/brand/coach-bubble";
+import { InviteCard } from "@/components/friends/invite-card";
 import type { Profile } from "@/lib/auth";
 import { ACCENTS, applyTheme, COACHES, type Accent, type CoachStyle, type Theme } from "@/lib/theme";
 import { finishOnboarding } from "./actions";
@@ -52,7 +53,6 @@ export function OnboardingFlow({ profile }: { profile: Profile }) {
   const [goal, setGoal] = useState(profile.weekly_goal);
   const [error, setError] = useState<string | null>(null);
   const [saving, startSaving] = useTransition();
-  const [copied, setCopied] = useState(false);
 
   const handle = usernameTouched ? username : slug(name);
 
@@ -91,8 +91,6 @@ export function OnboardingFlow({ profile }: { profile: Profile }) {
     router.refresh();
   };
 
-  const inviteUrl = typeof window === "undefined" ? "" : `${window.location.origin}/?from=${encodeURIComponent(handle || "a-friend")}`;
-  const inviteText = `I'm on Rivl, the to-do app where we compete for points every week. You vs me, starting Monday: ${inviteUrl}`;
 
   function next() {
     if (step < STEPS - 1) return setStep(step + 1);
@@ -309,21 +307,9 @@ export function OnboardingFlow({ profile }: { profile: Profile }) {
             </span>
             <h1 className={question}>Rivl needs a rival. Bring one.</h1>
             <p className="text-body text-pretty text-muted">
-              Invite a friend. You both start the week at zero, and the board resets every Monday.
+              Invite a friend. You both get +100 points when they join, and the board resets every Monday.
             </p>
-            <div className="flex h-12 items-center justify-between gap-2 rounded-chip border border-line bg-surface pr-1.5 pl-4">
-              <span className="truncate font-mono text-body-sm text-muted">{inviteUrl.replace(/^https?:\/\//, "")}</span>
-              <button
-                type="button"
-                onClick={async () => {
-                  await navigator.clipboard?.writeText(inviteUrl).catch(() => {});
-                  setCopied(true);
-                }}
-                className="h-9 flex-none rounded-full bg-surface-2 px-3 text-[0.8125rem] font-semibold"
-              >
-                {copied ? "Copied" : "Copy"}
-              </button>
-            </div>
+            <InviteCard compact />
           </>
         ) : null}
 
@@ -345,20 +331,9 @@ export function OnboardingFlow({ profile }: { profile: Profile }) {
         </button>
       ) : (
         <div className="flex flex-col gap-2">
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(inviteText)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => setTimeout(finish, 300)}
-            className="flex h-14 items-center justify-center gap-2 rounded-full bg-[#25D366] text-body font-semibold text-[#0B0B10]"
-          >
-            <span className="material-symbol text-[1.375rem]" aria-hidden>
-              chat
-            </span>
-            Invite on WhatsApp
-          </a>
-          <button type="button" onClick={finish} className="h-12 rounded-full text-[0.9375rem] font-medium text-muted">
-            Skip for now
+
+          <button type="button" onClick={finish} className="h-14 rounded-full border border-line text-body font-semibold">
+            Done, let&apos;s go
           </button>
         </div>
       )}

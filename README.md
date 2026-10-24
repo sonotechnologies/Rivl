@@ -6,7 +6,7 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build steps 1–4 of 12 from the build brief, plus onboarding (pulled forward from step 12).
+Build steps 1–5 of 12 from the build brief, plus onboarding (pulled forward from step 12).
 
 **1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
@@ -45,7 +45,13 @@ Build steps 1–4 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] New accounts go through 5 steps from the design: name and username, coach, colour and dark/light, when the day starts, weekly goal; then a WhatsApp invite
 - [x] Theme previews live; everything saves in one go; "Replay onboarding" on Me
 
-Not yet: friends and invite codes (step 5), board (step 6), challenges, feed, coach recap and nudges, push, focus timer.
+**5. Friends**
+- [x] Invite links (`/invite/[code]`, works signed out, joins after sign-in), WhatsApp, share sheet and an on-demand QR code
+- [x] +100 points each when a new account (under 7 days old) joins with your link, once per person
+- [x] Username search, friend requests (20 a day), accept/decline/cancel, remove, block (hides you both ways) and report
+- [x] Other people's data is only reachable through security-definer functions that return public fields
+
+Not yet: board (step 6), challenges, feed, coach recap and nudges, push, focus timer.
 
 ## Getting started
 

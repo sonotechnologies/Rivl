@@ -145,6 +145,12 @@ export function MeScreen() {
       </ul>
 
       <div className="mt-2 flex flex-col gap-2">
+        <ButtonLink href="/friends">
+          <span className="material-symbol text-xl" aria-hidden>
+            group
+          </span>
+          Friends
+        </ButtonLink>
         <ButtonLink href="/settings" variant="ghost">
           Settings
         </ButtonLink>
