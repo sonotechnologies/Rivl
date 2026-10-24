@@ -2,7 +2,9 @@
 
 import { createContext, use, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { Profile } from "@/lib/auth";
-import { expectedPoints, isHard } from "@/lib/tasks/points";
+import { getBoardStore, rankWithMe, type BoardView } from "@/lib/board";
+import { todayISO, weekStartISO } from "@/lib/dates";
+import { expectedPoints, isHard, pointTotals } from "@/lib/tasks/points";
 import { getTaskStore, type TaskStore, type TaskView } from "@/lib/tasks/store";
 
 type Toast = { id: number; text: string; icon?: string };
@@ -98,4 +100,22 @@ const getServerView = () => SERVER_VIEW;
 export function useTasks() {
   const { store } = useApp();
   return useSyncExternalStore(store.subscribe, store.getView, getServerView);
+}
+
+const SERVER_BOARD: BoardView = { rows: null, moved: {}, error: false };
+const getServerBoard = () => SERVER_BOARD;
+
+/**
+ * The live weekly board, with your own row using your latest points (so it
+ * agrees with Today even before the server has scored your last tick).
+ */
+export function useBoard() {
+  const { profile } = useApp();
+  const store = getBoardStore(profile.id);
+  const board = useSyncExternalStore(store.subscribe, store.getView, getServerBoard);
+  const { stats, tasks } = useTasks();
+  const today = todayISO();
+  const { weekPts } = pointTotals(stats, tasks, today, weekStartISO(today));
+  const rows = board.rows ? rankWithMe(board.rows, weekPts) : null;
+  return { ...board, rows };
 }

@@ -6,7 +6,7 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build steps 1–5 of 12 from the build brief, plus onboarding (pulled forward from step 12).
+Build steps 1–6 of 12 from the build brief, plus onboarding (pulled forward from step 12).
 
 **1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
@@ -51,7 +51,14 @@ Build steps 1–5 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] Username search, friend requests (20 a day), accept/decline/cancel, remove, block (hides you both ways) and report
 - [x] Other people's data is only reachable through security-definer functions that return public fields
 
-Not yet: board (step 6), challenges, feed, coach recap and nudges, push, focus timer.
+**6. Leaderboard**
+- [x] `weekly_board()`: you and your friends ranked by this week's points (ties share a rank); resets Monday 00:00 local
+- [x] Board from the design: reset countdown, podium with gold/silver/bronze rings and #1 glow, ranked list, your row pinned when off screen
+- [x] Live: Realtime on friends' point events (30-second polling fallback); rows glide to new places and arrows flash on rank changes
+- [x] Today's rank strip ("#3 this week · 45 pts behind Ada"); board beside the app at 1024 px and up
+- [x] `close_weeks()` hourly via pg_cron records each finished week and awards Giant Slayer for finishing #1
+
+Not yet: challenges (step 7), feed, coach recap and nudges, push, focus timer.
 
 ## Getting started
 

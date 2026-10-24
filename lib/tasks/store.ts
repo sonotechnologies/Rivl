@@ -386,7 +386,8 @@ class TaskStore {
     const db = this.supabase;
     const [profile, events, badges] = await Promise.all([
       db.from("profiles").select("streak_count, streak_last_on, streak_freezes, streak_best, weekly_goal").eq("id", this.userId).single(),
-      db.from("point_events").select("task_id, type, amount, day").gte("week_start", weekStartISO()),
+      // Friends' events are readable too (for the board), so filter to ours.
+      db.from("point_events").select("task_id, type, amount, day").eq("user_id", this.userId).gte("week_start", weekStartISO()),
       db.from("user_achievements").select("achievement_id"),
     ]);
     if (profile.error || events.error || badges.error) return undefined;

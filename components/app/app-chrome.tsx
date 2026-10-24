@@ -14,7 +14,7 @@ export function AppChrome() {
     <>
       <BottomNav onAdd={openQuickAdd} />
       {toast ? (
-        <div className="pointer-events-none fixed inset-x-0 top-3 z-40 mx-auto w-full max-w-[480px] px-4">
+        <div className="pointer-events-none fixed inset-x-0 top-3 z-40 mx-auto w-full max-w-[480px] px-4 lg:left-[calc(50%-440px)] lg:right-auto lg:mx-0 lg:px-0">
           <div
             key={toast.id}
             role="status"

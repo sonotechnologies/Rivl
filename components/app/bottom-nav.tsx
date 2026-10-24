@@ -39,7 +39,7 @@ export function NavBar({ pathname, onAdd }: { pathname?: string; onAdd?: () => v
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-20 mx-auto grid w-full max-w-[480px] grid-cols-5 items-center justify-items-center border-t border-line bg-surface px-3 pt-1 pb-[max(18px,env(safe-area-inset-bottom))]"
+      className="fixed inset-x-0 bottom-0 z-20 mx-auto grid w-full max-w-[480px] lg:left-[calc(50%-440px)] lg:right-auto lg:mx-0 grid-cols-5 items-center justify-items-center border-t border-line bg-surface px-3 pt-1 pb-[max(18px,env(safe-area-inset-bottom))]"
     >
       {LEFT.map(tab)}
       <button

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useApp, useTasks } from "@/components/app/app-context";
 import { CoachBubble } from "@/components/brand/coach-bubble";
+import { RankStrip } from "@/components/board/rank-strip";
 import { SyncStatus } from "@/components/tasks/sync-status";
 import { DoneRow, TaskRow } from "@/components/tasks/task-row";
 import { coachLine, type CoachMoment } from "@/lib/coach-lines";
@@ -171,6 +172,8 @@ export function TodayScreen() {
           <DoneRow key={t.id} task={t} />
         ))}
       </Collapsible>
+
+      <RankStrip />
     </div>
   );
 }
