@@ -7,7 +7,7 @@ import { useApp, useTasks } from "@/components/app/app-context";
 import { ChoiceButton, Pips, PointsPill, Rating } from "@/components/tasks/task-bits";
 import { useBreakdown } from "@/components/tasks/use-breakdown";
 import { addDays, todayISO } from "@/lib/dates";
-import { pointsFor } from "@/lib/tasks/points";
+import { expectedPoints, pointsFor } from "@/lib/tasks/points";
 import type { Recurrence, Subtask, Task } from "@/lib/tasks/types";
 
 const REPEAT: { id: Recurrence | null; label: string }[] = [
@@ -120,7 +120,7 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
             disabled={completing.has(task.id)}
             onClick={() => {
               complete(task.id);
-              showToast(task.difficulty ? `+${pointsFor(task.difficulty)} pts` : "Done!", "check_circle");
+              if (expectedPoints(task) > 0) showToast(`+${expectedPoints(task)} pts`, "check_circle");
             }}
             className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent font-semibold text-on-accent disabled:opacity-70"
           >

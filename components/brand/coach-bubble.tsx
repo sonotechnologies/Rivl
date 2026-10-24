@@ -1,6 +1,6 @@
 import { COACHES, type CoachStyle } from "@/lib/theme";
 
-const TINTS: Record<CoachStyle, { tint: string; pct: number; ink: string }> = {
+export const COACH_TINTS: Record<CoachStyle, { tint: string; pct: number; ink: string }> = {
   hype: { tint: "var(--accent)", pct: 15, ink: "var(--accent-text)" },
   calm: { tint: "#2EC4B6", pct: 12, ink: "var(--coach-calm-ink)" },
   roast: { tint: "#FF3D8B", pct: 12, ink: "var(--coach-roast-ink)" },
@@ -16,7 +16,7 @@ type CoachBubbleProps = {
 /** Speech bubble with the coach's icon, tinted per personality. */
 export function CoachBubble({ coach, children, note }: CoachBubbleProps) {
   const { name, icon } = COACHES.find((c) => c.id === coach)!;
-  const { tint, pct, ink } = TINTS[coach];
+  const { tint, pct, ink } = COACH_TINTS[coach];
   const background = `color-mix(in oklab, ${tint} ${pct}%, var(--surface))`;
 
   return (

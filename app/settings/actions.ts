@@ -13,7 +13,7 @@ function isTimeZone(tz: string) {
   }
 }
 
-type Preferences = Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle; wake_time: string; sleep_time: string }>;
+type Preferences = Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle; wake_time: string; sleep_time: string; weekly_goal: number }>;
 
 const isTime = (v: unknown): v is string => typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
 
@@ -32,6 +32,7 @@ export async function savePreferences(prefs: Preferences) {
   if (isCoach(prefs.coach_style)) values.coach_style = prefs.coach_style;
   if (isTime(prefs.wake_time)) values.wake_time = prefs.wake_time;
   if (isTime(prefs.sleep_time)) values.sleep_time = prefs.sleep_time;
+  if (prefs.weekly_goal && [300, 500, 800].includes(prefs.weekly_goal)) values.weekly_goal = prefs.weekly_goal;
   if (Object.keys(values).length === 0) return { error: "Nothing to save." };
   return updateOwnProfile(values);
 }

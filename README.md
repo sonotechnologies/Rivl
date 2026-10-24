@@ -6,7 +6,7 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build steps 1–3 of 12 from the build brief.
+Build steps 1–4 of 12 from the build brief, plus onboarding (pulled forward from step 12).
 
 **1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
@@ -33,8 +33,19 @@ Build steps 1–3 of 12 from the build brief.
 - [x] Gemini Flash first, Groq as fallback, falling through retired model ids; if both fail, difficulty defaults to 2 and actions are refunded
 - [x] Guardrails: no medical, legal or financial advice, unsafe tasks refused, emails/phones/links stripped before sending
 
-Not yet: real points with caps and streaks (step 4), board, feed, friends, coach recap and nudges.
-Until step 4, the points on Today are the base points of what you've finished; the server will apply bonuses and caps.
+**4. Points, streaks and badges**
+- [x] `point_events` written only by database triggers: 5/10/20/35/50 by AI difficulty, +20% on or before the due date
+- [x] Anti-cheat: nothing for tasks under 10 minutes old, max 300 task points a day, un-ticking or deleting removes points
+- [x] Daily streaks with +5 × tier streak points, a freeze earned every 7 days (covers one missed day), undo if the day's only tick is removed
+- [x] 8 badges from the design (6 unlockable now; Rival and Giant Slayer arrive with challenges and the board), with the flip-in "Badge earned" moment
+- [x] Today: live points with the weekly goal, streak badge (glowing, or dashed "at risk"), real points on finished tasks
+- [x] Me: total points, best streak, 18-week streak calendar, badge grid
+
+**Onboarding**
+- [x] New accounts go through 5 steps from the design: name and username, coach, colour and dark/light, when the day starts, weekly goal; then a WhatsApp invite
+- [x] Theme previews live; everything saves in one go; "Replay onboarding" on Me
+
+Not yet: friends and invite codes (step 5), board (step 6), challenges, feed, coach recap and nudges, push, focus timer.
 
 ## Getting started
 

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { AppChrome } from "@/components/app/app-chrome";
 import { AppProvider } from "@/components/app/app-context";
@@ -28,6 +29,8 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
 
 async function SignedIn({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
+  // New accounts personalise Rivl first.
+  if (!profile.onboarded_at) redirect("/onboarding");
   return (
     <AppProvider profile={profile}>
       <ThemeSync theme={profile.theme} accent={profile.accent} />

@@ -7,7 +7,7 @@ import { SyncStatus } from "@/components/tasks/sync-status";
 import { DoneRow, TaskRow } from "@/components/tasks/task-row";
 import { coachLine, type CoachMoment } from "@/lib/coach-lines";
 import { formatDay, greeting, toISODate, todayISO, weekStartISO } from "@/lib/dates";
-import { pointsFor } from "@/lib/tasks/points";
+import { displayStreak, pointTotals, type StreakState } from "@/lib/tasks/points";
 import type { Subtask, Task } from "@/lib/tasks/types";
 
 const sectionLabel = "px-1 pt-1 text-caption font-semibold tracking-[0.06em] uppercase";
@@ -48,10 +48,9 @@ export function TodayScreen() {
     .filter((t) => completedOn(t) === today)
     .sort((a, b) => b.completed_at!.localeCompare(a.completed_at!));
 
-  // Base task points as the device sees them. The server applies bonuses and caps (build step 4).
-  const sum = (tasks: Task[]) => tasks.reduce((n, t) => n + pointsFor(t.difficulty), 0);
-  const todayPoints = sum(doneToday);
-  const weekPoints = sum(view.tasks.filter((t) => (completedOn(t) ?? "") >= weekStart));
+  const { todayPts: todayPoints, weekPts: weekPoints } = pointTotals(view.stats, view.tasks, today, weekStart);
+  const streak = displayStreak(view.stats, doneToday.length > 0, today);
+  const goal = view.stats?.weekly_goal ?? profile.weekly_goal;
 
   const subtaskCounts = countSubtasks(view.subtasks);
   const counts = (id: string) => subtaskCounts.get(id) ?? { done: 0, total: 0 };
@@ -71,17 +70,7 @@ export function TodayScreen() {
             {greeting()}, {name}
           </h1>
         </div>
-        {profile.streak_count > 0 ? (
-          <div
-            aria-label={`${profile.streak_count}-day streak`}
-            className="flex h-9 items-center gap-1 rounded-full border border-line bg-surface pr-3 pl-2 shadow-[0_0_18px_color-mix(in_oklab,#FF7A1A_35%,transparent)]"
-          >
-            <span className="material-symbol motion-safe:animate-flicker bg-linear-0 from-[#FF7A1A] to-[#FFC93D] bg-clip-text text-[1.375rem] text-transparent">
-              local_fire_department
-            </span>
-            <span className="font-display text-body font-bold tabular-nums">{profile.streak_count}</span>
-          </div>
-        ) : null}
+        <StreakBadge streak={streak} />
       </header>
 
       <div className="flex items-end justify-between rounded-card border border-line bg-surface p-4">
@@ -96,7 +85,7 @@ export function TodayScreen() {
           <div className="text-caption font-medium text-muted">This week</div>
           <div className="mt-1 font-display text-title font-bold tabular-nums">
             {weekPoints}
-            <span className="font-sans text-[0.8125rem] font-medium text-muted"> pts</span>
+            <span className="font-sans text-[0.8125rem] font-medium text-muted"> / {goal}</span>
           </div>
         </div>
       </div>
@@ -182,6 +171,39 @@ export function TodayScreen() {
           <DoneRow key={t.id} task={t} />
         ))}
       </Collapsible>
+    </div>
+  );
+}
+
+/** Flame and count: glowing when today's done, dashed "at risk" when it isn't yet. */
+function StreakBadge({ streak }: { streak: StreakState }) {
+  if (streak.state === "none") return null;
+  if (streak.state === "risk") {
+    return (
+      <div
+        aria-label={`${streak.count}-day streak at risk`}
+        className="flex h-9 items-center gap-1 rounded-full border border-dashed border-line bg-surface pr-3 pl-2 text-muted"
+      >
+        <span className="material-symbol icon-outline text-[1.375rem]">local_fire_department</span>
+        <span className="font-display text-body font-bold tabular-nums">{streak.count}</span>
+        <span className="text-caption font-medium">at risk</span>
+      </div>
+    );
+  }
+  return (
+    <div
+      aria-label={`${streak.count}-day streak`}
+      className="flex h-9 items-center gap-1 rounded-full border border-line bg-surface pr-3 pl-2 shadow-[0_0_18px_color-mix(in_oklab,#FF7A1A_35%,transparent)]"
+    >
+      <span className="material-symbol motion-safe:animate-flicker bg-linear-0 from-[#FF7A1A] to-[#FFC93D] bg-clip-text text-[1.375rem] text-transparent">
+        local_fire_department
+      </span>
+      <span className="inline-block overflow-hidden font-display text-body font-bold tabular-nums">
+        {/* Re-keyed so the number ticks up when the streak grows. */}
+        <span key={streak.count} className="inline-block animate-tick">
+          {streak.count}
+        </span>
+      </span>
     </div>
   );
 }

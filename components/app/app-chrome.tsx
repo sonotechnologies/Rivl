@@ -4,6 +4,7 @@ import { PlanSheet } from "@/components/tasks/plan-sheet";
 import { QuickAddSheet } from "@/components/tasks/quick-add-sheet";
 import { TaskOptionsSheet } from "@/components/tasks/task-options-sheet";
 import { useApp } from "./app-context";
+import { BadgeCelebration } from "./badge-celebration";
 import { BottomNav } from "./bottom-nav";
 
 /** Everything that floats over the signed-in screens: nav, toast and bottom sheets. */
@@ -33,6 +34,7 @@ export function AppChrome() {
       {sheet?.kind === "add" ? <QuickAddSheet /> : null}
       {sheet?.kind === "options" ? <TaskOptionsSheet taskId={sheet.taskId} /> : null}
       {sheet?.kind === "plan" ? <PlanSheet /> : null}
+      <BadgeCelebration />
     </>
   );
 }

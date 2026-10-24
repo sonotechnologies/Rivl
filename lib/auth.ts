@@ -17,9 +17,11 @@ export type Profile = {
   /** HH:MM:SS; the day Plan my day schedules within. */
   wake_time: string;
   sleep_time: string;
+  weekly_goal: number;
+  onboarded_at: string | null;
 };
 
-const PROFILE_COLUMNS = "id, username, display_name, avatar_url, bio, timezone, coach_style, theme, accent, streak_count, wake_time, sleep_time";
+const PROFILE_COLUMNS = "id, username, display_name, avatar_url, bio, timezone, coach_style, theme, accent, streak_count, wake_time, sleep_time, weekly_goal, onboarded_at";
 
 /**
  * Data access layer: the signed-in user's profile, or a redirect to /login.

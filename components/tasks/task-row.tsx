@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRef, useState, type PointerEvent } from "react";
-import { useApp } from "@/components/app/app-context";
+import { useApp, useTasks } from "@/components/app/app-context";
 import { formatDay, formatTime } from "@/lib/dates";
-import { isHard, pointsFor } from "@/lib/tasks/points";
+import { awardedPoints, expectedPoints, isHard, pointsFor } from "@/lib/tasks/points";
 import type { Task } from "@/lib/tasks/types";
 import { Pips, PointsPill } from "./task-bits";
 
@@ -35,6 +35,8 @@ export function TaskRow({
   const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const isCompleting = completing.has(task.id);
   const points = pointsFor(task.difficulty);
+  // What finishing it now actually earns (on-time bonus, or nothing if it's brand new).
+  const earned = isCompleting ? expectedPoints(task) : 0;
 
   const meta = [
     overdue && task.due_on ? `Due ${formatDay(task.due_on).toLowerCase()}` : null,
@@ -130,12 +132,14 @@ export function TaskRow({
       </div>
       {isCompleting ? (
         <>
-          <span
-            className="pointer-events-none absolute -top-2 right-3.5 animate-float-up font-display text-lg font-bold text-accent-text"
-            aria-hidden
-          >
-            +{points}
-          </span>
+          {earned > 0 ? (
+            <span
+              className="pointer-events-none absolute -top-2 right-3.5 animate-float-up font-display text-lg font-bold text-accent-text"
+              aria-hidden
+            >
+              +{earned}
+            </span>
+          ) : null}
           {isHard(task.difficulty) && !prefersReducedMotion() ? (
             <span className="pointer-events-none absolute top-1/2 left-[26px] size-0" aria-hidden>
               {CONFETTI.map((c, i) => (
@@ -156,6 +160,7 @@ export function TaskRow({
 /** A finished task in the Done list: tap the tick to undo. */
 export function DoneRow({ task }: { task: Task }) {
   const { store } = useApp();
+  const { stats } = useTasks();
   return (
     <div className="flex animate-fade-in items-center gap-2 rounded-card border border-line bg-surface py-1.5 pr-3 pl-1">
       <button
@@ -171,7 +176,7 @@ export function DoneRow({ task }: { task: Task }) {
       <Link href={`/task/${task.id}`} className="min-w-0 flex-1 truncate text-[0.9375rem] font-medium text-muted line-through">
         {task.title}
       </Link>
-      <PointsPill points={pointsFor(task.difficulty)} muted />
+      <PointsPill points={awardedPoints(stats, task)} muted />
     </div>
   );
 }

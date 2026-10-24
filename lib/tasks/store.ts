@@ -3,6 +3,7 @@
 import { createStore, del, get, set } from "idb-keyval";
 import { ai, isAIError } from "@/lib/ai/client";
 import { createClient } from "@/lib/supabase/client";
+import { weekStartISO } from "@/lib/dates";
 import { SUBTASK_COLUMNS, TASK_COLUMNS, type Subtask, type SubtaskPatch, type Task, type TaskPatch } from "./types";
 
 /*
@@ -30,7 +31,20 @@ type Op = { opId: string; at: string; rescore?: string } & (
 
 type OpInput = Op extends infer O ? (O extends Op ? Omit<O, "opId" | "at" | "rescore"> : never) : never;
 
-type Snapshot = { tasks: Task[]; subtasks: Subtask[]; fetchedAt: string | null };
+/** Server-owned game state: streak, this week's point events and earned badges. */
+export type Stats = {
+  streak_count: number;
+  streak_last_on: string | null;
+  streak_freezes: number;
+  streak_best: number;
+  weekly_goal: number;
+  events: { task_id: string | null; type: string; amount: number; day: string }[];
+  badges: string[];
+  /** When this was read; completions after it haven't been scored yet. */
+  fetched_at: string;
+};
+
+type Snapshot = { tasks: Task[]; subtasks: Subtask[]; fetchedAt: string | null; stats?: Stats };
 
 export type TaskView = {
   /** False until the device cache has been read. */
@@ -43,6 +57,8 @@ export type TaskView = {
   syncing: boolean;
   /** Last write the server refused (it has been rolled back). */
   error: string | null;
+  /** Null until the first successful fetch (or the device cache has some). */
+  stats: Stats | null;
 };
 
 /** How far back completed tasks are kept on the device (for Done and weekly totals). */
@@ -127,7 +143,7 @@ class TaskStore {
   private scoring = false;
 
   constructor(private userId: string) {
-    this.view = { loaded: false, tasks: [], subtasks: [], online: true, pending: 0, syncing: false, error: null };
+    this.view = { loaded: false, tasks: [], subtasks: [], online: true, pending: 0, syncing: false, error: null, stats: null };
     if (typeof window === "undefined") return;
     this.view.online = navigator.onLine;
     void this.load();
@@ -154,7 +170,7 @@ class TaskStore {
 
   private emit(patch: Partial<TaskView> = {}) {
     const { tasks, subtasks } = replay(this.snapshot, this.outbox);
-    this.view = { ...this.view, ...patch, tasks, subtasks, pending: this.outbox.length };
+    this.view = { ...this.view, ...patch, tasks, subtasks, pending: this.outbox.length, stats: this.snapshot.stats ?? null };
     this.listeners.forEach((fn) => fn());
   }
 
@@ -353,12 +369,28 @@ class TaskStore {
           ...this.snapshot,
           tasks: this.snapshot.tasks.map((t) => (t.id === id ? { ...t, difficulty: result.difficulty, difficulty_reason: result.reason } : t)),
         };
+        // A task finished before it was rated has just had its points recalculated.
+        if (this.snapshot.tasks.find((t) => t.id === id)?.completed_at) {
+          const stats = await this.fetchStats();
+          if (stats) this.snapshot = { ...this.snapshot, stats };
+        }
         if (idb) await set(key(this.userId, "snapshot"), this.snapshot, idb);
         this.emit();
       }
     } finally {
       this.scoring = false;
     }
+  }
+
+  private async fetchStats(): Promise<Stats | undefined> {
+    const db = this.supabase;
+    const [profile, events, badges] = await Promise.all([
+      db.from("profiles").select("streak_count, streak_last_on, streak_freezes, streak_best, weekly_goal").eq("id", this.userId).single(),
+      db.from("point_events").select("task_id, type, amount, day").gte("week_start", weekStartISO()),
+      db.from("user_achievements").select("achievement_id"),
+    ]);
+    if (profile.error || events.error || badges.error) return undefined;
+    return { ...profile.data, events: events.data, badges: badges.data.map((b) => b.achievement_id), fetched_at: new Date().toISOString() };
   }
 
   private async fetch() {
@@ -368,11 +400,14 @@ class TaskStore {
       for (let attempt = 0; attempt < 2; attempt++) {
         this.flushedSinceFetch = 0;
         const since = new Date(Date.now() - HISTORY_DAYS * 86_400_000).toISOString();
-        const { data, error } = await this.supabase
-          .from("tasks")
-          .select(`${TASK_COLUMNS}, subtasks(${SUBTASK_COLUMNS})`)
-          .or(`completed_at.is.null,completed_at.gte.${since}`)
-          .order("created_at");
+        const [{ data, error }, stats] = await Promise.all([
+          this.supabase
+            .from("tasks")
+            .select(`${TASK_COLUMNS}, subtasks(${SUBTASK_COLUMNS})`)
+            .or(`completed_at.is.null,completed_at.gte.${since}`)
+            .order("created_at"),
+          this.fetchStats(),
+        ]);
         if (error || !data) return;
         // Writes landed while we were reading; the result may already be stale.
         if (this.flushedSinceFetch > 0) continue;
@@ -385,6 +420,7 @@ class TaskStore {
           }),
           subtasks: rows.flatMap((r) => r.subtasks),
           fetchedAt: new Date().toISOString(),
+          stats: stats ?? this.snapshot.stats,
         };
         if (idb) await set(key(this.userId, "snapshot"), this.snapshot, idb);
         this.emit();

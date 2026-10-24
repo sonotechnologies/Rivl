@@ -16,6 +16,7 @@ export function SettingsForm({ profile }: { profile: Profile }) {
   const [theme, setTheme] = useState<Theme>(profile.theme);
   const [accent, setAccent] = useState<Accent>(profile.accent);
   const [coach, setCoach] = useState<CoachStyle>(profile.coach_style);
+  const [goal, setGoal] = useState(profile.weekly_goal);
   const [prefError, setPrefError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -149,6 +150,39 @@ export function SettingsForm({ profile }: { profile: Profile }) {
                 className={field}
               />
             </label>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4" aria-labelledby="goal">
+        <h2 id="goal" className={sectionTitle}>
+          Weekly goal
+        </h2>
+        <div role="radiogroup" aria-label="Weekly points goal" className="grid grid-cols-3 gap-2">
+          {(
+            [
+              [300, "Casual"],
+              [500, "Serious"],
+              [800, "Ruthless"],
+            ] as const
+          ).map(([pts, label]) => (
+            <button
+              key={pts}
+              type="button"
+              role="radio"
+              aria-checked={goal === pts}
+              onClick={() => {
+                setGoal(pts);
+                startTransition(async () => {
+                  const { error } = await savePreferences({ weekly_goal: pts });
+                  setPrefError(error);
+                });
+              }}
+              className={`flex flex-col items-center rounded-chip py-2.5 ${goal === pts ? "border-[1.5px] border-accent bg-[color-mix(in_oklab,var(--accent)_12%,var(--surface))]" : "border border-line bg-surface"}`}
+            >
+              <span className="font-display text-title font-bold tabular-nums">{pts}</span>
+              <span className="text-caption text-muted">{label}</span>
+            </button>
           ))}
         </div>
       </section>

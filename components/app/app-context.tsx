@@ -2,7 +2,7 @@
 
 import { createContext, use, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { Profile } from "@/lib/auth";
-import { isHard } from "@/lib/tasks/points";
+import { expectedPoints, isHard } from "@/lib/tasks/points";
 import { getTaskStore, type TaskStore, type TaskView } from "@/lib/tasks/store";
 
 type Toast = { id: number; text: string; icon?: string };
@@ -47,6 +47,7 @@ export function AppProvider({ profile, children }: { profile: Profile; children:
       const task = store.getView().tasks.find((t) => t.id === taskId);
       if (!task || task.completed_at) return;
       navigator.vibrate?.(isHard(task.difficulty) ? 25 : 10);
+      if (expectedPoints(task) === 0) showToast("Too fresh for points: tasks need to be 10 minutes old. It still counts for your streak.", "schedule");
       setCompleting((prev) => new Set(prev).add(taskId));
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       setTimeout(
@@ -61,7 +62,7 @@ export function AppProvider({ profile, children }: { profile: Profile; children:
         reduced ? 200 : CELEBRATE_MS,
       );
     },
-    [store],
+    [store, showToast],
   );
 
   const value = useMemo<AppContextValue>(
@@ -90,7 +91,7 @@ export function useApp() {
   return ctx;
 }
 
-const SERVER_VIEW: TaskView = { loaded: false, tasks: [], subtasks: [], online: true, pending: 0, syncing: false, error: null };
+const SERVER_VIEW: TaskView = { loaded: false, tasks: [], subtasks: [], online: true, pending: 0, syncing: false, error: null, stats: null };
 const getServerView = () => SERVER_VIEW;
 
 /** Live tasks for the signed-in user (from the device cache, then the server). */

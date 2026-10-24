@@ -23,9 +23,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 // Only the icons we use, so the icon font stays tiny.
 const ICONS = [
-  "add", "auto_awesome", "campaign", "check", "check_circle", "chevron_left", "close", "cloud_off", "delete", "download",
-  "dynamic_feed", "eco", "edit", "event_upcoming", "expand_less", "expand_more", "ios_share", "leaderboard",
-  "local_fire_department", "mail", "more_horiz", "person", "repeat", "schedule", "settings", "sync", "task_alt", "today",
+  "add", "arrow_back", "auto_awesome", "campaign", "chat", "check", "check_circle", "chevron_left", "cleaning_services",
+  "close", "cloud_off", "content_copy", "dark_mode", "delete", "download", "dynamic_feed", "eco", "edit", "event_upcoming",
+  "expand_less", "expand_more", "fitness_center", "ios_share", "leaderboard", "light_mode", "local_fire_department", "lock",
+  "mail", "military_tech", "more_horiz", "person", "repeat", "schedule", "settings", "swords", "sync", "task_alt", "today",
+  "wb_twilight", "workspace_premium",
 ];
 const ICON_FONT_URL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400..700,0..1,0&icon_names=${[...ICONS].sort().join(",")}&display=block`;
 
