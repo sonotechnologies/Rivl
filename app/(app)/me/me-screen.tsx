@@ -8,7 +8,7 @@ import { BADGES } from "@/lib/badges";
 import { addDays, todayISO, weekStartISO } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/client";
 
-type MyStats = { total_points: number; tasks_done: number; days: { day: string; count: number }[] };
+type MyStats = { total_points: number; tasks_done: number; wins?: number; days: { day: string; count: number }[] };
 
 const WEEKS = 18;
 const heatColour = (level: number) =>
@@ -48,7 +48,7 @@ export function MeScreen() {
   const statTiles = [
     { label: "Total pts", value: mine ? mine.total_points.toLocaleString("en-GB") : "–" },
     { label: "Best streak", value: stats ? String(stats.streak_best) : "–" },
-    { label: "Wins", value: "0" },
+    { label: "Wins", value: mine ? String(mine.wins ?? 0) : "–" },
   ];
 
   return (

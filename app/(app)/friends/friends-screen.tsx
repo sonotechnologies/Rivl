@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useApp, useTasks } from "@/components/app/app-context";
@@ -330,7 +331,13 @@ function PersonSheet({
     >
       {mode === "menu" ? (
         <div className="flex flex-col overflow-hidden rounded-card border border-line bg-bg">
-          <button type="button" data-autofocus className={item} onClick={onRemove}>
+          <Link href={`/challenge/new?friend=${friend.id}`} data-autofocus className={item}>
+            <span className="material-symbol text-[1.375rem] text-accent-text" aria-hidden>
+              swords
+            </span>
+            Challenge {nameOf(friend).split(" ")[0]}
+          </Link>
+          <button type="button" className={`${item} border-t border-line`} onClick={onRemove}>
             <span className="material-symbol icon-outline text-[1.375rem] text-muted" aria-hidden>
               person_remove
             </span>

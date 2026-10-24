@@ -2,6 +2,7 @@
 
 import { createContext, use, useCallback, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { Profile } from "@/lib/auth";
+import { getChallengeStore, type Challenge } from "@/lib/challenges";
 import { getBoardStore, rankWithMe, type BoardView } from "@/lib/board";
 import { todayISO, weekStartISO } from "@/lib/dates";
 import { expectedPoints, isHard, pointTotals } from "@/lib/tasks/points";
@@ -118,4 +119,14 @@ export function useBoard() {
   const { weekPts } = pointTotals(stats, tasks, today, weekStartISO(today));
   const rows = board.rows ? rankWithMe(board.rows, weekPts) : null;
   return { ...board, rows };
+}
+
+const SERVER_CHALLENGES: { list: Challenge[] | null } = { list: null };
+const getServerChallenges = () => SERVER_CHALLENGES;
+
+/** Your challenges, kept live. */
+export function useChallenges() {
+  const { profile } = useApp();
+  const store = getChallengeStore(profile.id);
+  return { ...useSyncExternalStore(store.subscribe, store.getView, getServerChallenges), refresh: () => store.refresh() };
 }

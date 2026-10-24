@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useBoard } from "@/components/app/app-context";
+import { ChallengeCarousel } from "@/components/challenges/challenge-card";
 import { Avatar } from "@/components/friends/avatar";
 import { gapText, nameOf, resetCountdown, type BoardRow, type Move } from "@/lib/board";
 
@@ -36,6 +37,7 @@ export function BoardView({ compact = false, onMeVisible }: { compact?: boolean;
           <p className="px-1 text-caption text-muted">Resets Monday at midnight. Finish the week #1 to earn Giant Slayer.</p>
         </>
       )}
+      {!compact && rows && rows.length > 1 ? <ChallengeCarousel /> : null}
     </div>
   );
 }

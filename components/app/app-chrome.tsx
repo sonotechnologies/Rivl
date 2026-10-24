@@ -1,5 +1,6 @@
 "use client";
 
+import { TrophyCelebration } from "@/components/challenges/trophy-celebration";
 import { PlanSheet } from "@/components/tasks/plan-sheet";
 import { QuickAddSheet } from "@/components/tasks/quick-add-sheet";
 import { TaskOptionsSheet } from "@/components/tasks/task-options-sheet";
@@ -34,6 +35,7 @@ export function AppChrome() {
       {sheet?.kind === "add" ? <QuickAddSheet /> : null}
       {sheet?.kind === "options" ? <TaskOptionsSheet taskId={sheet.taskId} /> : null}
       {sheet?.kind === "plan" ? <PlanSheet /> : null}
+      <TrophyCelebration />
       <BadgeCelebration />
     </>
   );

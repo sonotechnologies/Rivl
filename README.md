@@ -6,7 +6,7 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build steps 1–6 of 12 from the build brief, plus onboarding (pulled forward from step 12).
+Build steps 1–7 of 12 from the build brief, plus onboarding (pulled forward from step 12).
 
 **1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
@@ -58,7 +58,13 @@ Build steps 1–6 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] Today's rank strip ("#3 this week · 45 pts behind Ada"); board beside the app at 1024 px and up
 - [x] `close_weeks()` hourly via pg_cron records each finished week and awards Giant Slayer for finishing #1
 
-Not yet: challenges (step 7), feed, coach recap and nudges, push, focus timer.
+**7. Challenges**
+- [x] Head-to-head: "first to N tasks" (ends the moment someone gets there) or "most points" by an end time (1 hour to 14 days)
+- [x] Only points earned after the challenge starts count; +50 and the Rival badge for the winner; ties are a draw
+- [x] Settled by trigger (first to N), when either player opens the app, and every 5 minutes via pg_cron
+- [x] Board carousel from the design (scores, VS, progress bars, time left, accept/decline/cancel), `/challenge/new`, and the full-screen trophy moment
+
+Not yet: feed (step 8), coach recap and nudges, push, focus timer.
 
 ## Getting started
 
