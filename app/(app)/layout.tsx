@@ -6,7 +6,8 @@ import { NavBar } from "@/components/app/bottom-nav";
 import { DesktopBoard } from "@/components/board/desktop-board";
 import { ServiceWorker } from "@/components/app/service-worker";
 import { ThemeSync } from "@/components/theme-sync";
-import { getCurrentProfile } from "@/lib/auth";
+import { SetupProblem } from "@/components/app/setup-problem";
+import { loadProfile } from "@/lib/auth";
 import { TodaySkeleton } from "./today/today-screen";
 
 // Signed-in tabs. The shell prerenders; the profile streams in behind Suspense.
@@ -29,7 +30,8 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
 }
 
 async function SignedIn({ children }: { children: React.ReactNode }) {
-  const profile = await getCurrentProfile();
+  const { profile, problem } = await loadProfile();
+  if (problem) return <SetupProblem problem={problem} />;
   // New accounts personalise Rivl first.
   if (!profile.onboarded_at) redirect("/onboarding");
   return (

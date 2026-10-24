@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getCurrentProfile } from "@/lib/auth";
+import { SetupProblem } from "@/components/app/setup-problem";
+import { loadProfile } from "@/lib/auth";
 import { OnboardingFlow } from "./onboarding-flow";
 
 export const metadata: Metadata = { title: "Welcome" };
@@ -16,6 +17,7 @@ export default function OnboardingPage() {
 }
 
 async function Onboarding() {
-  const profile = await getCurrentProfile();
+  const { profile, problem } = await loadProfile();
+  if (problem) return <SetupProblem problem={problem} />;
   return <OnboardingFlow profile={profile} />;
 }

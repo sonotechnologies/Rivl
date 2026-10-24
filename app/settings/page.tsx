@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { ThemeSync } from "@/components/theme-sync";
-import { getCurrentProfile } from "@/lib/auth";
+import { SetupProblem } from "@/components/app/setup-problem";
+import { loadProfile } from "@/lib/auth";
 import { SettingsForm } from "./settings-form";
 
 export const metadata: Metadata = { title: "Settings" };
@@ -30,7 +31,8 @@ export default function SettingsPage() {
 }
 
 async function Settings() {
-  const profile = await getCurrentProfile();
+  const { profile, problem } = await loadProfile();
+  if (problem) return <SetupProblem problem={problem} />;
   return (
     <>
       <ThemeSync theme={profile.theme} accent={profile.accent} />
