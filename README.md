@@ -1,25 +1,55 @@
-# CODING AGENTS: READ THIS FIRST
+# Rivl
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+Get it done. Beat your friends. A free, AI-powered to-do PWA where friends compete on a weekly leaderboard.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v4 · Supabase (Postgres, Auth) · Vercel.
 
-## What you should do — IMPORTANT
+## Status
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+Build step 1 of 12 (**Foundation**) from the build brief:
 
-**Read `project/Rivl Brand System.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+- [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
+- [x] `/brand`: the brand and theme system sheet from the Claude Design handoff
+- [x] Supabase clients, session-refreshing `proxy.ts`, Google + email magic link sign-in
+- [x] `profiles` table with RLS and a sign-up trigger; settings for theme, accent, coach, username, bio
+- [x] PWA manifest, icons, install prompt (Android/desktop button, iPhone instructions)
+- [ ] Service worker and offline cache (Serwist), which comes with step 2, Tasks
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Getting started
 
-## About the design files
+1. Create a Supabase project and run `supabase/migrations/20261024000000_profiles.sql` (SQL editor, or `supabase db push`).
+2. In Supabase → Authentication:
+   - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
+   - Providers: enable Google (client ID and secret from Google Cloud) and Email.
+3. `cp .env.example .env.local` and fill in the project URL and publishable key.
+4. `npm install`, then `npm run dev`.
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+`/` and `/brand` work without Supabase; sign-in shows a setup note until the env vars are set.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Theme system
 
-## Bundle contents
+Tokens live in `app/globals.css` as CSS variables, switched by `data-theme` and `data-accent` on `<html>`. An inline script in `app/layout.tsx` applies the saved cookie before first paint. The profile is the source of truth across devices (`components/theme-sync.tsx`).
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Building first screens` project files (HTML prototypes, assets, components)
+| Tailwind | Token | Use |
+| --- | --- | --- |
+| `bg-bg` `bg-surface` `bg-surface-2` | `--bg` `--surface` `--surface-2` | Grounds, by depth |
+| `border-line` | `--border` | 1 px borders |
+| `text-ink` `text-muted` | `--text` `--text-muted` | Text |
+| `bg-accent` + `text-on-accent` | `--accent` `--on-accent` | Filled buttons and pills |
+| `text-accent-text` | `--accent-text` | Accent-coloured text (darker in light mode) |
+| `shadow-glow` | `--accent-glow` | Only on #1 and an active streak |
+| `font-display` `font-sans` `font-mono` | Space Grotesk · Inter · JetBrains Mono | |
+| `text-caption` … `text-celebration` | 12 → 64 px, in rem | Type scale |
+| `rounded-chip` `rounded-card` `rounded-sheet` | 12 · 16 · 24 px | Radius |
+
+Accent-coloured text in dark mode uses each accent's base hex, except Nova, which uses `#AE7BFF`: base Nova is only 3.9:1 in a coach bubble and 4.2:1 on `surface-2`.
+
+## Layout
+
+```
+app/            routes: / · /login · /auth/* · /today · /settings · /brand · manifest
+components/     brand/ (Logo, AppIcon, CoachBubble) · ui/ (Button) · install prompt · theme sync
+lib/            theme constants, contrast maths, auth data access, Supabase clients
+supabase/       SQL migrations
+design/         Claude Design handoff bundle (prototypes, chats, design brief)
+```

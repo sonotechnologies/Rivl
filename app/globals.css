@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+/*
+ * Rivl theme tokens. Everything visual is driven by these variables.
+ * <html data-theme="dark|light" data-accent="volt|pulse|ice|blaze|nova|gold">
+ * is set before first paint by the inline script in app/layout.tsx.
+ */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0b10;
+  --surface: #15151d;
+  --surface-2: #1e1e29;
+  --border: #2a2a38;
+  --text: #f4f4f8;
+  --text-muted: #9a9ab0;
+  /* Coach bubble ink (label + icon) per mode */
+  --coach-calm-ink: #5ee0d3;
+  --coach-roast-ink: #ff6fa8;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f6f6f9;
+  --surface: #ffffff;
+  --surface-2: #ededf3;
+  --border: #dcdce6;
+  --text: #111118;
+  --text-muted: #5e5e72;
+  --coach-calm-ink: #0b7268;
+  --coach-roast-ink: #c8005a;
+}
+
+/*
+ * Accents. --accent fills buttons and pills (always with --on-accent text).
+ * --accent-text is for accent-coloured text: the base hex in dark mode,
+ * a darker variant in light mode so it passes 4.5:1.
+ */
+:root,
+[data-accent="volt"] {
+  --accent: #c6ff3d;
+  --accent-dark-text: #4a7300;
+}
+[data-accent="pulse"] {
+  --accent: #ff3d8b;
+  --accent-dark-text: #c8005a;
+}
+[data-accent="ice"] {
+  --accent: #3de1ff;
+  --accent-dark-text: #00728a;
+}
+[data-accent="blaze"] {
+  --accent: #ff7a1a;
+  --accent-dark-text: #b04a00;
+}
+[data-accent="nova"] {
+  --accent: #9b5cff;
+  --accent-dark-text: #6e2fe0;
+}
+[data-accent="gold"] {
+  --accent: #ffc93d;
+  --accent-dark-text: #8a6200;
+}
+
+:root {
+  --on-accent: #0b0b10;
+  --success: #2ed47a;
+  --danger: #ff4d4f;
+  --flame-from: #ff7a1a;
+  --flame-to: #ffc93d;
+}
+
+/* Derived tokens are re-declared wherever theme or accent is set, so a
+   subtree with its own data-theme/data-accent recomputes them. */
+:root,
+[data-theme],
+[data-accent] {
+  --accent-text: var(--accent);
+  --accent-glow: color-mix(in srgb, var(--accent) 30%, transparent);
+  /* The logo chevron takes the accent on dark grounds, the ink on light */
+  --logo-chevron: var(--accent);
+}
+
+[data-theme="light"] {
+  --accent-text: var(--accent-dark-text);
+  --logo-chevron: var(--text);
+}
+
+/* Base Nova is 4.22:1 on surface-2 and 3.92:1 in a coach bubble, so
+   accent-coloured text in dark mode uses a lighter step (5.2:1+). */
+[data-accent="nova"]:not([data-theme="light"]) {
+  --accent-text: #ae7bff;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-accent-text: var(--accent-text);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Type scale, in rem so the system text size setting applies */
+  --text-caption: 0.75rem;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.45;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5;
+  --text-title: 1.25rem;
+  --text-title--line-height: 1.2;
+  --text-heading: 1.75rem;
+  --text-heading--line-height: 1.1;
+  --text-hero: 2.5rem;
+  --text-hero--line-height: 1;
+  --text-celebration: 4rem;
+  --text-celebration--line-height: 1;
+
+  --radius-chip: 12px;
+  --radius-card: 16px;
+  --radius-sheet: 24px;
+
+  --shadow-glow: 0 0 24px 4px var(--accent-glow);
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Material Symbols (subset loaded in app/layout.tsx) */
+.material-symbol {
+  font-family: "Material Symbols Rounded";
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  font-variation-settings: "FILL" 1;
+  -webkit-font-feature-settings: "liga";
+  font-feature-settings: "liga";
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
