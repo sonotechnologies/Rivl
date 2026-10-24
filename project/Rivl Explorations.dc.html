@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400..700,0..1,0&display=block">
+<style>
+body{margin:0;background:#08080C;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button{font:inherit;color:inherit}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+@keyframes burst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.5);opacity:0}}
+@keyframes flicker{0%,100%{transform:scale(1)}50%{transform:scale(1.1) rotate(-4deg)}}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes toastIn{from{transform:translateY(-130%);opacity:0}to{transform:none;opacity:1}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-4px) rotate(-8deg)}40%{transform:translateX(4px) rotate(8deg)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes flipIn{0%{transform:perspective(600px) rotateY(-180deg) scale(.4);opacity:0}60%{opacity:1}100%{transform:perspective(600px) rotateY(0) scale(1)}}
+@keyframes trophyIn{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes tickUp{from{transform:translateY(70%);opacity:0}to{transform:none;opacity:1}}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes flashUp{0%,100%{opacity:1}50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:1ms!important}}
+</style>
+</helmet>
+<div style="--bg:#0B0B10;--surface:#15151D;--surface-2:#1E1E29;--border:#2A2A38;--text:#F4F4F8;--text-muted:#9A9AB0;--accent:#C6FF3D;--accent-text:#C6FF3D;--on-accent:#0B0B10;--coach-tint:#26301A;--coach-ink:#C6FF3D;--danger:#FF4D4F">
+<div style="{{ themeVars }}">
+<section style="background:#08080C;width:max-content;min-width:100%;box-sizing:border-box;padding:72px 80px 24px;display:flex;flex-direction:column;gap:40px;color:#F4F4F8;border-bottom:1px solid #1E1E29">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:760px">
+    <div style="font:500 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9A9AB0">Turn 2</div>
+    <div style="font:700 48px/1.05 'Space Grotesk';letter-spacing:-0.02em">Feed &amp; Profile</div>
+    <div style="font:400 16px/1.5 Inter;color:#9A9AB0;text-wrap:pretty">Built in the 1a vocabulary. Reactions and Nudge back are tappable. Profile points include whatever you complete in Turn 1.</div>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start;padding-bottom:72px">
+
+    <div id="2a" style="display:flex;flex-direction:column;gap:14px;width:391px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">2a</span><span style="font:600 16px Inter">Feed</span></div>
+      <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">Nudges sit in a strip at the top. Cards are newest first, and a photo is optional.</div>
+      <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+        <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+        <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 110px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;padding-top:4px">Feed</div>
+            <div style="display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px 2px;flex:none">
+              <sc-for list="{{ nudges }}" as="n" hint-placeholder-count="2">
+                <div style="flex:none;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:16px;background:var(--surface-2);border:1px solid var(--border)">
+                  <span style="{{ n.av }}">{{ n.init }}</span>
+                  <div><div style="font:600 13px Inter;white-space:nowrap">{{ n.name }} nudged you</div><div style="font:400 12px Inter;color:var(--text-muted);white-space:nowrap">{{ n.msg }}</div></div>
+                  <button onClick="{{ n.back }}" style="{{ n.btn }}">{{ n.label }}</button>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+              <div style="padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px;flex:none">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="{{ f.av }}">{{ f.init }}</span>
+                  <div style="flex:1;min-width:0"><div style="font:400 14px Inter;color:var(--text-muted)"><span style="font-weight:600;color:var(--text)">{{ f.name }}</span> {{ f.verb }}</div><div style="font:600 16px Inter;margin-top:2px">{{ f.task }}</div></div>
+                  <span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px;flex:none">+{{ f.pts }}</span>
+                </div>
+                <sc-if value="{{ f.photo }}"><div style="height:180px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--surface-2) 0 10px,var(--surface) 10px 20px);border:1px solid var(--border);display:grid;place-items:center;font:500 12px ui-monospace,Menlo,monospace;color:var(--text-muted)">{{ f.photo }}</div></sc-if>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <sc-for list="{{ f.reactions }}" as="r"><button onClick="{{ r.toggle }}" style="{{ r.style }}"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">{{ r.icon }}</span>{{ r.count }}</button></sc-for>
+                  <span style="margin-left:auto;font:400 12px Inter;color:var(--text-muted)">{{ f.ago }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">today</span>Today</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">leaderboard</span>Board</div>
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">dynamic_feed</span>Feed</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="2b" style="display:flex;flex-direction:column;gap:14px;width:391px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">2b</span><span style="font:600 16px Inter">Profile</span></div>
+      <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">Big stats, a 15-week streak heatmap in accent tones, and badges. Locked badges are greyed out with a lock.</div>
+      <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+        <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+        <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 110px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:flex-end"><span style="width:44px;height:44px;display:grid;place-items:center;color:var(--text-muted)"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">settings</span></span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
+              <span style="{{ profileAv }}">DA</span>
+              <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;margin-top:10px">Dami Adeyemi</div>
+              <div style="font:500 14px Inter;color:var(--text-muted)">@dami · 12-day streak</div>
+              <div style="font:400 15px/1.4 Inter;max-width:280px;text-wrap:pretty">Designer in Lagos. Will beat you at to-dos.</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px">
+              <div style="padding:14px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--border)"><div style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ totalPts }}</div><div style="font:500 12px Inter;color:var(--text-muted);margin-top:6px">Total pts</div></div>
+              <div style="padding:14px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--border)"><div style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums">31</div><div style="font:500 12px Inter;color:var(--text-muted);margin-top:6px">Best streak</div></div>
+              <div style="padding:14px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--border)"><div style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums">9</div><div style="font:500 12px Inter;color:var(--text-muted);margin-top:6px">Wins</div></div>
+            </div>
+            <div style="padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;font:600 13px Inter"><span>Last 15 weeks</span><span style="color:var(--text-muted);font-weight:500">86 active days</span></div>
+              <div style="display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:3px">
+                <sc-for list="{{ heat }}" as="h" hint-placeholder-count="105"><span style="{{ h }}"></span></sc-for>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;font:500 11px Inter;color:var(--text-muted)">Less<sc-for list="{{ heatLegend }}" as="h"><span style="{{ h }}"></span></sc-for>More</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:8px 4px 0"><span>Badges</span><span>{{ badgeCount }}</span></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <sc-for list="{{ badges }}" as="b" hint-placeholder-count="9">
+                <div style="{{ b.card }}">
+                  <span style="{{ b.disc }}"><span style="font-family:'Material Symbols Rounded';font-size:26px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">{{ b.icon }}</span></span>
+                  <div style="font:600 12px/1.25 Inter;text-align:center">{{ b.name }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">today</span>Today</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">leaderboard</span>Board</div>
+          <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">person</span>Me</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#08080C;min-height:100vh;width:max-content;min-width:100%;box-sizing:border-box;padding:72px 80px 120px;display:flex;flex-direction:column;gap:72px;color:#F4F4F8">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:760px">
+    <div style="font:500 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9A9AB0">Turn 1 · Oct 23, 2026</div>
+    <div style="font:700 48px/1.05 'Space Grotesk';letter-spacing:-0.02em">rivl — Today &amp; Leaderboard</div>
+    <div style="font:400 16px/1.5 Inter;color:#9A9AB0;text-wrap:pretty">Three takes on each screen, plus the desktop layout. Tap any checkbox to complete a task: points float up, hard tasks burst, and every board below re-ranks live. Accent, light/dark and coach are in Tweaks.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="font:700 24px 'Space Grotesk';color:#F4F4F8">Today</div>
+    <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+      <div id="1a" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1a</span><span style="font:600 16px Inter">Scoreboard</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">Brief layout, straight. Points card up top, rank strip docked above the nav.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 170px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-top:4px">
+              <div><div style="font:500 13px Inter;color:var(--text-muted)">Friday, Oct 23</div><div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;margin-top:2px">Morning, Dami</div></div>
+              <div style="display:flex;align-items:center;gap:4px;padding:6px 12px 6px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border);box-shadow:0 0 18px color-mix(in oklab, #FF7A1A 30%, transparent)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;background:linear-gradient(180deg,#FFC93D,#FF7A1A);-webkit-background-clip:text;background-clip:text;color:transparent;animation:flicker 1.6s ease-in-out infinite">local_fire_department</span><span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">12</span></div>
+            </div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--border)">
+              <div><div style="font:500 12px Inter;color:var(--text-muted)">Today</div><div style="font:700 40px/1 'Space Grotesk';font-variant-numeric:tabular-nums;margin-top:6px">{{ todayPts }}<span style="font:500 16px Inter;color:var(--text-muted)"> pts</span></div></div>
+              <div style="text-align:right"><div style="font:500 12px Inter;color:var(--text-muted)">This week</div><div style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums;margin-top:4px">{{ youPts }}</div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--coach-tint);color:var(--coach-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">{{ coach.icon }}</span></div>
+              <div style="background:var(--coach-tint);border-radius:4px 16px 16px 16px;padding:10px 14px;flex:1"><div style="font:600 12px Inter;color:var(--coach-ink);margin-bottom:3px">{{ coach.name }}</div><div style="font:400 15px/1.4 Inter;text-wrap:pretty">{{ coach.line }}</div></div>
+            </div>
+            <button style="height:44px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent-text);background:transparent;font:600 15px Inter;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">auto_awesome</span>Plan my day</button>
+            <sc-for list="{{ open }}" as="t" hint-placeholder-count="5">
+              <sc-if value="{{ t.isOverdue }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--danger);padding:6px 4px 0">Overdue</div></sc-if>
+              <sc-if value="{{ t.isToday }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:6px 4px 0">Today</div></sc-if>
+              <div style="position:relative;display:flex;align-items:center;gap:8px;padding:6px 12px 6px 4px;background:var(--surface);border:1px solid var(--border);border-radius:16px">
+                <button onClick="{{ t.toggle }}" aria-label="Complete task" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer">
+                  <sc-if value="{{ t.completing }}"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></sc-if>
+                  <sc-if value="{{ t.idle }}"><span style="width:28px;height:28px;border-radius:50%;border:2px solid var(--text-muted);box-sizing:border-box"></span></sc-if>
+                </button>
+                <div style="flex:1;min-width:0"><div style="font:500 15px Inter">{{ t.title }}</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px"><span style="display:flex;gap:3px"><sc-for list="{{ t.pips }}" as="p"><span style="{{ p }}"></span></sc-for></span><span style="font:400 12px Inter;color:var(--text-muted)">{{ t.meta }}</span></div></div>
+                <span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">{{ t.pts }}</span>
+                <sc-if value="{{ t.completing }}"><span style="position:absolute;right:14px;top:-8px;font:700 18px 'Space Grotesk';color:var(--accent-text);animation:floatUp 620ms ease-out forwards;pointer-events:none">+{{ t.pts }}</span></sc-if>
+                <sc-if value="{{ t.hard }}"><span style="position:absolute;left:26px;top:50%;width:0;height:0;pointer-events:none"><sc-for list="{{ confetti }}" as="c"><span style="{{ c }}"></span></sc-for></span></sc-if>
+              </div>
+            </sc-for>
+            <button onClick="{{ toggleA }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 4px;border:none;background:transparent;cursor:pointer;font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)"><span>Done · {{ doneCount }}</span><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden">{{ chevA }}</span></button>
+            <sc-if value="{{ openA }}">
+              <sc-for list="{{ doneList }}" as="t">
+                <div style="display:flex;align-items:center;gap:8px;padding:6px 12px 6px 4px;background:var(--surface);border:1px solid var(--border);border-radius:16px;opacity:.75">
+                  <button onClick="{{ t.toggle }}" aria-label="Undo" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></button>
+                  <div style="flex:1;font:500 15px Inter;text-decoration:line-through;color:var(--text-muted)">{{ t.title }}</div>
+                  <span style="background:var(--surface-2);color:var(--text-muted);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">{{ t.pts }}</span>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:96px;display:flex;align-items:center;gap:10px;padding:0 10px 0 16px;min-height:48px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);box-shadow:0 -12px 24px var(--bg)">
+            <span style="font:700 18px 'Space Grotesk';color:var(--accent-text);font-variant-numeric:tabular-nums">#{{ rank }}</span>
+            <span style="font:500 14px Inter;flex:1">this week · {{ gapText }}</span>
+            <sc-if value="{{ movedUp }}"><span style="display:flex;align-items:center;gap:2px;font:600 12px Inter;color:#2ED47A"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden">arrow_upward</span>{{ moveLabel }}</span></sc-if>
+            <span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;display:inline-block;width:1em;overflow:hidden;color:var(--text-muted)">chevron_right</span>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="1b" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1b</span><span style="font:600 16px Inter">The chase</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">The rank strip becomes the hero: the gap to the person ahead is the biggest number on screen.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 110px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+              <div style="font:600 15px Inter">Morning, Dami <span style="color:var(--text-muted);font-weight:400">· Fri, Oct 23</span></div>
+              <div style="display:flex;align-items:center;gap:3px"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;background:linear-gradient(180deg,#FFC93D,#FF7A1A);-webkit-background-clip:text;background-clip:text;color:transparent;animation:flicker 1.6s ease-in-out infinite">local_fire_department</span><span style="font:700 16px 'Space Grotesk'">12</span></div>
+            </div>
+            <div style="padding:18px 18px 16px;border-radius:24px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;gap:8px;font:500 12px Inter;color:var(--text-muted);white-space:nowrap"><span>You're #{{ rank }} this week</span><span>Resets {{ countdown }}</span></div>
+              <div style="display:flex;align-items:baseline;gap:10px"><span style="font:700 64px/0.9 'Space Grotesk';letter-spacing:-0.03em;color:var(--accent-text);font-variant-numeric:tabular-nums">{{ gap }}</span><span style="font:600 18px/1.2 Inter">{{ chaseLine }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px"><span style="{{ youAvSm }}">DA</span><div style="flex:1;height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden"><div style="{{ youBar }}"></div></div><span style="font:700 14px 'Space Grotesk';font-variant-numeric:tabular-nums;width:34px;text-align:right">{{ youPts }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="{{ aheadAvSm }}">{{ aheadInit }}</span><div style="flex:1;height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden"><div style="width:100%;height:100%;background:var(--text-muted);border-radius:5px"></div></div><span style="font:700 14px 'Space Grotesk';font-variant-numeric:tabular-nums;width:34px;text-align:right">{{ aheadPts }}</span></div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:flex-start;padding-top:12px;border-top:1px solid var(--border)">
+                <span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;color:var(--coach-ink)">{{ coach.icon }}</span>
+                <div style="font:400 14px/1.4 Inter;text-wrap:pretty">{{ coach.line }}</div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 4px 0">
+              <span style="flex:1;min-width:0;white-space:nowrap;font:700 18px 'Space Grotesk'">{{ openPts }} pts left</span>
+              <button style="flex:none;height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent-text);background:transparent;font:600 13px Inter;display:flex;align-items:center;gap:4px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">auto_awesome</span>Plan my day</button>
+            </div>
+            <div style="border-radius:16px;background:var(--surface);border:1px solid var(--border);overflow:hidden">
+              <sc-for list="{{ open }}" as="t" hint-placeholder-count="5">
+                <sc-if value="{{ t.isOverdue }}"><div style="font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--danger);padding:10px 14px 2px">Overdue</div></sc-if>
+                <sc-if value="{{ t.isToday }}"><div style="font:600 11px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:10px 14px 2px;border-top:1px solid var(--border)">Today</div></sc-if>
+                <div style="position:relative;display:flex;align-items:center;gap:6px;padding:4px 12px 4px 4px">
+                  <button onClick="{{ t.toggle }}" aria-label="Complete task" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer">
+                    <sc-if value="{{ t.completing }}"><span style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></sc-if>
+                    <sc-if value="{{ t.idle }}"><span style="width:24px;height:24px;border-radius:50%;border:2px solid var(--text-muted);box-sizing:border-box"></span></sc-if>
+                  </button>
+                  <div style="flex:1;min-width:0"><div style="font:500 15px Inter">{{ t.title }}</div><div style="font:400 12px Inter;color:var(--text-muted);margin-top:2px">{{ t.diffLabel }}</div></div>
+                  <span style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums;color:var(--accent-text)">+{{ t.pts }}</span>
+                  <sc-if value="{{ t.completing }}"><span style="position:absolute;right:12px;top:-6px;font:700 18px 'Space Grotesk';color:var(--accent-text);animation:floatUp 620ms ease-out forwards;pointer-events:none">+{{ t.pts }}</span></sc-if>
+                  <sc-if value="{{ t.hard }}"><span style="position:absolute;left:26px;top:50%;width:0;height:0;pointer-events:none"><sc-for list="{{ confetti }}" as="c"><span style="{{ c }}"></span></sc-for></span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <button onClick="{{ toggleB }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 14px;border-radius:16px;border:1px dashed var(--border);background:transparent;cursor:pointer;font:500 14px Inter;color:var(--text-muted)"><span>{{ doneCount }} done · {{ todayPts }} pts banked</span><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden">{{ chevB }}</span></button>
+            <sc-if value="{{ openB }}">
+              <sc-for list="{{ doneList }}" as="t">
+                <div style="display:flex;align-items:center;gap:6px;padding:0 12px 0 4px">
+                  <button onClick="{{ t.toggle }}" aria-label="Undo" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer"><span style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></button>
+                  <div style="flex:1;font:500 15px Inter;text-decoration:line-through;color:var(--text-muted)">{{ t.title }}</div>
+                  <span style="font:700 16px 'Space Grotesk';color:var(--text-muted)">+{{ t.pts }}</span>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="1c" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1c</span><span style="font:600 16px Inter">Thumb zone</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">A segmented day bar fills as you go. Coach, plan and rank sit in a dock within thumb reach.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 20px 260px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:4px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px"><span style="font:500 13px Inter;color:var(--text-muted)">Fri, Oct 23</span><span style="display:flex;align-items:center;gap:3px;font:700 15px 'Space Grotesk'"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;background:linear-gradient(180deg,#FFC93D,#FF7A1A);-webkit-background-clip:text;background-clip:text;color:transparent">local_fire_department</span>12 days</span></div>
+            <div style="display:flex;align-items:baseline;gap:6px;margin-top:20px"><span style="font:700 64px/0.9 'Space Grotesk';letter-spacing:-0.03em;font-variant-numeric:tabular-nums">{{ todayPts }}</span><span style="font:500 20px 'Space Grotesk';color:var(--text-muted);font-variant-numeric:tabular-nums">/ {{ maxPts }} pts</span></div>
+            <div style="display:flex;gap:4px;margin:14px 0 12px"><sc-for list="{{ segments }}" as="s" hint-placeholder-count="8"><span style="{{ s }}"></span></sc-for></div>
+            <sc-for list="{{ open }}" as="t" hint-placeholder-count="5">
+              <sc-if value="{{ t.isOverdue }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--danger);padding:12px 0 4px">Overdue</div></sc-if>
+              <sc-if value="{{ t.isToday }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:12px 0 4px">Today</div></sc-if>
+              <div style="position:relative;display:flex;align-items:center;gap:10px;padding:4px 0;border-bottom:1px solid var(--border)">
+                <button onClick="{{ t.toggle }}" aria-label="Complete task" style="width:44px;height:44px;margin-left:-8px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer">
+                  <sc-if value="{{ t.completing }}"><span style="width:26px;height:26px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></sc-if>
+                  <sc-if value="{{ t.idle }}"><span style="width:26px;height:26px;border-radius:8px;border:2px solid var(--text-muted);box-sizing:border-box"></span></sc-if>
+                </button>
+                <div style="flex:1;min-width:0;font:500 16px Inter">{{ t.title }}</div>
+                <span style="display:flex;gap:3px"><sc-for list="{{ t.pips }}" as="p"><span style="{{ p }}"></span></sc-for></span>
+                <span style="font:700 15px 'Space Grotesk';font-variant-numeric:tabular-nums;width:28px;text-align:right">{{ t.pts }}</span>
+                <sc-if value="{{ t.completing }}"><span style="position:absolute;right:0;top:-8px;font:700 18px 'Space Grotesk';color:var(--accent-text);animation:floatUp 620ms ease-out forwards;pointer-events:none">+{{ t.pts }}</span></sc-if>
+                <sc-if value="{{ t.hard }}"><span style="position:absolute;left:14px;top:50%;width:0;height:0;pointer-events:none"><sc-for list="{{ confetti }}" as="c"><span style="{{ c }}"></span></sc-for></span></sc-if>
+              </div>
+            </sc-for>
+            <button onClick="{{ toggleC }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:8px 0 0;border:none;background:transparent;cursor:pointer;font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)"><span>Done · {{ doneCount }}</span><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden">{{ chevC }}</span></button>
+            <sc-if value="{{ openC }}">
+              <sc-for list="{{ doneList }}" as="t">
+                <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)">
+                  <button onClick="{{ t.toggle }}" aria-label="Undo" style="width:44px;height:44px;margin-left:-8px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer"><span style="width:26px;height:26px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></button>
+                  <div style="flex:1;font:500 16px Inter;text-decoration:line-through;color:var(--text-muted)">{{ t.title }}</div>
+                  <span style="font:700 15px 'Space Grotesk';color:var(--text-muted)">{{ t.pts }}</span>
+                </div>
+              </sc-for>
+            </sc-if>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:84px;padding:14px 16px 12px;background:var(--surface);border-top:1px solid var(--border);border-radius:24px 24px 0 0;display:flex;flex-direction:column;gap:12px;box-shadow:0 -16px 32px var(--bg)">
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;background:var(--coach-tint)">
+              <span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;color:var(--coach-ink)">{{ coach.icon }}</span>
+              <div style="font:400 14px/1.4 Inter;text-wrap:pretty">{{ coach.line }}</div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button style="flex:1;height:48px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent-text);background:transparent;font:600 15px Inter;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">auto_awesome</span>Plan my day</button>
+              <div style="height:48px;padding:0 16px;border-radius:999px;background:var(--surface-2);display:flex;align-items:center;gap:8px"><span style="font:700 18px 'Space Grotesk';color:var(--accent-text)">#{{ rank }}</span><span style="font:600 13px Inter;color:var(--text-muted);font-variant-numeric:tabular-nums">{{ gapShort }}</span></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--surface)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="font:700 24px 'Space Grotesk';color:#F4F4F8">Leaderboard</div>
+    <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+      <div id="1d" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1d</span><span style="font:600 16px Inter">Podium</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">Raised blocks for the top 3, #1 in accent. Your row is always pinned above the nav.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 170px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+              <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em">This week</div>
+              <div style="display:flex;align-items:center;gap:4px;height:32px;padding:0 12px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font:600 13px Inter;font-variant-numeric:tabular-nums"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden;color:var(--text-muted)">timer</span>{{ countdown }}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end;margin-top:20px">
+              <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                  <span style="{{ p.avStyle }}">{{ p.init }}</span>
+                  <div style="text-align:center"><div style="font:600 14px Inter">{{ p.name }}</div><div style="font:700 14px 'Space Grotesk';color:var(--text-muted);font-variant-numeric:tabular-nums">{{ p.pts }}</div></div>
+                  <div style="{{ p.blockStyle }}">{{ p.rank }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:-4px">
+              <sc-for list="{{ rest }}" as="r" hint-placeholder-count="4">
+                <div style="{{ r.rowStyle }}">
+                  <span style="font:700 16px 'Space Grotesk';width:20px;color:var(--text-muted)">{{ r.rank }}</span>
+                  <span style="{{ r.avS }}">{{ r.init }}</span>
+                  <span style="flex:1;font:500 15px Inter">{{ r.name }}</span>
+                  <span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:12px 4px 0">Challenges</div>
+            <div style="display:flex;gap:12px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px">
+              <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+                <div style="flex:none;width:272px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;justify-content:space-between;font:600 12px Inter;color:var(--text-muted)"><span>{{ c.title }}</span><span style="display:flex;align-items:center;gap:3px"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1;display:inline-block;width:1em;overflow:hidden">timer</span>{{ c.ends }}</span></div>
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="{{ c.youAv }}">DA</span><span style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.you }}</span></div>
+                    <span style="font:700 14px 'Space Grotesk';font-style:italic;color:var(--text-muted)">VS</span>
+                    <div style="display:flex;align-items:center;gap:8px"><span style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.them }}</span><span style="{{ c.themAv }}">{{ c.themInit }}</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:5px"><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.youBar }}"></div></div><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.themBar }}"></div></div></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="position:absolute;left:16px;right:16px;bottom:96px;display:flex;align-items:center;gap:12px;padding:8px 14px;border-radius:16px;background:var(--surface-2);border:1.5px solid var(--accent);box-shadow:0 -12px 24px var(--bg)">
+            <span style="font:700 16px 'Space Grotesk';color:var(--accent-text);width:24px">#{{ rank }}</span>
+            <span style="{{ youAvSm }}">DA</span>
+            <div style="flex:1"><div style="font:600 15px Inter">You</div><div style="font:400 12px Inter;color:var(--text-muted)">{{ gapText }}</div></div>
+            <span style="font:700 18px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ youPts }}</span>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="1e" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1e</span><span style="font:600 16px Inter">The ladder</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">The reset clock is the headline. Ringed avatars replace blocks, and the gap between each rung is spelled out.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 110px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:0">
+            <div style="padding:8px 4px 0"><div style="font:500 13px Inter;color:var(--text-muted)">Week 43 resets Monday in</div><div style="font:700 40px/1.1 'Space Grotesk';letter-spacing:-0.02em;font-variant-numeric:tabular-nums;margin-top:4px">{{ countdown }}</div></div>
+            <div style="display:flex;justify-content:center;align-items:flex-end;gap:28px;margin:28px 0 24px">
+              <sc-for list="{{ ringPodium }}" as="p" hint-placeholder-count="3">
+                <div style="{{ p.wrap }}">
+                  <span style="{{ p.avStyle }}">{{ p.init }}</span>
+                  <div style="font:600 13px Inter;margin-top:12px">{{ p.name }}</div>
+                  <div style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ p.pts }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+              <sc-if value="{{ r.gapAbove }}"><div style="display:flex;align-items:center;gap:8px;padding:2px 0 2px 26px;font:500 11px Inter;color:var(--text-muted);font-variant-numeric:tabular-nums"><span style="width:1px;height:14px;background:var(--border)"></span>{{ r.gapAbove }}</div></sc-if>
+              <div style="{{ r.rowStyle }}">
+                <span style="font:700 16px 'Space Grotesk';width:20px;color:var(--text-muted)">{{ r.rank }}</span>
+                <span style="{{ r.avS }}">{{ r.init }}</span>
+                <div style="flex:1"><div style="font:500 15px Inter">{{ r.name }}</div><sc-if value="{{ r.isYou }}"><div style="font:500 12px Inter;color:var(--accent-text)">{{ gapText }}</div></sc-if></div>
+                <span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+              </div>
+            </sc-for>
+            <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:24px 4px 10px">Your challenges</div>
+            <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+              <div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--border)">
+                <span style="{{ c.youAv }}">DA</span>
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between;font:600 13px Inter"><span>{{ c.title }}</span><span style="color:var(--text-muted);font-weight:500">{{ c.ends }}</span></div>
+                  <div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;transform:scaleX(-1)"><div style="{{ c.youBar }}"></div></div><span style="font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;width:44px;text-align:center">{{ c.you }}–{{ c.them }}</span><div style="flex:1;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.themBar }}"></div></div></div>
+                </div>
+                <span style="{{ c.themAv }}">{{ c.themInit }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="1f" style="display:flex;flex-direction:column;gap:14px;width:391px">
+        <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1f</span><span style="font:600 16px Inter">Race bars</span></div>
+        <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">The leader gets a spotlight card. Every other row is a bar scaled to the leader, so distance reads at a glance.</div>
+        <div style="width:375px;height:812px;border-radius:48px;border:8px solid #1C1C24;box-shadow:0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5);background:var(--bg);color:var(--text);position:relative;overflow:hidden;font-family:Inter,sans-serif">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px"><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">signal_cellular_alt</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">wifi</span><span style="font-family:'Material Symbols Rounded';font-size:17px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">battery_full</span></span></div>
+          <div style="position:absolute;top:44px;left:0;right:0;bottom:0;overflow-y:auto;padding:8px 16px 110px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0 8px">
+              <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em">Board</div>
+              <div style="display:flex;gap:4px;padding:3px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font:600 13px Inter"><span style="padding:6px 12px;border-radius:999px;background:var(--surface-2)">Week</span><span style="padding:6px 12px;color:var(--text-muted)">All time</span></div>
+            </div>
+            <div style="position:relative;padding:20px;border-radius:24px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;gap:16px;overflow:hidden">
+              <span style="{{ leaderAv }}">{{ leader.init }}</span>
+              <div style="flex:1"><div style="display:flex;align-items:center;gap:4px;font:600 12px Inter;color:#FFC93D"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">workspace_premium</span>Leading · {{ countdown }} left</div><div style="font:700 28px 'Space Grotesk';margin-top:2px">{{ leader.name }}</div></div>
+              <div style="font:700 40px/1 'Space Grotesk';font-variant-numeric:tabular-nums;letter-spacing:-0.02em">{{ leader.pts }}</div>
+            </div>
+            <sc-for list="{{ chasers }}" as="r" hint-placeholder-count="6">
+              <div style="position:relative;display:flex;align-items:center;gap:12px;padding:8px 14px;min-height:44px;border-radius:12px;overflow:hidden">
+                <div style="{{ r.barStyle }}"></div>
+                <span style="position:relative;font:700 16px 'Space Grotesk';width:20px;color:var(--text-muted)">{{ r.rank }}</span>
+                <span style="{{ r.avS }}">{{ r.init }}</span>
+                <span style="position:relative;flex:1;font:500 15px Inter">{{ r.name }}</span>
+                <sc-if value="{{ r.isYou }}"><span style="position:relative;display:flex;align-items:center;gap:2px;font:600 12px Inter;color:var(--accent-text)">{{ moveIcon }}</span></sc-if>
+                <span style="position:relative;font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+              </div>
+            </sc-for>
+            <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:16px 4px 2px">Head to head</div>
+            <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+              <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border)">
+                <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px"><span style="{{ c.youAv }}">DA</span><span style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.you }}</span></div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center"><span style="font:700 16px 'Space Grotesk';font-style:italic;color:var(--accent-text)">VS</span><span style="font:500 12px/1.3 Inter;color:var(--text-muted);max-width:110px">{{ c.title }}</span><span style="font:600 12px Inter">{{ c.ends }}</span></div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span style="{{ c.themAv }}">{{ c.themInit }}</span><span style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.them }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:84px;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">today</span>Today</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent-text);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">leaderboard</span>Board</div>
+            <div style="width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span>Feed</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-muted);font:600 11px Inter"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span>Me</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="font:700 24px 'Space Grotesk';color:#F4F4F8">Desktop · 1024</div>
+    <div id="1g" style="display:flex;flex-direction:column;gap:14px;width:1024px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="font:700 13px 'Space Grotesk';background:#C6FF3D;color:#0B0B10;padding:3px 9px;border-radius:999px">1g</span><span style="font:600 16px Inter">Today + board side panel</span></div>
+      <div style="font:400 14px/1.45 Inter;color:#9A9AB0;text-wrap:pretty">1a in a 480 px column, with the board docked on the right. Same live data as the phones.</div>
+      <div style="width:1024px;height:720px;border-radius:14px;border:1px solid #2A2A38;overflow:hidden;background:var(--bg);color:var(--text);display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,.5)">
+        <div style="height:40px;flex:none;display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border)"><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="margin:0 auto;padding:4px 40px;border-radius:8px;background:var(--surface-2);font:500 12px Inter;color:var(--text-muted)">rivl.app</span></div>
+        <div style="flex:1;min-height:0;display:grid;grid-template-columns:72px 480px 1fr">
+          <div style="border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0">
+            <div style="font:700 20px 'Space Grotesk';letter-spacing:-0.04em;color:var(--accent-text);margin-bottom:14px">rivl</div>
+            <div style="width:44px;height:44px;border-radius:12px;background:var(--surface-2);color:var(--accent-text);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">today</span></div>
+            <div style="width:44px;height:44px;border-radius:12px;color:var(--text-muted);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">dynamic_feed</span></div>
+            <div style="width:44px;height:44px;border-radius:12px;color:var(--text-muted);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1;display:inline-block;width:1em;overflow:hidden">person</span></div>
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:auto"><span style="font-family:'Material Symbols Rounded';font-size:26px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 600">add</span></div>
+          </div>
+          <div style="overflow-y:auto;padding:24px 24px 40px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div><div style="font:500 13px Inter;color:var(--text-muted)">Friday, Oct 23</div><div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;margin-top:2px">Morning, Dami</div></div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="background:var(--accent);color:var(--on-accent);font:700 15px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:6px 12px;border-radius:999px">{{ todayPts }} pts</span><div style="display:flex;align-items:center;gap:4px;padding:6px 12px 6px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border);box-shadow:0 0 18px color-mix(in oklab, #FF7A1A 30%, transparent)"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1;background:linear-gradient(180deg,#FFC93D,#FF7A1A);-webkit-background-clip:text;background-clip:text;color:transparent">local_fire_department</span><span style="font:700 15px 'Space Grotesk'">12</span></div></div>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start">
+              <div style="width:36px;height:36px;border-radius:50%;background:var(--coach-tint);color:var(--coach-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">{{ coach.icon }}</span></div>
+              <div style="background:var(--coach-tint);border-radius:4px 16px 16px 16px;padding:10px 14px;flex:1"><div style="font:600 12px Inter;color:var(--coach-ink);margin-bottom:3px">{{ coach.name }}</div><div style="font:400 15px/1.4 Inter;text-wrap:pretty">{{ coach.line }}</div></div>
+            </div>
+            <button style="height:44px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent-text);background:transparent;font:600 15px Inter;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'FILL' 1">auto_awesome</span>Plan my day</button>
+            <sc-for list="{{ open }}" as="t" hint-placeholder-count="5">
+              <sc-if value="{{ t.isOverdue }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--danger);padding:6px 4px 0">Overdue</div></sc-if>
+              <sc-if value="{{ t.isToday }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:6px 4px 0">Today</div></sc-if>
+              <div style="position:relative;display:flex;align-items:center;gap:8px;padding:6px 12px 6px 4px;background:var(--surface);border:1px solid var(--border);border-radius:16px">
+                <button onClick="{{ t.toggle }}" aria-label="Complete task" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer">
+                  <sc-if value="{{ t.completing }}"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;display:inline-block;width:1em;overflow:hidden;font-variation-settings:'wght' 700">check</span></span></sc-if>
+                  <sc-if value="{{ t.idle }}"><span style="width:28px;height:28px;border-radius:50%;border:2px solid var(--text-muted);box-sizing:border-box"></span></sc-if>
+                </button>
+                <div style="flex:1;min-width:0"><div style="font:500 15px Inter">{{ t.title }}</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px"><span style="display:flex;gap:3px"><sc-for list="{{ t.pips }}" as="p"><span style="{{ p }}"></span></sc-for></span><span style="font:400 12px Inter;color:var(--text-muted)">{{ t.meta }}</span></div></div>
+                <span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">{{ t.pts }}</span>
+                <sc-if value="{{ t.completing }}"><span style="position:absolute;right:14px;top:-8px;font:700 18px 'Space Grotesk';color:var(--accent-text);animation:floatUp 620ms ease-out forwards;pointer-events:none">+{{ t.pts }}</span></sc-if>
+                <sc-if value="{{ t.hard }}"><span style="position:absolute;left:26px;top:50%;width:0;height:0;pointer-events:none"><sc-for list="{{ confetti }}" as="c"><span style="{{ c }}"></span></sc-for></span></sc-if>
+              </div>
+            </sc-for>
+            <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:12px 4px 0">Done · {{ doneCount }}</div>
+          </div>
+          <div style="border-left:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr);align-content:start;grid-auto-rows:max-content;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font:700 20px 'Space Grotesk'">This week</div><div style="display:flex;align-items:center;gap:4px;font:600 13px Inter;color:var(--text-muted);font-variant-numeric:tabular-nums"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;display:inline-block;width:1em;overflow:hidden">timer</span>{{ countdown }}</div></div>
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+              <div style="{{ r.rowStyleFlat }}">
+                <span style="font:700 15px 'Space Grotesk';width:18px;color:var(--text-muted)">{{ r.rank }}</span>
+                <span style="{{ r.avS }}">{{ r.init }}</span>
+                <span style="flex:1;font:500 14px Inter">{{ r.name }}</span>
+                <span style="font:700 15px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+              </div>
+            </sc-for>
+            <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:16px 4px 4px">Challenges</div>
+            <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+              <div style="padding:12px 14px;border-radius:16px;background:var(--bg);border:1px solid var(--border);display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;justify-content:space-between;font:600 12px Inter;color:var(--text-muted)"><span>{{ c.title }}</span><span>{{ c.ends }}</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="{{ c.youAv }}">DA</span><div style="flex:1;display:flex;flex-direction:column;gap:5px"><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.youBar }}"></div></div><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.themBar }}"></div></div></div><span style="{{ c.themAv }}">{{ c.themInit }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Volt&quot;,&quot;Pulse&quot;,&quot;Ice&quot;,&quot;Blaze&quot;,&quot;Nova&quot;,&quot;Gold&quot;],&quot;default&quot;:&quot;Volt&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;default&quot;:&quot;Dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;coach&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Hype Man&quot;,&quot;Calm Mentor&quot;,&quot;Savage Roaster&quot;],&quot;default&quot;:&quot;Hype Man&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Coach&quot;}}">
+const ACCENTS={Volt:['#C6FF3D','#4A7300'],Pulse:['#FF3D8B','#C8005A'],Ice:['#3DE1FF','#00728A'],Blaze:['#FF7A1A','#B04A00'],Nova:['#9B5CFF','#6E2FE0'],Gold:['#FFC93D','#8A6200']};
+const NEUTRAL={Dark:{bg:'#0B0B10',surface:'#15151D',s2:'#1E1E29',border:'#2A2A38',text:'#F4F4F8',muted:'#9A9AB0',danger:'#FF4D4F'},Light:{bg:'#F6F6F9',surface:'#FFFFFF',s2:'#EDEDF3',border:'#DCDCE6',text:'#111118',muted:'#5E5E72',danger:'#D42A2C'}};
+const COACH={'Hype Man':{icon:'campaign',tint:null,pct:15},'Calm Mentor':{icon:'eco',tint:'#2EC4B6',pct:12,ink:['#5EE0D3','#0E7C72']},'Savage Roaster':{icon:'local_fire_department',tint:'#FF3D8B',pct:12,ink:['#FF6FA8','#C8005A']}};
+const FRIENDS=[{id:'kemi',name:'Kemi',init:'KO',hue:40,pts:520},{id:'ada',name:'Ada',init:'AN',hue:340,pts:385},{id:'tobi',name:'Tobi',init:'TB',hue:230,pts:310},{id:'chidi',name:'Chidi',init:'CE',hue:160,pts:255},{id:'zara',name:'Zara',init:'ZM',hue:90,pts:190},{id:'femi',name:'Femi',init:'FA',hue:290,pts:120}];
+const YOU={id:'you',name:'You',init:'DA',hue:125};
+const TASKS=[
+ {id:'inv',title:'Send invoice to Kola Studio',d:3,overdue:true,meta:'Due yesterday'},
+ {id:'run',title:'Morning run, 5 km',d:4,meta:'7:00'},
+ {id:'land',title:'Reply to landlord',d:1,meta:'2 min'},
+ {id:'deck',title:'Finish pitch deck v2',d:5,meta:'Due 5 pm'},
+ {id:'groc',title:'Buy groceries',d:2,meta:'After work'},
+ {id:'read',title:'Read 20 pages',d:2,meta:'Evening'},
+ {id:'water',title:'Drink water before coffee',d:1,meta:''},
+ {id:'stand',title:'Stand-up call',d:2,meta:'9:30'}];
+const DIFF=['','Easy','Easy','Medium','Hard','Brutal'];
+const RINGS=['#FFC93D','#C9CED6','#CD7F4A'];
+const BASE=310,START_RANK=3;
+const CONF=Array.from({length:14},(_,i)=>{const a=i/14*Math.PI*2,r=34+(i%3)*16;return{dx:Math.round(Math.cos(a)*r),dy:Math.round(Math.sin(a)*r)}});
+
+const REACT=[['fire','whatshot'],['clap','celebration'],['lol','sentiment_very_satisfied']];
+const FEED=[
+ {id:'f1',who:'kemi',verb:'completed',task:'Gym: leg day',pts:40,ago:'12m',photo:'post-workout photo',r:[6,2,1]},
+ {id:'f2',who:'ada',verb:'completed',task:'Submit visa application',pts:50,ago:'1h',photo:null,r:[3,8,0]},
+ {id:'f3',who:'tobi',verb:'won a challenge',task:'First to 10 tasks vs Chidi',pts:60,ago:'2h',photo:null,r:[9,4,2]},
+ {id:'f4',who:'you',verb:'completed',task:'Stand-up call',pts:20,ago:'3h',photo:null,r:[1,0,0]},
+ {id:'f5',who:'chidi',verb:'completed',task:'Clean the kitchen',pts:20,ago:'5h',photo:'kitchen photo',r:[2,1,5]}];
+const NUDGES=[{who:'ada',msg:'Invoice. Now.'},{who:'tobi',msg:"You're slipping, boss"}];
+const HEAT=Array.from({length:105},(_,i)=>{const x=Math.sin(i*12.9898)*43758.5453,v=x-Math.floor(x);return i>92?(v>.2?3:2):v<.18?0:v<.4?1:v<.7?2:v<.9?3:4});
+const BADGES=[['First blood','bolt'],['Early bird','wb_sunny'],['7-day streak','local_fire_department'],['Giant slayer','military_tech'],['Century','workspace_premium'],['Night owl','bedtime'],['30-day streak','local_fire_department',true],['Undefeated','emoji_events',true],['Squad goals','group',true]];
+class Component extends DCLogic {
+  state={done:{water:true,stand:true},completing:{},openA:false,openB:false,openC:false,now:Date.now()};
+  componentDidMount(){this.iv=setInterval(()=>this.setState({now:Date.now()}),30000);this.to=[]}
+  componentWillUnmount(){clearInterval(this.iv);(this.to||[]).forEach(clearTimeout)}
+  toggle(id){
+    if(this.state.done[id]){this.setState(s=>{const d={...s.done};delete d[id];return{done:d}});return}
+    if(this.state.completing[id])return;
+    this.setState(s=>({completing:{...s.completing,[id]:true}}));
+    (this.to=this.to||[]).push(setTimeout(()=>this.setState(s=>{const c={...s.completing};delete c[id];return{completing:c,done:{...s.done,[id]:true}}}),620));
+  }
+  av(r,size,ring,glow){
+    const sh=[];if(ring)sh.push('0 0 0 2px var(--bg)','0 0 0 4px '+ring);if(glow)sh.push('0 0 28px 6px color-mix(in oklab, var(--accent) 30%, transparent)');
+    return{position:'relative',width:size,height:size,borderRadius:'50%',background:`oklch(0.8 0.1 ${r.hue})`,color:'#0B0B10',display:'grid',placeItems:'center',font:`700 ${Math.round(size*0.36)}px 'Space Grotesk'`,flex:'none',boxShadow:sh.join(',')||'none'};
+  }
+  renderVals(){
+    const P=this.props,mode=P.mode==='Light'?'Light':'Dark',dark=mode==='Dark',N=NEUTRAL[mode];
+    const acc=ACCENTS[P.accent]||ACCENTS.Volt,accentText=dark?acc[0]:acc[1];
+    const coachName=COACH[P.coach]?P.coach:'Hype Man',C=COACH[coachName];
+    const themeVars={'--bg':N.bg,'--surface':N.surface,'--surface-2':N.s2,'--border':N.border,'--text':N.text,'--text-muted':N.muted,'--danger':N.danger,'--accent':acc[0],'--accent-text':accentText,'--on-accent':'#0B0B10',
+      '--coach-tint':`color-mix(in oklab, ${C.tint||acc[0]} ${C.pct}%, ${N.surface})`,'--coach-ink':C.ink?(dark?C.ink[0]:C.ink[1]):accentText};
+    const {done,completing}=this.state;
+    const confetti=CONF.map((c,i)=>({position:'absolute',left:0,top:0,width:i%2?6:8,height:i%2?6:4,borderRadius:i%2?'50%':'1px',background:i%3===0?'var(--text)':'var(--accent)','--dx':c.dx+'px','--dy':c.dy+'px',animation:'burst 640ms cubic-bezier(.2,.7,.3,1) forwards'}));
+    const mk=t=>({...t,pts:t.d*10,diffLabel:DIFF[t.d]+(t.meta?' · '+t.meta:''),pips:[1,2,3,4,5].map(n=>({width:6,height:6,borderRadius:'50%',background:n<=t.d?'var(--accent-text)':'var(--border)'})),toggle:()=>this.toggle(t.id),completing:!!completing[t.id],idle:!completing[t.id],hard:!!completing[t.id]&&t.d>=4});
+    const openT=TASKS.filter(t=>!done[t.id]).map(mk);
+    let last=null;
+    const open=openT.map(t=>{const g=t.overdue?'O':'T',h=g!==last;last=g;return{...t,isOverdue:h&&g==='O',isToday:h&&g==='T'}});
+    const doneList=TASKS.filter(t=>done[t.id]).map(mk);
+    const todayPts=doneList.reduce((a,t)=>a+t.pts,0),openPts=openT.reduce((a,t)=>a+t.pts,0),maxPts=TASKS.reduce((a,t)=>a+t.d*10,0);
+    const segments=TASKS.map(t=>({flex:1,height:8,borderRadius:4,background:(done[t.id]||completing[t.id])?'var(--accent)':'var(--surface-2)',transition:'background 200ms ease-out'}));
+
+    const youPts=BASE+todayPts;
+    const all=[...FRIENDS,{...YOU,pts:youPts,isYou:true}].sort((a,b)=>b.pts-a.pts||(a.isYou?-1:b.isYou?1:0));
+    const yi=all.findIndex(r=>r.isYou),rank=yi+1,ahead=all[yi-1],behind=all[yi+1],lead=all[0].pts;
+    const gap=ahead?ahead.pts-youPts:0;
+    const rows=all.map((r,i)=>({...r,rank:i+1,
+      avS:this.av(r,36,RINGS[i]),
+      rowStyle:{display:'flex',alignItems:'center',gap:12,padding:'8px 14px',minHeight:44,borderRadius:16,background:'var(--surface)',border:r.isYou?'1.5px solid var(--accent)':'1px solid var(--border)',transition:'transform 250ms ease-out'},
+      rowStyleFlat:{display:'flex',alignItems:'center',gap:12,padding:'6px 10px',minHeight:44,borderRadius:12,background:r.isYou?'var(--surface-2)':'transparent',border:r.isYou?'1.5px solid var(--accent)':'1.5px solid transparent'},
+      barStyle:{position:'absolute',left:0,top:0,bottom:0,width:(r.pts/lead*100)+'%',background:r.isYou?'color-mix(in oklab, var(--accent) 24%, transparent)':'var(--surface-2)',borderRadius:12,transition:'width 300ms ease-out',border:r.isYou?'1.5px solid var(--accent)':'none',boxSizing:'border-box'},
+      gapAbove:i>0?`${all[i-1].pts-r.pts} pts`:null}));
+    const heights=[100,136,76];
+    const podium=[1,0,2].map(i=>{const r=all[i],first=i===0;return{...r,rank:i+1,avStyle:this.av(r,first?68:56,RINGS[i],first),
+      blockStyle:{width:'100%',height:heights[[1,0,2].indexOf(i)],background:first?'var(--accent)':'var(--surface-2)',color:first?'var(--on-accent)':'var(--text)',border:first?'none':'1px solid var(--border)',borderBottom:'none',borderRadius:'16px 16px 0 0',display:'flex',justifyContent:'center',paddingTop:10,boxSizing:'border-box',font:"700 40px/1 'Space Grotesk'",transition:'height 300ms ease-out'}}});
+    const ringPodium=[1,0,2].map(i=>{const r=all[i],first=i===0;return{...r,avStyle:this.av(r,first?84:64,RINGS[i],first),wrap:{display:'flex',flexDirection:'column',alignItems:'center',marginBottom:first?24:0}}});
+    const leader=rows[0];
+
+    const tasksYou=10+doneList.length;
+    const chal=(title,ends,you,them,goal,f)=>({title,ends,you,them,themInit:f.init,youAv:this.av(YOU,32),themAv:this.av(f,32),
+      youBar:{width:Math.min(100,you/goal*100)+'%',height:'100%',background:'var(--accent)',borderRadius:3,transition:'width 300ms ease-out'},
+      themBar:{width:Math.min(100,them/goal*100)+'%',height:'100%',background:'var(--text-muted)',borderRadius:3}});
+    const challenges=[chal('First to 20 tasks','2d left',tasksYou,13,20,FRIENDS[2]),chal('5-day run streak','Ends Sun',done.run?4:3,4,5,FRIENDS[1])];
+
+    const now=new Date(this.state.now),next=new Date(now);next.setHours(0,0,0,0);next.setDate(next.getDate()+(((8-now.getDay())%7)||7));
+    const diff=next-now,cd=`${Math.floor(diff/864e5)}d ${Math.floor(diff%864e5/36e5)}h ${String(Math.floor(diff%36e5/6e4)).padStart(2,'0')}m`;
+
+    const movedUp=rank<START_RANK,an=ahead?ahead.name:'';
+    const gapText=!ahead?'top of the board':gap===0?`tied with ${an}`:`${gap} pts behind ${an}`;
+    const allDone=openT.length===0;
+    const lines={
+      'Hype Man':allDone?'Clean sweep! Nothing left today but bragging rights.':movedUp?`You just jumped to #${rank}! ${an}'s next. Keep cooking.`:`${openT.length} tasks, ${openPts} pts on the table. ${an}'s only ${gap} ahead. Go get it.`,
+      'Calm Mentor':allDone?'Everything is done. Rest well, tomorrow starts fresh.':movedUp?`You moved up to #${rank}. Take a breath, then keep the rhythm.`:done.land?'Good start. Pick the next smallest task and keep it steady.':'Start small. The landlord reply takes two minutes and gets you moving.',
+      'Savage Roaster':allDone?'Every task done? Who are you and what did you do with Dami?':movedUp?`#${rank}? Look at you, actually doing things. ${behind?behind.name:'Everyone'} is not okay.`:`That invoice was due yesterday. Kola Studio won't pay itself, and ${an} is laughing.`};
+
+    const F=Object.fromEntries(FRIENDS.map(f=>[f.id,f]));
+    const R=this.state.react||{},NB=this.state.nudged||{};
+    const feed=FEED.map(f=>{const p=f.who==='you'?YOU:F[f.who];return{...f,name:f.who==='you'?'You':p.name,init:p.init,av:this.av(p,40),
+      reactions:REACT.map(([k,icon],j)=>{const on=!!R[f.id+k];return{icon,count:f.r[j]+(on?1:0),toggle:()=>this.setState(s=>({react:{...(s.react||{}),[f.id+k]:!on}})),
+        style:{display:'flex',alignItems:'center',gap:4,height:36,padding:'0 10px',borderRadius:999,border:on?'1.5px solid var(--accent)':'1px solid var(--border)',background:on?'color-mix(in oklab, var(--accent) 16%, var(--surface))':'transparent',color:on?'var(--accent-text)':'var(--text-muted)',font:"700 13px 'Space Grotesk'",cursor:'pointer',fontVariantNumeric:'tabular-nums'}}})}});
+    const nudges=NUDGES.map(n=>{const p=F[n.who],sent=!!NB[n.who];return{...n,name:p.name,init:p.init,av:this.av(p,32),label:sent?'Sent':'Nudge back',
+      back:()=>this.setState(s=>({nudged:{...(s.nudged||{}),[n.who]:true}})),
+      btn:{height:36,padding:'0 12px',borderRadius:999,border:'none',background:sent?'var(--surface)':'var(--accent)',color:sent?'var(--text-muted)':'var(--on-accent)',font:'600 12px Inter',cursor:'pointer',whiteSpace:'nowrap'}}});
+    const lv=['var(--surface-2)','color-mix(in oklab, var(--accent) 30%, var(--surface-2))','color-mix(in oklab, var(--accent) 58%, var(--surface-2))','color-mix(in oklab, var(--accent) 82%, var(--surface-2))','var(--accent)'];
+    const cell=l=>({aspectRatio:'1',borderRadius:3,background:lv[l]});
+    const heat=HEAT.map((l,i)=>i===HEAT.length-1?cell(Math.min(4,1+doneList.length)):cell(l));
+    const badges=BADGES.map(([name,icon,locked])=>({name,icon:locked?'lock':icon,
+      card:{display:'flex',flexDirection:'column',alignItems:'center',gap:8,padding:'14px 8px',borderRadius:16,background:'var(--surface)',border:'1px solid var(--border)',opacity:locked?0.55:1,color:locked?'var(--text-muted)':'var(--text)'},
+      disc:{width:52,height:52,borderRadius:'50%',display:'grid',placeItems:'center',background:locked?'var(--surface-2)':'color-mix(in oklab, var(--accent) 18%, var(--surface))',color:locked?'var(--text-muted)':'var(--accent-text)',border:locked?'1px dashed var(--border)':'1.5px solid var(--accent)'}}));
+    const pav=this.av(YOU,88,null,true);pav.boxShadow='0 0 0 3px var(--bg), 0 0 0 5px var(--accent), 0 0 28px 6px color-mix(in oklab, var(--accent) 30%, transparent)';
+    const extra={feed,nudges,heat,heatLegend:[0,1,2,3,4].map(l=>({...cell(l),width:10,height:10,aspectRatio:'auto'})),badges,badgeCount:`${BADGES.filter(b=>!b[2]).length} of ${BADGES.length}`,
+      profileAv:pav,totalPts:(4490+youPts).toLocaleString('en-US')};
+    return{...extra,themeVars,confetti,open,doneList,doneCount:doneList.length,todayPts,openPts,maxPts,segments,youPts,rank,gap,gapText,
+      gapShort:ahead?`−${gap} to ${an}`:'Top',chaseLine:ahead?`pts to pass ${an}`:'pts clear at the top',
+      aheadName:an,aheadPts:ahead?ahead.pts:youPts,aheadInit:ahead?ahead.init:'',aheadAvSm:this.av(ahead||YOU,28),youAvSm:this.av(YOU,28),
+      youBar:{width:Math.min(100,youPts/(ahead?ahead.pts:youPts)*100)+'%',height:'100%',background:'var(--accent)',borderRadius:5,transition:'width 300ms ease-out'},
+      movedUp,moveLabel:`Up ${START_RANK-rank}`,moveIcon:movedUp?`▲ ${START_RANK-rank}`:'You',
+      countdown:cd,rows,rest:rows.slice(3),chasers:rows.slice(1),podium,ringPodium,leader,leaderAv:this.av(leader,56,RINGS[0],true),challenges,
+      coach:{name:coachName,icon:C.icon,line:lines[coachName]},
+      toggleA:()=>this.setState(s=>({openA:!s.openA})),toggleB:()=>this.setState(s=>({openB:!s.openB})),toggleC:()=>this.setState(s=>({openC:!s.openC})),
+      openA:this.state.openA,openB:this.state.openB,openC:this.state.openC,
+      chevA:this.state.openA?'expand_less':'expand_more',chevB:this.state.openB?'expand_less':'expand_more',chevC:this.state.openC?'expand_less':'expand_more'};
+  }
+}
+</script>
+</body>
+</html>

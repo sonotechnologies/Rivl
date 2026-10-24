@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400..700,0..1,0&display=block">
+<style>body{margin:0;background:#0B0B10;-webkit-font-smoothing:antialiased}a{color:#C6FF3D}a:hover{color:#E2FF9A}</style>
+</helmet>
+<div style="background:#0B0B10;color:#F4F4F8;font-family:Inter,sans-serif;min-height:100vh;padding:64px clamp(20px,5vw,72px) 120px;box-sizing:border-box;display:flex;flex-direction:column;gap:72px;max-width:1280px;margin:0 auto">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font:500 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:#9A9AB0">Brand &amp; theme system · v1</div>
+    <div style="font:700 48px/1.05 'Space Grotesk';letter-spacing:-0.02em">rivl</div>
+    <div style="font:400 16px/1.5 Inter;color:#9A9AB0;max-width:640px;text-wrap:pretty">A game lobby for getting things done. Competitive, energetic, a little cheeky, never childish.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Logo</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <div style="height:240px;border-radius:24px;background:#15151D;border:1px solid #2A2A38;display:grid;place-items:center"><span style="display:inline-flex;font:700 120px 'Space Grotesk';letter-spacing:-0.04em;color:#F4F4F8">r<span style="position:relative">ı<span style="position:absolute;left:50%;top:.12em;width:.22em;height:.22em;border-top:.09em solid #C6FF3D;border-left:.09em solid #C6FF3D;transform:translateX(-50%) rotate(45deg)"></span></span>vl</span></div>
+      <div style="height:240px;border-radius:24px;background:#F6F6F9;display:grid;place-items:center"><span style="display:inline-flex;font:700 120px 'Space Grotesk';letter-spacing:-0.04em;color:#111118">r<span style="position:relative">ı<span style="position:absolute;left:50%;top:.12em;width:.22em;height:.22em;border-top:.09em solid #111118;border-left:.09em solid #111118;transform:translateX(-50%) rotate(45deg)"></span></span>vl</span></div>
+    </div>
+    <div style="font:400 14px/1.5 Inter;color:#9A9AB0;max-width:640px;text-wrap:pretty">Lowercase Space Grotesk 700, tracked −4%. The dot of the i becomes an upward chevron. On light grounds the chevron takes the ink colour.</div>
+    <div style="font:600 15px Inter;margin-top:12px">App icon</div>
+    <div style="display:flex;flex-wrap:wrap;gap:20px">
+      <sc-for list="{{ accents }}" as="a" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="{{ a.icon }}"><span style="display:inline-flex;font:700 44px 'Space Grotesk';letter-spacing:-0.04em">r<span style="position:relative">ı<span style="{{ a.chev }}"></span></span>vl</span></div>
+          <span style="font:500 13px Inter;color:#9A9AB0">{{ a.name }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:12px">
+      <span style="padding:10px 18px;border-radius:999px;border:1px solid #2A2A38;font:600 16px 'Space Grotesk'">Get it done. Beat your friends.</span>
+      <span style="padding:10px 18px;border-radius:999px;border:1px solid #2A2A38;font:600 16px 'Space Grotesk'">Productivity, but make it competitive.</span>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Neutrals</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px">
+      <sc-for list="{{ neutralModes }}" as="m" hint-placeholder-count="2">
+        <div style="{{ m.panel }}">
+          <div style="font:600 15px Inter">{{ m.name }}</div>
+          <sc-for list="{{ m.tokens }}" as="t"><div style="display:flex;align-items:center;gap:12px"><span style="{{ t.sw }}"></span><span style="flex:1;font:500 13px 'JetBrains Mono'">{{ t.token }}</span><span style="font:500 13px 'JetBrains Mono';opacity:.7">{{ t.hex }}</span></div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Accents and contrast</div>
+    <div style="font:400 14px/1.5 Inter;color:#9A9AB0;max-width:720px;text-wrap:pretty">Each accent fills buttons and pills with #0B0B10 text on top. Accent-coloured text uses the base hex in dark mode and a darker text variant in light mode. Ratios are WCAG 2 and are calculated live, with 4.5:1 as the pass mark.</div>
+    <div style="display:flex;flex-direction:column;border-radius:16px;border:1px solid #2A2A38;overflow-x:auto">
+      <div style="display:grid;grid-template-columns:160px repeat(5,minmax(120px,1fr));min-width:820px;padding:12px 16px;background:#15151D;font:600 12px Inter;letter-spacing:.04em;text-transform:uppercase;color:#9A9AB0;gap:12px"><span>Accent</span><span>On-accent text</span><span>Dark · on bg</span><span>Dark · on surface</span><span>Light · on bg</span><span>Light · on surface</span></div>
+      <sc-for list="{{ accents }}" as="a" hint-placeholder-count="6">
+        <div style="display:grid;grid-template-columns:160px repeat(5,minmax(120px,1fr));min-width:820px;padding:12px 16px;border-top:1px solid #2A2A38;align-items:center;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px"><span style="{{ a.sw }}"></span><div><div style="font:600 14px Inter">{{ a.name }}</div><div style="font:500 11px 'JetBrains Mono';color:#9A9AB0">{{ a.hex }} · {{ a.textHex }}</div></div></div>
+          <sc-for list="{{ a.checks }}" as="c"><div style="display:flex;align-items:center;gap:8px"><span style="{{ c.chip }}">Aa</span><span style="font:600 13px 'JetBrains Mono';font-variant-numeric:tabular-nums">{{ c.ratio }}</span><span style="{{ c.badge }}">{{ c.verdict }}</span></div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:16px">
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:40px;border-radius:12px;background:#2ED47A"></span><div><div style="font:600 14px Inter">Success</div><div style="font:500 12px 'JetBrains Mono';color:#9A9AB0">#2ED47A</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:40px;border-radius:12px;background:#FF4D4F"></span><div><div style="font:600 14px Inter">Danger</div><div style="font:500 12px 'JetBrains Mono';color:#9A9AB0">#FF4D4F</div></div></div>
+      <div style="display:flex;align-items:center;gap:10px"><span style="width:40px;height:40px;border-radius:12px;background:linear-gradient(0deg,#FF7A1A,#FFC93D)"></span><div><div style="font:600 14px Inter">Streak flame</div><div style="font:500 12px 'JetBrains Mono';color:#9A9AB0">#FF7A1A → #FFC93D</div></div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Type</div>
+    <div style="display:flex;flex-direction:column;border-top:1px solid #2A2A38">
+      <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="7">
+        <div style="display:grid;grid-template-columns:140px minmax(0,1fr);gap:16px;align-items:baseline;padding:14px 0;border-bottom:1px solid #2A2A38">
+          <span style="font:500 12px 'JetBrains Mono';color:#9A9AB0">{{ t.label }}</span>
+          <span style="{{ t.style }}">{{ t.sample }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:400 14px/1.5 Inter;color:#9A9AB0;max-width:640px;text-wrap:pretty">Display: Space Grotesk 700 for headings, points, ranks and streaks. Body: Inter 400/500/600. Tabular figures wherever a score can change.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Spacing and shape</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+      <div style="padding:20px;border-radius:16px;background:#15151D;border:1px solid #2A2A38;display:flex;flex-direction:column;gap:12px"><div style="font:600 14px Inter">4 px grid</div><div style="display:flex;align-items:flex-end;gap:8px"><span style="width:4px;height:4px;background:#C6FF3D"></span><span style="width:8px;height:8px;background:#C6FF3D"></span><span style="width:12px;height:12px;background:#C6FF3D"></span><span style="width:16px;height:16px;background:#C6FF3D"></span><span style="width:24px;height:24px;background:#C6FF3D"></span></div><div style="font:400 13px Inter;color:#9A9AB0">16 gutter · 12 between cards</div></div>
+      <div style="padding:20px;border-radius:16px;background:#15151D;border:1px solid #2A2A38;display:flex;flex-direction:column;gap:12px"><div style="font:600 14px Inter">Radius</div><div style="display:flex;align-items:flex-end;gap:10px"><span style="width:44px;height:44px;border-radius:12px;border:1.5px solid #9A9AB0"></span><span style="width:52px;height:52px;border-radius:16px;border:1.5px solid #9A9AB0"></span><span style="width:60px;height:60px;border-radius:24px 24px 0 0;border:1.5px solid #9A9AB0;border-bottom:none"></span><span style="width:72px;height:36px;border-radius:999px;border:1.5px solid #9A9AB0"></span></div><div style="font:400 13px Inter;color:#9A9AB0">12 chips · 16 cards · 24 sheets · pill</div></div>
+      <div style="padding:20px;border-radius:16px;background:#15151D;border:1px solid #2A2A38;display:flex;flex-direction:column;gap:12px"><div style="font:600 14px Inter">Depth</div><div style="display:flex;gap:10px;align-items:center"><span style="width:44px;height:44px;border-radius:12px;background:#15151D;border:1px solid #2A2A38"></span><span style="width:44px;height:44px;border-radius:12px;background:#1E1E29;border:1px solid #2A2A38"></span><span style="width:44px;height:44px;border-radius:50%;background:#C6FF3D;box-shadow:0 0 24px 4px rgba(198,255,61,.3)"></span></div><div style="font:400 13px Inter;color:#9A9AB0">Surface steps and a 1 px border. Glow only on #1 and an active streak.</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <div style="font:700 28px 'Space Grotesk'">Coaches</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <sc-for list="{{ coaches }}" as="c" hint-placeholder-count="3">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="{{ c.avatar }}"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;font-variation-settings:'FILL' 1">{{ c.icon }}</span></div>
+          <div style="{{ c.bubble }}"><div style="{{ c.label }}">{{ c.name }} · {{ c.tintNote }}</div><div style="font:400 15px/1.4 Inter;text-wrap:pretty">{{ c.line }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ACC=[['Volt','#C6FF3D','#4A7300'],['Pulse','#FF3D8B','#C8005A'],['Ice','#3DE1FF','#00728A'],['Blaze','#FF7A1A','#B04A00'],['Nova','#9B5CFF','#6E2FE0'],['Gold','#FFC93D','#8A6200']];
+const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]};
+const ratio=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+class Component extends DCLogic {
+  renderVals(){
+    const chk=(fg,bg,filled)=>{const r=ratio(fg,bg),ok=r>=4.5;return{ratio:r.toFixed(1)+':1',verdict:ok?'Pass':'Fail',
+      chip:{width:40,height:28,borderRadius:8,display:'grid',placeItems:'center',font:"700 14px 'Space Grotesk'",background:filled?fg:bg,color:filled?bg:fg,border:'1px solid #2A2A38',flex:'none'},
+      badge:{font:'600 11px Inter',padding:'2px 6px',borderRadius:6,background:ok?'rgba(46,212,122,.16)':'rgba(255,77,79,.16)',color:ok?'#2ED47A':'#FF4D4F'}}};
+    const accents=ACC.map(([name,hex,t])=>({name,hex,textHex:t,
+      sw:{width:36,height:36,borderRadius:10,background:hex,flex:'none'},
+      icon:{width:96,height:96,borderRadius:24,background:hex,color:'#0B0B10',display:'grid',placeItems:'center'},
+      chev:{position:'absolute',left:'50%',top:'.12em',width:'.22em',height:'.22em',borderTop:'.09em solid #0B0B10',borderLeft:'.09em solid #0B0B10',transform:'translateX(-50%) rotate(45deg)'},
+      checks:[{...chk(hex,'#0B0B10',true)},chk(hex,'#0B0B10'),chk(hex,'#15151D'),chk(t,'#F6F6F9'),chk(t,'#FFFFFF')]}));
+    accents.forEach(a=>{const r=ratio('#0B0B10',a.hex),ok=r>=4.5;a.checks[0]={...a.checks[0],chip:{...a.checks[0].chip,background:a.hex,color:'#0B0B10'}}});
+    const N=[['--bg','#0B0B10','#F6F6F9'],['--surface','#15151D','#FFFFFF'],['--surface-2','#1E1E29','#EDEDF3'],['--border','#2A2A38','#DCDCE6'],['--text','#F4F4F8','#111118'],['--text-muted','#9A9AB0','#5E5E72']];
+    const neutralModes=[['Dark (default)',1],['Light',2]].map(([name,i])=>({name,
+      panel:{padding:20,borderRadius:16,background:i===1?'#15151D':'#FFFFFF',color:i===1?'#F4F4F8':'#111118',border:'1px solid '+(i===1?'#2A2A38':'#DCDCE6'),display:'flex',flexDirection:'column',gap:12},
+      tokens:N.map(n=>({token:n[0],hex:n[i],sw:{width:36,height:36,borderRadius:10,background:n[i],border:'1px solid '+(i===1?'#2A2A38':'#DCDCE6'),flex:'none'}}))}));
+    const D="'Space Grotesk'";
+    const typeScale=[['64 · celebration',`700 64px/1 ${D}`,'#1'],['40 · hero number',`700 40px/1 ${D}`,'1,240 pts'],['28 · heading',`700 28px/1.1 ${D}`,'This week'],['20 · title',`700 20px/1.2 ${D}`,'Quick add'],['16 · body','400 16px/1.5 Inter','You\'re 40 pts behind Tobi. Fix that.'],['14 · body small','400 14px/1.45 Inter','Tap a friend to nudge them.'],['12 · caption','500 12px Inter','Due yesterday']].map(([label,font,sample])=>({label,sample,style:{font,fontVariantNumeric:'tabular-nums',letterSpacing:font.includes('Grotesk')?'-0.02em':'0'}}));
+    const coaches=[['Hype Man','campaign','#C6FF3D',15,'#C6FF3D','Accent at 15%','THREE tasks before noon?! You\'re cooking. Keep going!'],['Calm Mentor','eco','#2EC4B6',12,'#5EE0D3','Soft teal at 12%','One step at a time. Start with the smallest task and build from there.'],['Savage Roaster','local_fire_department','#FF3D8B',12,'#FF6FA8','Hot pink at 12%','Zero tasks and it\'s 6 pm. Even your to-do list is bored.']].map(([name,icon,tint,pct,ink,tintNote,line])=>{const bg=`color-mix(in oklab, ${tint} ${pct}%, #15151D)`;return{name,icon,tintNote,line,
+      avatar:{width:36,height:36,borderRadius:'50%',background:bg,color:ink,display:'grid',placeItems:'center',flex:'none'},
+      bubble:{background:bg,borderRadius:'4px 16px 16px 16px',padding:'10px 14px',flex:1},label:{font:'600 12px Inter',color:ink,marginBottom:3}}});
+    return{accents,neutralModes,typeScale,coaches};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400..700,0..1,0&display=block">
+<style>
+body{margin:0;background:#08080C;font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C6FF3D}a:hover{color:#E2FF9A}
+button,input{font:inherit;color:inherit}
+input::placeholder{color:#9A9AB0}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes floatUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}
+@keyframes burst{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.5);opacity:0}}
+@keyframes flicker{0%,100%{transform:scale(1)}50%{transform:scale(1.12) rotate(-4deg)}}
+@keyframes slideOut{to{transform:translateX(48px);opacity:0}}
+@keyframes toastIn{from{transform:translateY(-16px);opacity:0}}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(4deg)}}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes trophyIn{0%{transform:scale(.3) rotate(-14deg);opacity:0}70%{transform:scale(1.08) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes flipIn{0%{transform:perspective(600px) rotateY(90deg) scale(.4);opacity:0}100%{transform:perspective(600px) rotateY(0) scale(1);opacity:1}}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.2}}
+@keyframes shimmer{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes tick{from{transform:translateY(70%);opacity:0}}
+@keyframes rmFade{from{opacity:0}}
+[data-rm="1"] *{animation-name:rmFade!important;animation-duration:200ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:0s!important}
+@media (prefers-reduced-motion: reduce){[data-rivl] *{animation-name:rmFade!important;animation-duration:200ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:0s!important}}
+</style>
+</helmet>
+<div data-rivl="1" data-rm="{{ rmFlag }}" style="min-height:100vh;background:#08080C;display:flex;justify-content:center;align-items:flex-start;padding:40px 24px;box-sizing:border-box;font-family:Inter,sans-serif">
+<div style="{{ shellStyle }}">
+  <sc-if value="{{ isDesktop }}">
+    <div style="height:40px;flex:none;display:flex;align-items:center;gap:8px;padding:0 14px;background:var(--surface);border-bottom:1px solid var(--border)"><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="width:11px;height:11px;border-radius:50%;background:var(--border)"></span><span style="margin:0 auto;padding:4px 48px;border-radius:8px;background:var(--surface-2);font:500 12px Inter;color:var(--text-muted)">rivl.app</span></div>
+  </sc-if>
+  <div style="{{ bodyStyle }}">
+    <div style="position:relative;display:flex;flex-direction:column;min-height:0;min-width:0;flex:1;overflow:hidden">
+      <sc-if value="{{ isPhone }}">
+        <div style="height:44px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px;font:600 15px Inter"><span>9:41</span><span style="display:flex;gap:4px;font-family:'Material Symbols Rounded';font-size:17px;line-height:1;font-variation-settings:'FILL' 1"><span>signal_cellular_alt</span><span>wifi</span><span>battery_full</span></span></div>
+      </sc-if>
+      <sc-if value="{{ isDesktop }}">
+        <div style="height:52px;flex:none;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--border)"><span style="display:inline-flex;font:700 24px 'Space Grotesk';letter-spacing:-0.04em;color:var(--text)">r<span style="position:relative">ı<span style="position:absolute;left:50%;top:.12em;width:.22em;height:.22em;border-top:.09em solid var(--accent);border-left:.09em solid var(--accent);transform:translateX(-50%) rotate(45deg)"></span></span>vl</span></div>
+      </sc-if>
+
+      <sc-if value="{{ inOnb }}">
+        <div data-screen-label="Onboarding" style="flex:1;min-height:0;display:flex;flex-direction:column;padding:8px 20px 28px">
+          <div style="height:44px;display:flex;align-items:center;justify-content:space-between">
+            <button onClick="{{ onbBack }}" aria-label="Back" style="{{ backStyle }}"><span style="font-family:'Material Symbols Rounded';font-size:24px;line-height:1">arrow_back</span></button>
+            <div style="display:flex;gap:6px;align-items:center"><sc-for list="{{ dots }}" as="d" hint-placeholder-count="5"><span style="{{ d }}"></span></sc-for></div>
+            <button onClick="{{ finishOnb }}" style="height:44px;padding:0 4px;border:none;background:transparent;font:500 14px Inter;color:var(--text-muted);cursor:pointer">Skip</button>
+          </div>
+          <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:20px;padding-top:32px">
+            <sc-if value="{{ step0 }}">
+              <div style="font:600 13px Inter;color:var(--accent-text)">Step 1 of 5</div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em;text-wrap:pretty">What should your rivals call you?</div>
+              <input value="{{ name }}" onChange="{{ setName }}" placeholder="Your name" style="height:56px;padding:0 16px;border-radius:12px;border:1.5px solid var(--accent);background:var(--surface);font:600 20px Inter;outline:none">
+              <div style="font:400 14px Inter;color:var(--text-muted)">This is how you show up on the board.</div>
+            </sc-if>
+            <sc-if value="{{ step1 }}">
+              <div style="font:600 13px Inter;color:var(--accent-text)">Step 2 of 5</div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em">Pick your coach</div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ coachOpts }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.pick }}" style="{{ o.style }}">
+                    <span style="{{ o.iconWrap }}"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;font-variation-settings:'FILL' 1">{{ o.icon }}</span></span>
+                    <span style="flex:1;text-align:left"><span style="display:block;font:600 16px Inter">{{ o.name }}</span><span style="display:block;font:400 14px/1.4 Inter;color:var(--text-muted);margin-top:3px;text-wrap:pretty">{{ o.sample }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ step2 }}">
+              <div style="font:600 13px Inter;color:var(--accent-text)">Step 3 of 5</div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em">Pick your colour</div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <sc-for list="{{ accentOpts }}" as="o" hint-placeholder-count="6">
+                  <button onClick="{{ o.pick }}" style="{{ o.tile }}"><span style="{{ o.dot }}"></span><span style="font:600 14px Inter">{{ o.name }}</span></button>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:16px;background:var(--surface);border:1px solid var(--border)"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;font-variation-settings:'wght' 700">check</span></span><span style="flex:1;font:500 15px Inter">Preview task</span><span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';padding:4px 10px;border-radius:999px">30</span></div>
+            </sc-if>
+            <sc-if value="{{ step3 }}">
+              <div style="font:600 13px Inter;color:var(--accent-text)">Step 4 of 5</div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em">When does your day start?</div>
+              <div style="display:flex;flex-wrap:wrap;gap:10px"><sc-for list="{{ timeOpts }}" as="o" hint-placeholder-count="6"><button onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for></div>
+              <div style="font:400 14px/1.4 Inter;color:var(--text-muted)">Your coach sends the morning message then.</div>
+            </sc-if>
+            <sc-if value="{{ step4 }}">
+              <div style="font:600 13px Inter;color:var(--accent-text)">Step 5 of 5</div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em">Weekly points goal</div>
+              <div style="display:flex;flex-direction:column;gap:12px"><sc-for list="{{ goalOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="{{ o.style }}"><span style="font:700 28px 'Space Grotesk';font-variant-numeric:tabular-nums;width:72px;text-align:left">{{ o.pts }}</span><span style="flex:1;text-align:left"><span style="display:block;font:600 16px Inter">{{ o.label }}</span><span style="display:block;font:400 13px Inter;color:var(--text-muted);margin-top:2px">{{ o.desc }}</span></span></button></sc-for></div>
+            </sc-if>
+            <sc-if value="{{ step5 }}">
+              <div style="width:72px;height:72px;border-radius:24px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:40px;line-height:1;font-variation-settings:'FILL' 1">swords</span></div>
+              <div style="font:700 28px/1.15 'Space Grotesk';letter-spacing:-0.02em;text-wrap:pretty">Rivl needs a rival. Bring one.</div>
+              <div style="font:400 16px/1.5 Inter;color:var(--text-muted);text-wrap:pretty">Invite a friend. You both start the week at zero, and the board resets every Monday.</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 6px 0 16px;border-radius:12px;background:var(--surface);border:1px solid var(--border)"><span style="font:500 14px 'JetBrains Mono';color:var(--text-muted)">{{ inviteLink }}</span><button onClick="{{ copyLink }}" style="height:36px;padding:0 12px;border-radius:999px;border:none;background:var(--surface-2);font:600 13px Inter;cursor:pointer">Copy</button></div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ notInvite }}">
+            <button onClick="{{ onbNext }}" style="height:56px;border-radius:999px;border:none;background:var(--accent);color:var(--on-accent);font:600 16px Inter;cursor:pointer">Continue</button>
+          </sc-if>
+          <sc-if value="{{ step5 }}">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button onClick="{{ inviteWA }}" style="height:56px;border-radius:999px;border:none;background:#25D366;color:#0B0B10;font:600 16px Inter;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;font-variation-settings:'FILL' 1">chat</span>Invite on WhatsApp</button>
+              <button onClick="{{ finishOnb }}" style="height:48px;border-radius:999px;border:none;background:transparent;font:500 15px Inter;color:var(--text-muted);cursor:pointer">Skip for now</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ inApp }}">
+        <div style="flex:1;min-height:0;position:relative">
+
+          <sc-if value="{{ tabToday }}">
+            <div data-screen-label="Today" style="position:absolute;inset:0;overflow-y:auto;padding:8px 16px 88px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-top:4px">
+                <div><div style="font:500 13px Inter;color:var(--text-muted)">Friday, Oct 23</div><div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;margin-top:2px">Morning, {{ name }}</div></div>
+                <sc-if value="{{ streakActive }}">
+                  <div aria-label="Streak active" style="display:flex;align-items:center;gap:4px;height:36px;padding:0 12px 0 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border);box-shadow:0 0 18px color-mix(in oklab, #FF7A1A 35%, transparent)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;font-variation-settings:'FILL' 1;background:linear-gradient(0deg,#FF7A1A,#FFC93D);-webkit-background-clip:text;background-clip:text;color:transparent;animation:flicker 1.6s ease-in-out infinite">local_fire_department</span><span style="display:inline-block;overflow:hidden;font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums"><span style="display:inline-block;animation:tick 300ms ease-out">{{ streak }}</span></span></div>
+                </sc-if>
+                <sc-if value="{{ streakRisk }}">
+                  <div aria-label="Streak at risk" style="display:flex;align-items:center;gap:4px;height:36px;padding:0 12px 0 8px;border-radius:999px;background:var(--surface);border:1px dashed var(--border);color:var(--text-muted)"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">local_fire_department</span><span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ streak }}</span><span style="font:500 12px Inter">at risk</span></div>
+                </sc-if>
+              </div>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--border)">
+                <div><div style="font:500 12px Inter;color:var(--text-muted)">Today</div><div style="font:700 40px/1 'Space Grotesk';font-variant-numeric:tabular-nums;margin-top:6px">{{ todayPts }}<span style="font:500 16px Inter;color:var(--text-muted)"> pts</span></div></div>
+                <div style="text-align:right"><div style="font:500 12px Inter;color:var(--text-muted)">This week</div><div style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums;margin-top:4px">{{ youPts }}<span style="font:500 13px Inter;color:var(--text-muted)"> / {{ goal }}</span></div></div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:flex-start">
+                <div style="width:36px;height:36px;border-radius:50%;background:var(--coach-tint);color:var(--coach-ink);display:grid;place-items:center;flex:none"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;font-variation-settings:'FILL' 1">{{ coach.icon }}</span></div>
+                <div style="background:var(--coach-tint);border-radius:4px 16px 16px 16px;padding:10px 14px;flex:1"><div style="font:600 12px Inter;color:var(--coach-ink);margin-bottom:3px">{{ coach.name }}</div><div style="font:400 15px/1.4 Inter;text-wrap:pretty">{{ coach.line }}</div></div>
+              </div>
+              <button onClick="{{ plan }}" style="height:44px;border-radius:999px;border:1.5px solid var(--accent);color:var(--accent-text);background:transparent;font:600 15px Inter;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;font-variation-settings:'FILL' 1">auto_awesome</span>Plan my day</button>
+              <sc-if value="{{ hasOpen }}" hint-placeholder-val="{{ true }}">
+                <div style="font:400 12px Inter;color:var(--text-muted);padding:0 4px">Swipe right to complete, left for options.</div>
+              </sc-if>
+              <sc-for list="{{ open }}" as="t" hint-placeholder-count="5">
+                <sc-if value="{{ t.isOverdue }}"><div style="display:flex;align-items:center;gap:4px;font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--danger);padding:4px 4px 0"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">schedule</span>Overdue</div></sc-if>
+                <sc-if value="{{ t.isToday }}"><div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:4px 4px 0">Today</div></sc-if>
+                <div style="position:relative">
+                  <div style="{{ t.wrapStyle }}">
+                    <sc-if value="{{ t.swiping }}">
+                      <div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr"><div style="background:var(--accent);color:var(--on-accent);display:flex;align-items:center;gap:6px;padding-left:18px;font:600 14px Inter"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1">check</span>Done</div><div style="background:var(--surface-2);display:flex;align-items:center;justify-content:flex-end;gap:6px;padding-right:18px;font:600 14px Inter">Options<span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1">more_horiz</span></div></div>
+                    </sc-if>
+                    <div onPointerDown="{{ t.down }}" onPointerMove="{{ t.move }}" onPointerUp="{{ t.up }}" onPointerLeave="{{ t.up }}" onPointerCancel="{{ t.up }}" style="{{ t.fgStyle }}">
+                      <button onClick="{{ t.toggle }}" aria-label="Complete task" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer">
+                        <sc-if value="{{ t.completing }}"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;animation:pop 320ms cubic-bezier(.3,1.6,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;font-variation-settings:'wght' 700">check</span></span></sc-if>
+                        <sc-if value="{{ t.idle }}"><span style="width:28px;height:28px;border-radius:50%;border:2px solid var(--text-muted);box-sizing:border-box"></span></sc-if>
+                      </button>
+                      <div style="flex:1;min-width:0"><div style="font:500 15px Inter">{{ t.title }}</div><div style="display:flex;align-items:center;gap:8px;margin-top:5px"><span aria-label="{{ t.diffLabel }}" style="display:flex;gap:3px"><sc-for list="{{ t.pips }}" as="p"><span style="{{ p }}"></span></sc-for></span><span style="font:400 12px Inter;color:var(--text-muted)">{{ t.meta }}</span></div></div>
+                      <span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">{{ t.pts }}</span>
+                    </div>
+                  </div>
+                  <sc-if value="{{ t.completing }}"><span style="position:absolute;right:14px;top:-8px;font:700 18px 'Space Grotesk';color:var(--accent-text);animation:floatUp 620ms ease-out forwards;pointer-events:none">+{{ t.pts }}</span></sc-if>
+                  <sc-if value="{{ t.hard }}"><span style="position:absolute;left:26px;top:50%;width:0;height:0;pointer-events:none"><sc-for list="{{ confetti }}" as="c"><span style="{{ c }}"></span></sc-for></span></sc-if>
+                </div>
+              </sc-for>
+              <sc-if value="{{ allDone }}">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 16px;border-radius:16px;border:1px dashed var(--border);text-align:center">
+                  <div style="width:72px;height:72px;border-radius:50%;border:2px solid var(--accent);color:var(--accent-text);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:40px;line-height:1">task_alt</span></div>
+                  <div style="font:700 20px 'Space Grotesk'">All clear</div>
+                  <div style="font:400 14px/1.4 Inter;color:var(--text-muted);max-width:260px;text-wrap:pretty">{{ coach.line }}</div>
+                  <button onClick="{{ openAdd }}" style="height:44px;padding:0 20px;border-radius:999px;border:none;background:var(--accent);color:var(--on-accent);font:600 15px Inter;cursor:pointer">Add a task</button>
+                </div>
+              </sc-if>
+              <button onClick="{{ toggleDone }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0 4px;border:none;background:transparent;cursor:pointer;font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)"><span>Done · {{ doneCount }}</span><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1">{{ doneChev }}</span></button>
+              <sc-if value="{{ doneOpen }}">
+                <sc-for list="{{ doneList }}" as="t">
+                  <div style="display:flex;align-items:center;gap:8px;padding:6px 12px 6px 4px;background:var(--surface);border:1px solid var(--border);border-radius:16px;animation:fadeIn 200ms ease-out">
+                    <button onClick="{{ t.undo }}" aria-label="Mark not done" style="width:44px;height:44px;flex:none;border:none;background:transparent;padding:0;display:grid;place-items:center;cursor:pointer"><span style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;font-variation-settings:'wght' 700">check</span></span></button>
+                    <div style="flex:1;font:500 15px Inter;text-decoration:line-through;color:var(--text-muted)">{{ t.title }}</div>
+                    <span style="background:var(--surface-2);color:var(--text-muted);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">{{ t.pts }}</span>
+                  </div>
+                </sc-for>
+              </sc-if>
+            </div>
+            <button onClick="{{ goBoard }}" style="position:absolute;left:16px;right:16px;bottom:12px;display:flex;align-items:center;gap:10px;padding:0 10px 0 16px;min-height:48px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);box-shadow:0 -12px 24px var(--bg);cursor:pointer;text-align:left">
+              <span style="font:700 18px 'Space Grotesk';color:var(--accent-text);font-variant-numeric:tabular-nums">#{{ rank }}</span>
+              <span style="font:500 14px Inter;flex:1">this week · {{ gapText }}</span>
+              <sc-if value="{{ movedUp }}"><span style="display:flex;align-items:center;gap:2px;font:600 12px Inter;color:var(--success)"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">arrow_upward</span>Up {{ moveBy }}</span></sc-if>
+              <span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:var(--text-muted)">chevron_right</span>
+            </button>
+          </sc-if>
+
+          <sc-if value="{{ tabBoard }}">
+            <div data-screen-label="Leaderboard" onScroll="{{ onBoardScroll }}" ref="{{ boardRef }}" style="position:absolute;inset:0;overflow-y:auto;padding:8px 16px 88px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+                <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em">This week</div>
+                <div style="display:flex;align-items:center;gap:4px;height:32px;padding:0 12px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font:600 13px Inter;font-variant-numeric:tabular-nums"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;color:var(--text-muted)">timer</span>Resets in {{ countdown }}</div>
+              </div>
+              <sc-if value="{{ boardLoading }}">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end;height:250px;margin-top:20px"><div style="height:150px;border-radius:16px 16px 0 0;background:var(--surface-2);animation:shimmer 1s ease-in-out infinite"></div><div style="height:200px;border-radius:16px 16px 0 0;background:var(--surface-2);animation:shimmer 1s ease-in-out infinite"></div><div style="height:120px;border-radius:16px 16px 0 0;background:var(--surface-2);animation:shimmer 1s ease-in-out infinite"></div></div>
+                <sc-for list="{{ skeleton4 }}" as="s"><div style="height:50px;border-radius:16px;background:var(--surface);border:1px solid var(--border);animation:shimmer 1s ease-in-out infinite"></div></sc-for>
+              </sc-if>
+              <sc-if value="{{ boardReady }}">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end;margin-top:20px">
+                  <sc-for list="{{ podium }}" as="p" hint-placeholder-count="3">
+                    <div data-you="{{ p.youFlag }}" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+                      <span style="{{ p.avStyle }}">{{ p.init }}</span>
+                      <div style="text-align:center"><div style="font:600 14px Inter;display:flex;align-items:center;gap:2px;justify-content:center">{{ p.name }}<sc-if value="{{ p.flashUp }}"><span aria-label="moved up" style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;color:var(--success);animation:flash 400ms ease-in-out 3">arrow_upward</span></sc-if><sc-if value="{{ p.flashDown }}"><span aria-label="moved down" style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1;color:var(--danger);animation:flash 400ms ease-in-out 3">arrow_downward</span></sc-if></div><div style="font:700 14px 'Space Grotesk';color:var(--text-muted);font-variant-numeric:tabular-nums">{{ p.pts }}</div></div>
+                      <div style="{{ p.blockStyle }}">{{ p.rank }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="position:relative;height:232px;margin-top:-4px">
+                  <sc-for list="{{ listRows }}" as="r" hint-placeholder-count="4">
+                    <button onClick="{{ r.nudge }}" data-you="{{ r.youFlag }}" style="{{ r.style }}">
+                      <span style="font:700 16px 'Space Grotesk';width:20px;color:var(--text-muted)">{{ r.rank }}</span>
+                      <span style="{{ r.avS }}">{{ r.init }}</span>
+                      <span style="flex:1;font:500 15px Inter;text-align:left">{{ r.name }}</span>
+                      <sc-if value="{{ r.flashUp }}"><span aria-label="moved up" style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:var(--success);animation:flash 400ms ease-in-out 3">arrow_upward</span></sc-if>
+                      <sc-if value="{{ r.flashDown }}"><span aria-label="moved down" style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:var(--danger);animation:flash 400ms ease-in-out 3">arrow_downward</span></sc-if>
+                      <span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+                <div style="font:400 12px Inter;color:var(--text-muted);padding:0 4px">Tap a friend to nudge them.</div>
+                <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:12px 4px 0">Challenges</div>
+                <div style="display:flex;gap:12px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scroll-snap-type:x mandatory">
+                  <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+                    <div style="flex:none;width:280px;scroll-snap-align:start;padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
+                      <div style="display:flex;justify-content:space-between;font:600 12px Inter;color:var(--text-muted)"><span>{{ c.title }}</span><span style="display:flex;align-items:center;gap:3px;color:var(--text)"><span style="font-family:'Material Symbols Rounded';font-size:14px;line-height:1">{{ c.endsIcon }}</span>{{ c.ends }}</span></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between">
+                        <div style="display:flex;align-items:center;gap:8px"><span style="{{ c.youAv }}">{{ youInit }}</span><span style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.you }}</span></div>
+                        <span style="font:700 14px 'Space Grotesk';font-style:italic;color:var(--accent-text)">VS</span>
+                        <div style="display:flex;align-items:center;gap:8px"><span style="font:700 20px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.them }}</span><span style="{{ c.themAv }}">{{ c.themInit }}</span></div>
+                      </div>
+                      <div style="display:flex;flex-direction:column;gap:5px"><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.youBar }}"></div></div><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.themBar }}"></div></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <sc-if value="{{ showPin }}">
+              <div style="position:absolute;left:16px;right:16px;bottom:12px;display:flex;align-items:center;gap:12px;padding:8px 14px;min-height:44px;border-radius:16px;background:var(--surface-2);border:1.5px solid var(--accent);box-shadow:0 -12px 24px var(--bg);animation:fadeIn 150ms ease-out">
+                <span style="font:700 16px 'Space Grotesk';color:var(--accent-text);width:24px">#{{ rank }}</span>
+                <span style="{{ youAvSm }}">{{ youInit }}</span>
+                <div style="flex:1"><div style="font:600 15px Inter">You</div><div style="font:400 12px Inter;color:var(--text-muted)">{{ gapText }}</div></div>
+                <span style="font:700 18px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ youPts }}</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ tabFeed }}">
+            <div data-screen-label="Feed" style="position:absolute;inset:0;overflow-y:auto;padding:8px 16px 24px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:12px">
+              <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;padding-top:4px">Feed</div>
+              <div style="display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px">
+                <sc-for list="{{ nudges }}" as="n" hint-placeholder-count="2">
+                  <div style="flex:none;display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--border)"><span style="{{ n.av }}">{{ n.init }}</span><span style="font:400 13px Inter;white-space:nowrap"><span style="font-weight:600">{{ n.name }}</span> nudged you · {{ n.msg }}</span></div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ feedLoading }}">
+                <sc-for list="{{ skeleton3 }}" as="s"><div style="height:132px;border-radius:16px;background:var(--surface);border:1px solid var(--border);animation:shimmer 1s ease-in-out infinite"></div></sc-for>
+              </sc-if>
+              <sc-if value="{{ feedReady }}">
+                <sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+                  <div style="padding:14px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
+                    <div style="display:flex;align-items:center;gap:10px"><span style="{{ f.av }}">{{ f.init }}</span><div style="flex:1;font:400 14px Inter"><span style="font-weight:600">{{ f.name }}</span> completed</div><span style="font:400 12px Inter;color:var(--text-muted)">{{ f.ago }}</span></div>
+                    <div style="display:flex;align-items:center;gap:10px"><div style="flex:1;font:600 16px/1.3 'Space Grotesk'">{{ f.task }}</div><span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:999px">+{{ f.pts }}</span></div>
+                    <sc-if value="{{ f.photo }}"><div style="height:180px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--surface-2) 0 10px,var(--surface) 10px 20px);display:grid;place-items:center;font:500 12px 'JetBrains Mono';color:var(--text-muted)">{{ f.photo }}</div></sc-if>
+                    <div style="display:flex;gap:6px">
+                      <sc-for list="{{ f.reacts }}" as="r"><button onClick="{{ r.toggle }}" aria-label="{{ r.label }}" style="{{ r.style }}"><span style="{{ r.iconStyle }}">{{ r.icon }}</span><span style="font:600 13px Inter;font-variant-numeric:tabular-nums">{{ r.count }}</span></button></sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tabMe }}">
+            <div data-screen-label="Profile" style="position:absolute;inset:0;overflow-y:auto;padding:8px 16px 32px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:12px">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0 8px;text-align:center">
+                <span style="{{ meAv }}">{{ youInit }}</span>
+                <div style="font:700 28px 'Space Grotesk';letter-spacing:-0.02em;margin-top:10px">{{ name }} Adeyemi</div>
+                <div style="font:500 14px Inter;color:var(--text-muted)">@{{ handle }}</div>
+                <div style="font:400 15px/1.4 Inter;max-width:280px;text-wrap:pretty">Designer in Lagos. Coming for Kemi's crown.</div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <sc-for list="{{ stats }}" as="s" hint-placeholder-count="3"><div style="padding:14px 12px;border-radius:16px;background:var(--surface);border:1px solid var(--border)"><div style="font:700 28px/1 'Space Grotesk';font-variant-numeric:tabular-nums">{{ s.value }}</div><div style="font:500 12px Inter;color:var(--text-muted);margin-top:6px">{{ s.label }}</div></div></sc-for>
+              </div>
+              <div style="padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:600 15px Inter">Streak calendar</span><span style="font:500 12px Inter;color:var(--text-muted)">Last 18 weeks</span></div>
+                <div style="display:grid;grid-template-rows:repeat(7,auto);grid-auto-flow:column;grid-auto-columns:1fr;gap:3px"><sc-for list="{{ heat }}" as="h" hint-placeholder-count="126"><span style="{{ h }}"></span></sc-for></div>
+                <div style="display:flex;justify-content:flex-end;align-items:center;gap:4px;font:500 11px Inter;color:var(--text-muted)">Less<sc-for list="{{ heatLegend }}" as="h"><span style="{{ h }}"></span></sc-for>More</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 4px 0"><span style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Badges</span><span style="font:500 12px Inter;color:var(--text-muted)">{{ badgeCount }} of 8</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                <sc-for list="{{ badges }}" as="b" hint-placeholder-count="8">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:16px;background:var(--surface);border:1px solid var(--border);text-align:center">
+                    <span style="{{ b.disc }}"><span style="font-family:'Material Symbols Rounded';font-size:26px;line-height:1;font-variation-settings:'FILL' 1">{{ b.icon }}</span><sc-if value="{{ b.locked }}"><span style="position:absolute;right:-4px;bottom:-4px;width:20px;height:20px;border-radius:50%;background:var(--surface-2);border:2px solid var(--surface);display:grid;place-items:center;font-family:'Material Symbols Rounded';font-size:12px;line-height:1;color:var(--text-muted);font-variation-settings:'FILL' 1">lock</span></sc-if></span>
+                    <span style="{{ b.nameStyle }}">{{ b.name }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:12px 4px 0">Appearance</div>
+              <div style="padding:16px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 15px Inter">Accent</span><span style="font:500 13px Inter;color:var(--text-muted)">{{ accentName }}</span></div>
+                <div style="display:flex;justify-content:space-between"><sc-for list="{{ swatches }}" as="s" hint-placeholder-count="6"><button onClick="{{ s.pick }}" aria-label="{{ s.name }}" style="{{ s.style }}"><sc-if value="{{ s.on }}"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;color:#0B0B10;font-variation-settings:'wght' 700">check</span></sc-if></button></sc-for></div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 15px Inter">Mode</span><div style="display:flex;gap:4px;padding:3px;border-radius:999px;background:var(--surface-2)"><sc-for list="{{ modes }}" as="m"><button onClick="{{ m.pick }}" style="{{ m.style }}"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">{{ m.icon }}</span>{{ m.name }}</button></sc-for></div></div>
+                <div style="font:500 15px Inter">Coach</div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:-8px"><sc-for list="{{ coachOpts }}" as="o"><button onClick="{{ o.pick }}" style="{{ o.style }}"><span style="{{ o.iconWrap }}"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;font-variation-settings:'FILL' 1">{{ o.icon }}</span></span><span style="flex:1;text-align:left;font:600 15px Inter">{{ o.name }}</span></button></sc-for></div>
+              </div>
+              <button onClick="{{ replayOnb }}" style="height:44px;border-radius:999px;border:1px solid var(--border);background:transparent;font:500 14px Inter;color:var(--text-muted);cursor:pointer">Replay onboarding</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="height:84px;flex:none;padding:0 12px 18px;box-sizing:border-box;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;justify-items:center;position:relative;z-index:5">
+          <sc-for list="{{ navLeft }}" as="n" hint-placeholder-count="2"><button onClick="{{ n.go }}" style="{{ n.style }}"><span style="{{ n.iconStyle }}">{{ n.icon }}</span>{{ n.label }}</button></sc-for>
+          <button onClick="{{ openAdd }}" aria-label="Quick add" style="width:56px;height:56px;border-radius:50%;border:none;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg);cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:30px;line-height:1;font-variation-settings:'wght' 600">add</span></button>
+          <sc-for list="{{ navRight }}" as="n" hint-placeholder-count="2"><button onClick="{{ n.go }}" style="{{ n.style }}"><span style="{{ n.iconStyle }}">{{ n.icon }}</span>{{ n.label }}</button></sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ toast }}">
+        <div role="status" style="position:absolute;top:52px;left:16px;right:16px;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;min-height:44px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);box-shadow:0 12px 32px rgba(0,0,0,.35);animation:toastIn 220ms ease-out">
+          <sc-if value="{{ toast.hasAv }}"><span style="{{ toast.av }}">{{ toast.init }}</span></sc-if>
+          <sc-if value="{{ toast.hasIcon }}"><span style="{{ toast.iconWrap }}"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;font-variation-settings:'FILL' 1">{{ toast.icon }}</span></span></sc-if>
+          <span style="flex:1;font:500 14px/1.3 Inter;text-wrap:pretty">{{ toast.text }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ sheetOpen }}">
+        <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:30;background:rgba(5,5,8,.6);animation:fadeIn 180ms ease-out"></div>
+        <div role="dialog" style="position:absolute;left:0;right:0;bottom:0;z-index:31;background:var(--surface);border-radius:24px 24px 0 0;border-top:1px solid var(--border);padding:8px 16px 28px;display:flex;flex-direction:column;gap:16px;animation:sheetUp 240ms cubic-bezier(.2,.8,.3,1)">
+          <div style="width:40px;height:4px;border-radius:2px;background:var(--border);align-self:center"></div>
+          <sc-if value="{{ sheetAdd }}">
+            <div style="font:700 20px 'Space Grotesk'">Quick add</div>
+            <input value="{{ addTitle }}" onChange="{{ setAddTitle }}" onKeyDown="{{ addKey }}" autoFocus="{{ true }}" placeholder="What needs doing?" style="height:48px;padding:0 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font:500 16px Inter;outline:none">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font:500 14px Inter;color:var(--text-muted)">Difficulty · {{ addDiffLabel }}</span><span style="background:var(--accent);color:var(--on-accent);font:700 13px 'Space Grotesk';padding:4px 10px;border-radius:999px">+{{ addPts }} pts</span></div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><sc-for list="{{ diffOpts }}" as="d"><button onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.n }}</button></sc-for></div>
+            <div style="display:flex;gap:8px"><sc-for list="{{ dueOpts }}" as="d"><button onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.label }}</button></sc-for></div>
+            <button onClick="{{ addTask }}" style="height:52px;border-radius:999px;border:none;background:var(--accent);color:var(--on-accent);font:600 16px Inter;cursor:pointer">Add task</button>
+          </sc-if>
+          <sc-if value="{{ sheetOptions }}">
+            <div><div style="font:700 20px 'Space Grotesk'">{{ optTask.title }}</div><div style="font:400 13px Inter;color:var(--text-muted);margin-top:4px">{{ optTask.diffLabel }} · {{ optTask.pts }} pts</div></div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px"><sc-for list="{{ optDiff }}" as="d"><button onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.n }}</button></sc-for></div>
+            <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--bg);border:1px solid var(--border);overflow:hidden">
+              <button onClick="{{ optComplete }}" style="display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;border:none;background:transparent;font:500 15px Inter;cursor:pointer;text-align:left"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:var(--accent-text)">check_circle</span>Complete</button>
+              <button onClick="{{ optTomorrow }}" style="display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;border:none;border-top:1px solid var(--border);background:transparent;font:500 15px Inter;cursor:pointer;text-align:left"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1;color:var(--text-muted)">event_upcoming</span>Move to tomorrow</button>
+              <button onClick="{{ optDelete }}" style="display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;border:none;border-top:1px solid var(--border);background:transparent;font:500 15px Inter;color:var(--danger);cursor:pointer;text-align:left"><span style="font-family:'Material Symbols Rounded';font-size:22px;line-height:1">delete</span>Delete</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ sheetNudge }}">
+            <div style="display:flex;align-items:center;gap:12px"><span style="{{ nudgeAv }}">{{ nudgeTo.init }}</span><div><div style="font:700 20px 'Space Grotesk'">Nudge {{ nudgeTo.name }}</div><div style="font:400 13px Inter;color:var(--text-muted);margin-top:2px">#{{ nudgeTo.rank }} · {{ nudgeTo.pts }} pts</div></div></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ nudgeOpts }}" as="o"><button onClick="{{ o.pick }}" style="{{ o.style }}"><span style="{{ o.radio }}"></span>{{ o.text }}</button></sc-for></div>
+            <button onClick="{{ sendNudge }}" style="height:52px;border-radius:999px;border:none;background:var(--accent);color:var(--on-accent);font:600 16px Inter;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer"><span style="font-family:'Material Symbols Rounded';font-size:20px;line-height:1;font-variation-settings:'FILL' 1">send</span>Send nudge</button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ ovTrophy }}">
+        <div onClick="{{ dismissOverlay }}" style="position:absolute;inset:0;z-index:50;background:color-mix(in oklab, var(--bg) 94%, transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;cursor:pointer;animation:fadeIn 200ms ease-out">
+          <div style="width:200px;height:200px;border-radius:50%;background:radial-gradient(circle, color-mix(in oklab, #FFC93D 30%, transparent), transparent 68%);display:grid;place-items:center;animation:trophyIn 700ms cubic-bezier(.3,1.4,.5,1)"><span style="font-family:'Material Symbols Rounded';font-size:120px;line-height:1;color:#FFC93D;font-variation-settings:'FILL' 1">emoji_events</span></div>
+          <div style="font:600 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)">Challenge won</div>
+          <div style="font:700 40px/1.05 'Space Grotesk';letter-spacing:-0.02em">You beat Tobi</div>
+          <div style="font:400 16px Inter;color:var(--text-muted)">First to 20 tasks · 20–18</div>
+          <span style="margin-top:8px;background:var(--accent);color:var(--on-accent);font:700 20px 'Space Grotesk';padding:6px 16px;border-radius:999px">+100 pts</span>
+          <div style="font:500 13px Inter;color:var(--text-muted);margin-top:28px">Tap to continue</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ ovBadge }}">
+        <div onClick="{{ dismissOverlay }}" style="position:absolute;inset:0;z-index:50;background:color-mix(in oklab, var(--bg) 94%, transparent);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;cursor:pointer;animation:fadeIn 200ms ease-out">
+          <div style="width:136px;height:136px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;box-shadow:0 0 48px 8px color-mix(in oklab, var(--accent) 30%, transparent);animation:flipIn 500ms cubic-bezier(.2,.9,.3,1.2)"><span style="font-family:'Material Symbols Rounded';font-size:68px;line-height:1;font-variation-settings:'FILL' 1">{{ ovBadgeData.icon }}</span></div>
+          <div style="font:600 13px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-top:12px">Badge earned</div>
+          <div style="font:700 40px/1.05 'Space Grotesk';letter-spacing:-0.02em">{{ ovBadgeData.name }}</div>
+          <div style="font:400 16px Inter;color:var(--text-muted)">{{ ovBadgeData.desc }}</div>
+          <div style="font:500 13px Inter;color:var(--text-muted);margin-top:28px">Tap to continue</div>
+        </div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{ isDesktop }}">
+      <div style="border-left:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:24px;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:max-content;align-content:start;gap:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font:700 20px 'Space Grotesk'">This week</div><div style="display:flex;align-items:center;gap:4px;font:600 13px Inter;color:var(--text-muted);font-variant-numeric:tabular-nums"><span style="font-family:'Material Symbols Rounded';font-size:16px;line-height:1">timer</span>Resets in {{ countdown }}</div></div>
+        <sc-for list="{{ ranked }}" as="r" hint-placeholder-count="7">
+          <button onClick="{{ r.nudge }}" style="{{ r.flatStyle }}">
+            <span style="font:700 15px 'Space Grotesk';width:18px;color:var(--text-muted)">{{ r.rank }}</span>
+            <span style="{{ r.avS }}">{{ r.init }}</span>
+            <span style="flex:1;font:500 14px Inter;text-align:left">{{ r.name }}</span>
+            <sc-if value="{{ r.flashUp }}"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:var(--success);animation:flash 400ms ease-in-out 3">arrow_upward</span></sc-if>
+            <sc-if value="{{ r.flashDown }}"><span style="font-family:'Material Symbols Rounded';font-size:18px;line-height:1;color:var(--danger);animation:flash 400ms ease-in-out 3">arrow_downward</span></sc-if>
+            <span style="font:700 15px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ r.pts }}</span>
+          </button>
+        </sc-for>
+        <div style="font:600 12px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);padding:16px 4px 4px">Challenges</div>
+        <sc-for list="{{ challenges }}" as="c" hint-placeholder-count="2">
+          <div style="padding:12px 14px;border-radius:16px;background:var(--bg);border:1px solid var(--border);display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;font:600 12px Inter;color:var(--text-muted)"><span>{{ c.title }}</span><span style="color:var(--text)">{{ c.ends }}</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="{{ c.youAv }}">{{ youInit }}</span><span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.you }}</span><div style="flex:1;display:flex;flex-direction:column;gap:5px"><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.youBar }}"></div></div><div style="height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden"><div style="{{ c.themBar }}"></div></div></div><span style="font:700 16px 'Space Grotesk';font-variant-numeric:tabular-nums">{{ c.them }}</span><span style="{{ c.themAv }}">{{ c.themInit }}</span></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;start&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;App&quot;,&quot;Onboarding&quot;],&quot;default&quot;:&quot;App&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Phone&quot;,&quot;Desktop 1024&quot;],&quot;default&quot;:&quot;Phone&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;reduceMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Volt&quot;,&quot;Pulse&quot;,&quot;Ice&quot;,&quot;Blaze&quot;,&quot;Nova&quot;,&quot;Gold&quot;],&quot;default&quot;:&quot;Volt&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dark&quot;,&quot;Light&quot;],&quot;default&quot;:&quot;Dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;coach&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Hype Man&quot;,&quot;Calm Mentor&quot;,&quot;Savage Roaster&quot;],&quot;default&quot;:&quot;Hype Man&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const ACCENTS={Volt:['#C6FF3D','#4A7300'],Pulse:['#FF3D8B','#C8005A'],Ice:['#3DE1FF','#00728A'],Blaze:['#FF7A1A','#B04A00'],Nova:['#9B5CFF','#6E2FE0'],Gold:['#FFC93D','#8A6200']};
+const NEUTRAL={Dark:{bg:'#0B0B10',surface:'#15151D',s2:'#1E1E29',border:'#2A2A38',text:'#F4F4F8',muted:'#9A9AB0',danger:'#FF4D4F',success:'#2ED47A'},Light:{bg:'#F6F6F9',surface:'#FFFFFF',s2:'#EDEDF3',border:'#DCDCE6',text:'#111118',muted:'#5E5E72',danger:'#D42A2C',success:'#1A8F50'}};
+const COACH={'Hype Man':{icon:'campaign',tint:null,pct:15,sample:'THREE tasks before noon?! You\'re cooking. Keep going!'},'Calm Mentor':{icon:'eco',tint:'#2EC4B6',pct:12,ink:['#5EE0D3','#0E7C72'],sample:'One step at a time. Start with the smallest task and build from there.'},'Savage Roaster':{icon:'local_fire_department',tint:'#FF3D8B',pct:12,ink:['#FF6FA8','#C8005A'],sample:'Zero tasks and it\'s 6 pm. Even your to-do list is bored.'}};
+const FRIENDS=[{id:'kemi',name:'Kemi',init:'KO',hue:40,pts:520},{id:'ada',name:'Ada',init:'AN',hue:340,pts:385},{id:'tobi',name:'Tobi',init:'TB',hue:230,pts:310},{id:'chidi',name:'Chidi',init:'CE',hue:160,pts:255},{id:'zara',name:'Zara',init:'ZM',hue:90,pts:190},{id:'femi',name:'Femi',init:'FA',hue:290,pts:120}];
+const BASE=340,START_RANK=3;
+const TASKS0=[
+ {id:'inv',title:'Send invoice to Kola Studio',d:3,overdue:true,meta:'Due yesterday'},
+ {id:'run',title:'Morning run, 5 km',d:4,meta:'7:00'},
+ {id:'land',title:'Reply to landlord',d:1,meta:'2 min'},
+ {id:'deck',title:'Finish pitch deck v2',d:5,meta:'Due 5 pm'},
+ {id:'groc',title:'Buy groceries',d:2,meta:'After work'},
+ {id:'read',title:'Read 20 pages',d:2,meta:'Evening'}];
+const DIFF=['','Easy','Light','Medium','Hard','Brutal'];
+const RINGS=['#FFC93D','#C9CED6','#CD7F4A'];
+const BADGES=[{id:'early',name:'Early Bird',icon:'wb_twilight',desc:'5 tasks before 9 am'},{id:'fire',name:'On Fire',icon:'local_fire_department',desc:'7-day streak'},{id:'heavy',name:'Heavy Lifter',icon:'fitness_center',desc:'Finish a hard task'},{id:'rival',name:'Rival',icon:'swords',desc:'Win a challenge'},{id:'sweep',name:'Clean Sweep',icon:'cleaning_services',desc:'Clear a whole day'},{id:'slayer',name:'Giant Slayer',icon:'workspace_premium',desc:'Take #1 on the board'},{id:'owl',name:'Night Owl',icon:'dark_mode',desc:'10 tasks after 10 pm'},{id:'cent',name:'Centurion',icon:'military_tech',desc:'Finish 100 tasks'}];
+const FEED=[{id:'f1',who:'kemi',task:'Closed the Q3 report',pts:50,ago:'12m',r:[6,2,1]},{id:'f2',who:'ada',task:'Leg day, no skipping',pts:40,ago:'38m',photo:'post-workout photo',r:[9,4,0]},{id:'f3',who:'tobi',task:'Cleaned the whole flat',pts:20,ago:'1h',r:[2,0,5]},{id:'f4',who:'chidi',task:'Submitted visa form',pts:30,ago:'2h',r:[3,1,0]},{id:'f5',who:'zara',task:'Learned 30 Spanish words',pts:20,ago:'3h',r:[1,1,0]}];
+const REACTS=[{icon:'local_fire_department',label:'Fire'},{icon:'bolt',label:'Hype'},{icon:'visibility',label:'Watching you'}];
+const NUDGES=['Your move.','I\'m coming for your spot.','Two days left. Tick tock.','Still on that one task?'];
+const CONF=Array.from({length:14},(_,i)=>{const a=i/14*Math.PI*2,r=34+(i%3)*16;return{dx:Math.round(Math.cos(a)*r),dy:Math.round(Math.sin(a)*r)}});
+const HEAT=Array.from({length:126},(_,i)=>{const day=i-(126-7)+5;if(i>=126-2)return -1;if(i>=126-2-12)return 1+((i*7)%4);const v=(i*37+i*i*3)%11;return v<3?0:v<6?1:v<8?2:v<10?3:4});
+
+class Component extends DCLogic {
+  state={stage:null,onb:0,name:'Dami',coach:null,accent:null,mode:null,dayStart:'7 am',goal:500,
+    tab:'today',loaded:{today:true},tasks:TASKS0.map(t=>({...t})),done:{},completing:{},doneOpen:false,
+    bumped:false,sheet:null,sheetTask:null,addTitle:'',addDiff:2,addDue:'Today',toast:null,queue:[],
+    badges:{early:true,fire:true},won:false,bonus:0,reacts:{},mine:[],nudgeTo:null,nudgeMsg:0,swipe:null,flash:{},pin:false,now:Date.now()};
+  boardRef=React.createRef();
+  componentDidMount(){
+    this.timers=[];this.iv=setInterval(()=>this.setState({now:Date.now()}),30000);
+    this.rmMedia=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.lastRank=this.rankOf(this.state);
+    if(this.stage()==='app')this.scheduleNudge();
+  }
+  componentWillUnmount(){clearInterval(this.iv);this.timers.forEach(clearTimeout);clearTimeout(this.toastT)}
+  t(fn,ms){this.timers.push(setTimeout(fn,ms))}
+  stage(){return this.state.stage||(this.props.start==='Onboarding'?'onb':'app')}
+  rm(){return !!this.props.reduceMotion||this.rmMedia}
+  standings(st){
+    const pts=st.tasks.filter(t=>st.done[t.id]).reduce((a,t)=>a+t.d*10,0);
+    const you={id:'you',name:'You',init:(st.name||'D').slice(0,1).toUpperCase()+'A',hue:125,pts:BASE+pts+st.bonus,isYou:true};
+    return [...FRIENDS,you].sort((a,b)=>b.pts-a.pts||(a.isYou?-1:b.isYou?1:0));
+  }
+  rankOf(st){return this.standings(st).findIndex(r=>r.isYou)+1}
+  componentDidUpdate(){
+    const all=this.standings(this.state),r=all.findIndex(x=>x.isYou)+1;
+    if(this.lastRank&&r!==this.lastRank){
+      const up=r<this.lastRank,other=up?all[r]:all[r-2];
+      this.setState({flash:{you:up?'up':'down',[other.id]:up?'down':'up'}});
+      clearTimeout(this.flashT);this.flashT=setTimeout(()=>this.setState({flash:{}}),1400);
+      if(up)this.showToast({icon:'arrow_upward',good:true,text:`You passed ${other.name}. You're #${r}.`});
+      if(r===1&&!this.state.badges.slayer)this.setState(s=>({badges:{...s.badges,slayer:true},queue:[...s.queue,{type:'badge',id:'slayer'}]}));
+    }
+    this.lastRank=r;
+    this.checkPin();
+  }
+  checkPin(){
+    const el=this.boardRef.current;let pin=false;
+    if(el){const y=el.querySelector('[data-you="1"]');if(y){const a=el.getBoundingClientRect(),b=y.getBoundingClientRect();pin=b.bottom>a.bottom-64||b.bottom<a.top+20}}
+    if(pin!==this.state.pin)this.setState({pin});
+  }
+  scheduleNudge(){if(this.nudged)return;this.nudged=true;this.t(()=>this.showToast({who:'tobi',shake:true,text:'Tobi nudged you: "Invoice. Now."'}),7000)}
+  showToast(o){
+    this.setState({toast:null});
+    this.t(()=>{this.setState({toast:o});clearTimeout(this.toastT);this.toastT=setTimeout(()=>this.setState({toast:null}),2800)},40);
+  }
+  complete(id){
+    const s=this.state;if(s.done[id]||s.completing[id])return;
+    this.setState(st=>({completing:{...st.completing,[id]:true}}));
+    this.t(()=>this.finish(id),650);
+  }
+  finish(id){
+    this.setState(st=>{
+      const done={...st.done,[id]:true},c={...st.completing};delete c[id];
+      const t=st.tasks.find(x=>x.id===id);if(!t)return{completing:c};
+      const queue=[...st.queue],badges={...st.badges};let won=st.won,bonus=st.bonus;
+      const n=Object.keys(done).length;
+      if(t.d>=4&&!badges.heavy){badges.heavy=true;queue.push({type:'badge',id:'heavy'})}
+      if(!won&&17+n>=20){won=true;bonus+=100;queue.push({type:'trophy'});if(!badges.rival){badges.rival=true;queue.push({type:'badge',id:'rival'})}}
+      if(st.tasks.every(x=>done[x.id])&&!badges.sweep){badges.sweep=true;queue.push({type:'badge',id:'sweep'})}
+      return{done,completing:c,queue,badges,won,bonus,bumped:true,mine:[{id:'m'+id+Date.now(),task:t.title,pts:t.d*10},...st.mine]};
+    });
+  }
+  undo(id){this.setState(s=>{const d={...s.done};delete d[id];return{done:d}})}
+  dismissOverlay(){
+    const cur=this.state.queue[0];this.setState(s=>({queue:s.queue.slice(1)}));
+    if(cur&&cur.type==='badge'){const b=BADGES.find(x=>x.id===cur.id);this.showToast({icon:b.icon,text:`Badge earned: ${b.name}. It's on your profile.`})}
+  }
+  go(tab){
+    const st=this.state;
+    if(!st.loaded[tab]){this.setState({tab,loading:tab});this.t(()=>this.setState(s=>({loaded:{...s.loaded,[tab]:true},loading:null})),700)}
+    else this.setState({tab});
+  }
+  plan(){
+    const coach=this.coachName();
+    const key=coach==='Calm Mentor'?(t=>t.d):(t=>-t.d);
+    this.setState(s=>({tasks:[...s.tasks].sort((a,b)=>(b.overdue?1:0)-(a.overdue?1:0)||key(a)-key(b))}));
+    this.showToast({icon:'auto_awesome',text:{'Hype Man':'Planned: hardest first. Let\'s go.','Calm Mentor':'Planned: easiest first. Build momentum.','Savage Roaster':'Planned. You\'re out of excuses now.'}[coach]});
+  }
+  addTask(){
+    const s=this.state,title=s.addTitle.trim()||'New task';
+    if(s.addDue==='Today')this.setState(st=>({tasks:[...st.tasks,{id:'n'+Date.now(),title,d:st.addDiff,meta:'Added just now'}]}));
+    this.setState({sheet:null,addTitle:'',addDiff:2,addDue:'Today'});
+    this.showToast({icon:s.addDue==='Today'?'add_task':'event_upcoming',text:s.addDue==='Today'?`Added. Worth ${s.addDiff*10} pts.`:'Added for tomorrow.'});
+  }
+  coachName(){const c=this.state.coach||this.props.coach;return COACH[c]?c:'Hype Man'}
+  av(r,size,ring,glow){
+    const sh=[];if(ring)sh.push('0 0 0 2px var(--bg)','0 0 0 4px '+ring);if(glow)sh.push('0 0 28px 6px color-mix(in oklab, var(--accent) 30%, transparent)');
+    return{position:'relative',width:size,height:size,borderRadius:'50%',background:`oklch(0.8 0.1 ${r.hue})`,color:'#0B0B10',display:'grid',placeItems:'center',font:`700 ${Math.round(size*0.36)}px 'Space Grotesk'`,flex:'none',boxShadow:sh.join(',')||'none'};
+  }
+  renderVals(){
+    const P=this.props,S=this.state,rm=this.rm();
+    const modeName=S.mode||(P.mode==='Light'?'Light':'Dark'),dark=modeName==='Dark',N=NEUTRAL[modeName];
+    const accName=ACCENTS[S.accent]?S.accent:ACCENTS[P.accent]?P.accent:'Volt',acc=ACCENTS[accName],accentText=dark?acc[0]:acc[1];
+    const coachName=this.coachName(),C=COACH[coachName];
+    const vars={'--bg':N.bg,'--surface':N.surface,'--surface-2':N.s2,'--border':N.border,'--text':N.text,'--text-muted':N.muted,'--danger':N.danger,'--success':N.success,'--accent':acc[0],'--accent-text':accentText,'--on-accent':'#0B0B10',
+      '--coach-tint':`color-mix(in oklab, ${C.tint||acc[0]} ${C.pct}%, ${N.surface})`,'--coach-ink':C.ink?(dark?C.ink[0]:C.ink[1]):accentText};
+    const isDesktop=P.layout==='Desktop 1024';
+    const shellStyle=isDesktop?{...vars,width:1024,height:760,borderRadius:14,border:'1px solid #2A2A38',overflow:'hidden',display:'flex',flexDirection:'column',background:'var(--bg)',color:'var(--text)',boxShadow:'0 40px 80px rgba(0,0,0,.5)',flex:'none'}
+      :{...vars,width:375,height:812,borderRadius:48,border:'8px solid #1C1C24',boxShadow:'0 0 0 1px #2A2A38,0 40px 80px rgba(0,0,0,.5)',background:'var(--bg)',color:'var(--text)',position:'relative',overflow:'hidden',display:'flex',flexDirection:'column',flex:'none'};
+    const bodyStyle=isDesktop?{flex:1,minHeight:0,display:'grid',gridTemplateColumns:'480px 1fr'}:{flex:1,minHeight:0,display:'flex',flexDirection:'column'};
+    const stage=this.stage();
+
+    const {done,completing,swipe}=S;
+    const confetti=CONF.map((c,i)=>({position:'absolute',left:0,top:0,width:i%2?6:8,height:i%2?6:4,borderRadius:i%2?'50%':'1px',background:i%3===0?'var(--text)':'var(--accent)','--dx':c.dx+'px','--dy':c.dy+'px',animation:'burst 640ms cubic-bezier(.2,.7,.3,1) forwards'}));
+    const pips=d=>[1,2,3,4,5].map(n=>({width:6,height:6,borderRadius:'50%',background:n<=d?'var(--accent-text)':'var(--border)'}));
+    const mk=t=>{
+      const sw=swipe&&swipe.id===t.id?swipe.dx:0,comp=!!completing[t.id];
+      return{...t,pts:t.d*10,diffLabel:'Difficulty '+t.d+' of 5, '+DIFF[t.d],pips:pips(t.d),completing:comp,idle:!comp,hard:comp&&t.d>=4&&!rm,swiping:sw!==0,
+        toggle:()=>this.complete(t.id),undo:()=>this.undo(t.id),
+        wrapStyle:{position:'relative',borderRadius:16,overflow:'hidden',animation:comp?'slideOut 220ms ease-in 420ms forwards':'none'},
+        fgStyle:{position:'relative',display:'flex',alignItems:'center',gap:8,padding:'6px 12px 6px 4px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:16,transform:`translateX(${sw}px)`,transition:sw?'none':'transform 200ms ease-out',touchAction:'pan-y',userSelect:'none',cursor:'grab'},
+        down:e=>{this.drag={id:t.id,x:e.clientX}},
+        move:e=>{if(!this.drag||this.drag.id!==t.id)return;const dx=Math.max(-130,Math.min(130,e.clientX-this.drag.x));if(Math.abs(dx)>6)this.setState({swipe:{id:t.id,dx}})},
+        up:()=>{if(!this.drag||this.drag.id!==t.id)return;const dx=S.swipe&&S.swipe.id===t.id?S.swipe.dx:0;this.drag=null;this.setState({swipe:null});
+          if(dx>80)this.complete(t.id);else if(dx<-80)this.setState({sheet:'options',sheetTask:t.id})}};
+    };
+    const openT=S.tasks.filter(t=>!done[t.id]).sort((a,b)=>(b.overdue?1:0)-(a.overdue?1:0));
+    let last=null;
+    const open=openT.map(mk).map(t=>{const g=t.overdue?'O':'T',h=g!==last;last=g;return{...t,isOverdue:h&&g==='O',isToday:h&&g==='T'}});
+    const doneList=S.tasks.filter(t=>done[t.id]).map(mk);
+    const todayPts=doneList.reduce((a,t)=>a+t.pts,0),openPts=openT.reduce((a,t)=>a+t.d*10,0);
+
+    const all=this.standings(S),yi=all.findIndex(r=>r.isYou),rank=yi+1,ahead=all[yi-1],behind=all[yi+1],lead=all[0].pts,you=all[yi];
+    const gap=ahead?ahead.pts-you.pts:0,an=ahead?ahead.name:'';
+    const gapText=!ahead?'top of the board':gap===0?`tied with ${an}`:`${gap} pts behind ${an}`;
+    const fl=id=>S.flash[id];
+    const decorate=(r,i)=>({...r,rank:i+1,youFlag:r.isYou?'1':'0',avS:this.av(r,36,RINGS[i]),flashUp:fl(r.id)==='up',flashDown:fl(r.id)==='down',
+      nudge:()=>{if(!r.isYou)this.setState({sheet:'nudge',nudgeTo:r.id,nudgeMsg:0})},
+      flatStyle:{display:'flex',alignItems:'center',gap:12,padding:'6px 10px',minHeight:44,borderRadius:12,background:r.isYou?'var(--surface-2)':'transparent',border:r.isYou?'1.5px solid var(--accent)':'1.5px solid transparent',cursor:r.isYou?'default':'pointer',width:'100%'}});
+    const ranked=all.map(decorate);
+    const byId={};ranked.forEach(r=>byId[r.id]=r);
+    const listRows=['you',...FRIENDS.map(f=>f.id)].map(id=>{const r=byId[id],hide=r.rank<=3;return{...r,style:{position:'absolute',left:0,right:0,top:Math.max(0,r.rank-4)*58,height:50,display:'flex',alignItems:'center',gap:12,padding:'0 14px',borderRadius:16,background:'var(--surface)',border:r.isYou?'1.5px solid var(--accent)':'1px solid var(--border)',opacity:hide?0:1,pointerEvents:hide?'none':'auto',transition:'top 300ms ease-out, opacity 200ms ease-out',cursor:r.isYou?'default':'pointer',textAlign:'left'}}});
+    const heights=[100,136,76];
+    const podium=[1,0,2].map((i,k)=>{const r=ranked[i],first=i===0;return{...r,avStyle:this.av(r,first?68:56,RINGS[i],first),
+      blockStyle:{width:'100%',height:heights[k],background:first?'var(--accent)':'var(--surface-2)',color:first?'var(--on-accent)':'var(--text)',border:first?'none':'1px solid var(--border)',borderBottom:'none',borderRadius:'16px 16px 0 0',display:'flex',justifyContent:'center',paddingTop:10,boxSizing:'border-box',font:"700 40px/1 'Space Grotesk'"}}});
+
+    const tasksYou=17+Object.keys(done).length;
+    const YOU={hue:125};
+    const chal=(title,ends,you,them,goal,f,won)=>({title,ends:won?'Won':ends,endsIcon:won?'emoji_events':'timer',you,them,themInit:f.init,youAv:this.av(YOU,32),themAv:this.av(f,32),
+      youBar:{width:Math.min(100,you/goal*100)+'%',height:'100%',background:'var(--accent)',borderRadius:3,transition:'width 300ms ease-out'},
+      themBar:{width:Math.min(100,them/goal*100)+'%',height:'100%',background:'var(--text-muted)',borderRadius:3}});
+    const challenges=[chal('First to 20 tasks','2d left',Math.min(20,tasksYou),18,20,FRIENDS[2],S.won),chal('5-day run streak','Ends Sun',done.run?4:3,4,5,FRIENDS[1])];
+
+    const now=new Date(S.now),next=new Date(now);next.setHours(0,0,0,0);next.setDate(next.getDate()+(((8-now.getDay())%7)||7));
+    const diff=next-now,countdown=`${Math.floor(diff/864e5)}d ${Math.floor(diff%864e5/36e5)}h ${String(Math.floor(diff%36e5/6e4)).padStart(2,'0')}m`;
+
+    const movedUp=rank<START_RANK,allDone=openT.length===0,dc=doneList.length,nm=S.name||'you';
+    const lines={
+      'Hype Man':allDone?'Clean sweep. Nothing left today but bragging rights.':movedUp?`#${rank}! ${an||'Nobody'} is next. Keep cooking.`:dc===0?`${openT.length} tasks, ${openPts} pts on the table. ${an} is only ${gap} ahead. Go.`:`${dc} down already. You're cooking. Keep going!`,
+      'Calm Mentor':allDone?'Everything is done. Rest well, tomorrow starts fresh.':movedUp?`You moved up to #${rank}. Breathe, then keep the rhythm.`:dc===0?'One step at a time. Start with the smallest task and build from there.':'Good progress. Pick the next small one and keep it steady.',
+      'Savage Roaster':allDone?`Every task done? Who are you and what did you do with ${nm}?`:movedUp?`#${rank}? Look at you, doing things. ${behind?behind.name:'Everyone'} is not okay.`:dc===0?'Zero tasks and the invoice is a day late. Even your to-do list is bored.':`${dc} done. Cute. ${an} is still ${gap} ahead.`};
+
+    const cur=S.queue[0];
+    let toast=null;
+    if(S.toast){const o=S.toast,f=o.who&&FRIENDS.find(x=>x.id===o.who);
+      toast={...o,hasAv:!!f,hasIcon:!f,init:f?f.init:'',av:f?{...this.av(f,32),animation:o.shake?'shake 500ms ease-in-out 1':'none'}:null,
+        iconWrap:{width:32,height:32,borderRadius:'50%',display:'grid',placeItems:'center',flex:'none',background:o.good?'var(--success)':'var(--accent)',color:'#0B0B10'}};}
+
+    const navItem=(id,icon,label)=>{const on=S.tab===id;return{icon,label,go:()=>this.go(id),
+      style:{minWidth:56,height:56,border:'none',background:'transparent',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,color:on?'var(--accent-text)':'var(--text-muted)',font:'600 11px Inter',cursor:'pointer'},
+      iconStyle:{fontFamily:"'Material Symbols Rounded'",fontSize:24,lineHeight:1,fontVariationSettings:on?"'FILL' 1":"'FILL' 0"}}};
+
+    const sel=(on,extra)=>({border:on?'1.5px solid var(--accent)':'1px solid var(--border)',background:on?'color-mix(in oklab, var(--accent) 12%, var(--surface))':'var(--surface)',cursor:'pointer',...extra});
+    const coachOpts=Object.keys(COACH).map(k=>{const c=COACH[k],on=k===coachName,ink=c.ink?(dark?c.ink[0]:c.ink[1]):accentText;return{name:k,icon:c.icon,sample:c.sample,pick:()=>this.setState({coach:k}),
+      style:sel(on,{display:'flex',alignItems:'center',gap:12,padding:12,borderRadius:16,minHeight:56,textAlign:'left'}),
+      iconWrap:{width:40,height:40,borderRadius:'50%',flex:'none',display:'grid',placeItems:'center',background:`color-mix(in oklab, ${c.tint||acc[0]} ${c.pct+8}%, ${N.surface})`,color:ink}}});
+    const accentOpts=Object.keys(ACCENTS).map(k=>{const on=k===accName;return{name:k,pick:()=>this.setState({accent:k}),
+      tile:sel(on,{display:'flex',flexDirection:'column',alignItems:'center',gap:10,padding:'16px 8px',borderRadius:16}),
+      dot:{width:44,height:44,borderRadius:'50%',background:ACCENTS[k][0],boxShadow:on?`0 0 20px 2px color-mix(in oklab, ${ACCENTS[k][0]} 40%, transparent)`:'none'}}});
+    const timeOpts=['5 am','6 am','7 am','8 am','9 am','Later'].map(l=>({label:l,pick:()=>this.setState({dayStart:l}),style:sel(l===S.dayStart,{height:48,padding:'0 20px',borderRadius:999,font:'600 15px Inter'})}));
+    const goalOpts=[[300,'Casual','About 4 tasks a day'],[500,'Serious','Enough to fight for the podium'],[800,'Ruthless','You want Kemi\'s crown']].map(([p,l,d])=>({pts:p,label:l,desc:d,pick:()=>this.setState({goal:p}),style:sel(p===S.goal,{display:'flex',alignItems:'center',gap:12,padding:'14px 16px',borderRadius:16})}));
+    const dots=[0,1,2,3,4].map(i=>({width:i===S.onb?20:8,height:8,borderRadius:4,background:i<=S.onb?'var(--accent)':'var(--border)',transition:'width 200ms ease-out'}));
+
+    const fr=id=>id==='you'?{name:'You',init:you.init,hue:125}:FRIENDS.find(f=>f.id===id);
+    const feedItems=[...S.mine.map(m=>({...m,who:'you',ago:'now',r:[0,0,0]})),...FEED].map(f=>{const p=fr(f.who);return{...f,name:p.name,init:p.init,av:this.av(p,36),photo:f.photo||null,
+      reacts:REACTS.map((r,i)=>{const k=f.id+':'+i,on=!!S.reacts[k];return{icon:r.icon,label:r.label,count:f.r[i]+(on?1:0),toggle:()=>this.setState(s=>({reacts:{...s.reacts,[k]:!s.reacts[k]}})),
+        style:{display:'flex',alignItems:'center',gap:5,height:36,minWidth:44,padding:'0 12px',borderRadius:999,border:on?'1.5px solid var(--accent)':'1px solid var(--border)',background:on?'color-mix(in oklab, var(--accent) 14%, var(--surface))':'transparent',color:on?'var(--accent-text)':'var(--text-muted)',cursor:'pointer'},
+        iconStyle:{fontFamily:"'Material Symbols Rounded'",fontSize:18,lineHeight:1,fontVariationSettings:on?"'FILL' 1":"'FILL' 0"}}})}});
+    const nudges=[{who:'tobi',msg:'Invoice. Now.'},{who:'kemi',msg:'Ada is catching you.'}].map(n=>{const p=fr(n.who);return{...n,name:p.name,init:p.init,av:this.av(p,28)}});
+
+    const heatC=v=>v<0?'transparent':v===0?'var(--surface-2)':`color-mix(in oklab, var(--accent) ${[0,30,55,78,100][v]}%, var(--surface-2))`;
+    const heat=HEAT.map((v,i)=>{const today=i===126-3;const val=today?(dc>0?Math.min(4,dc):0):v;return{aspectRatio:'1',borderRadius:3,background:heatC(val),border:v<0?'1px dashed var(--border)':today?'1.5px solid var(--text)':'none',boxSizing:'border-box'}});
+    const heatLegend=[0,1,2,3,4].map(v=>({width:10,height:10,borderRadius:2,background:heatC(v)}));
+    const badges=BADGES.map(b=>{const on=!!S.badges[b.id];return{...b,locked:!on,disc:{position:'relative',width:52,height:52,borderRadius:'50%',display:'grid',placeItems:'center',background:on?'var(--accent)':'var(--surface-2)',color:on?'var(--on-accent)':'var(--text-muted)',opacity:on?1:.55},nameStyle:{font:'600 11px/1.2 Inter',color:on?'var(--text)':'var(--text-muted)'}}});
+    const swatches=Object.keys(ACCENTS).map(k=>({name:k,on:k===accName,pick:()=>this.setState({accent:k}),style:{width:44,height:44,borderRadius:'50%',border:'none',background:ACCENTS[k][0],display:'grid',placeItems:'center',cursor:'pointer',boxShadow:k===accName?'0 0 0 2px var(--surface), 0 0 0 4px '+ACCENTS[k][0]:'none'}}));
+    const modes=[['Dark','dark_mode'],['Light','light_mode']].map(([m,icon])=>({name:m,icon,pick:()=>this.setState({mode:m}),style:{display:'flex',alignItems:'center',gap:4,height:36,padding:'0 12px',borderRadius:999,border:'none',background:m===modeName?'var(--surface)':'transparent',color:m===modeName?'var(--text)':'var(--text-muted)',font:'600 13px Inter',cursor:'pointer'}}));
+
+    const diffBtn=(n,on,pick)=>({n,pick,style:{height:44,borderRadius:12,border:on?'1.5px solid var(--accent)':'1px solid var(--border)',background:on?'var(--accent)':'var(--bg)',color:on?'var(--on-accent)':'var(--text)',font:"700 16px 'Space Grotesk'",cursor:'pointer'}});
+    const optT=S.sheetTask&&S.tasks.find(t=>t.id===S.sheetTask);
+    const nt=S.nudgeTo&&byId[S.nudgeTo];
+
+    return{rmFlag:P.reduceMotion?'1':'0',shellStyle,bodyStyle,isDesktop,isPhone:!isDesktop,inOnb:stage==='onb',inApp:stage==='app',
+      step0:S.onb===0,step1:S.onb===1,step2:S.onb===2,step3:S.onb===3,step4:S.onb===4,step5:S.onb===5,notInvite:S.onb<5,dots,
+      backStyle:{width:44,height:44,border:'none',background:'transparent',display:'grid',placeItems:'center',cursor:'pointer',visibility:S.onb===0?'hidden':'visible'},
+      onbBack:()=>this.setState(s=>({onb:Math.max(0,s.onb-1)})),onbNext:()=>this.setState(s=>({onb:s.onb+1})),
+      finishOnb:()=>{this.setState({stage:'app',tab:'today'});this.scheduleNudge()},
+      inviteWA:()=>{this.setState({stage:'app',tab:'today'});this.showToast({icon:'chat',text:'Invite ready in WhatsApp.'});this.scheduleNudge()},
+      copyLink:()=>this.showToast({icon:'link',text:'Invite link copied.'}),inviteLink:'rivl.app/i/'+(S.name||'you').toLowerCase().replace(/\s+/g,''),
+      name:S.name,setName:e=>this.setState({name:e.target.value}),handle:(S.name||'you').toLowerCase().replace(/\s+/g,''),
+      coachOpts,accentOpts,timeOpts,goalOpts,goal:S.goal,
+      tabToday:S.tab==='today',tabBoard:S.tab==='board',tabFeed:S.tab==='feed',tabMe:S.tab==='me',
+      boardLoading:S.loading==='board',boardReady:S.loading!=='board',feedLoading:S.loading==='feed',feedReady:S.loading!=='feed',skeleton4:[1,2,3,4],skeleton3:[1,2,3],
+      navLeft:[navItem('today','today','Today'),navItem('board','leaderboard','Board')],navRight:[navItem('feed','dynamic_feed','Feed'),navItem('me','person','Me')],
+      goBoard:()=>this.go('board'),
+      streak:S.bumped?13:12,streakActive:S.bumped,streakRisk:!S.bumped,
+      confetti,open,hasOpen:open.length>0,allDone,doneList,doneCount:dc,todayPts,youPts:you.pts,
+      doneOpen:S.doneOpen,doneChev:S.doneOpen?'expand_less':'expand_more',toggleDone:()=>this.setState(s=>({doneOpen:!s.doneOpen})),
+      plan:()=>this.plan(),coach:{name:coachName,icon:C.icon,line:lines[coachName]},
+      rank,gapText,movedUp,moveBy:START_RANK-rank,countdown,ranked,listRows,podium,challenges,youInit:you.init,youAvSm:this.av({hue:125},28),
+      showPin:S.pin&&S.loading!=='board',onBoardScroll:()=>this.checkPin(),boardRef:this.boardRef,
+      feed:feedItems,nudges,
+      meAv:this.av({hue:125},96,'var(--accent)',true),
+      stats:[{value:(4820+todayPts+S.bonus).toLocaleString('en-US'),label:'Total pts'},{value:31,label:'Best streak'},{value:S.won?10:9,label:'Wins'}],
+      heat,heatLegend,badges,badgeCount:badges.filter(b=>!b.locked).length,swatches,modes,accentName:accName,
+      replayOnb:()=>this.setState({stage:'onb',onb:0}),
+      toast,
+      sheetOpen:!!S.sheet,sheetAdd:S.sheet==='add',sheetOptions:S.sheet==='options'&&!!optT,sheetNudge:S.sheet==='nudge'&&!!nt,
+      closeSheet:()=>this.setState({sheet:null}),openAdd:()=>this.setState({sheet:'add'}),
+      addTitle:S.addTitle,setAddTitle:e=>this.setState({addTitle:e.target.value}),addKey:e=>{if(e.key==='Enter')this.addTask()},
+      addDiffLabel:DIFF[S.addDiff],addPts:S.addDiff*10,addTask:()=>this.addTask(),
+      diffOpts:[1,2,3,4,5].map(n=>diffBtn(n,n===S.addDiff,()=>this.setState({addDiff:n}))),
+      dueOpts:['Today','Tomorrow'].map(l=>({label:l,pick:()=>this.setState({addDue:l}),style:sel(l===S.addDue,{flex:1,height:44,borderRadius:12,font:'600 14px Inter'})})),
+      optTask:optT?{title:optT.title,pts:optT.d*10,diffLabel:DIFF[optT.d]}:{},
+      optDiff:optT?[1,2,3,4,5].map(n=>diffBtn(n,n===optT.d,()=>this.setState(s=>({tasks:s.tasks.map(t=>t.id===optT.id?{...t,d:n}:t)})))):[],
+      optComplete:()=>{const id=S.sheetTask;this.setState({sheet:null});this.complete(id)},
+      optTomorrow:()=>{const id=S.sheetTask;this.setState(s=>({sheet:null,tasks:s.tasks.filter(t=>t.id!==id)}));this.showToast({icon:'event_upcoming',text:'Moved to tomorrow.'})},
+      optDelete:()=>{const id=S.sheetTask;this.setState(s=>({sheet:null,tasks:s.tasks.filter(t=>t.id!==id)}));this.showToast({icon:'delete',text:'Task deleted.'})},
+      nudgeTo:nt||{},nudgeAv:nt?this.av(nt,48):{},
+      nudgeOpts:NUDGES.map((m,i)=>{const on=i===S.nudgeMsg;return{text:m,pick:()=>this.setState({nudgeMsg:i}),style:sel(on,{display:'flex',alignItems:'center',gap:12,minHeight:48,padding:'0 14px',borderRadius:12,font:'500 15px Inter',textAlign:'left'}),radio:{width:18,height:18,borderRadius:'50%',flex:'none',boxSizing:'border-box',border:on?'6px solid var(--accent)':'2px solid var(--text-muted)'}}}),
+      sendNudge:()=>{const n=nt;this.setState({sheet:null});this.showToast({who:n.id,text:`Nudge sent to ${n.name}: "${NUDGES[S.nudgeMsg]}"`})},
+      ovTrophy:!!cur&&cur.type==='trophy',ovBadge:!!cur&&cur.type==='badge',ovBadgeData:cur&&cur.type==='badge'?BADGES.find(b=>b.id===cur.id):{},
+      dismissOverlay:()=>this.dismissOverlay()};
+  }
+}
+</script>
+</body>
+</html>
