@@ -132,3 +132,77 @@ Reply as {"blocks": [{"task": task number, "start": "HH:MM", "end": "HH:MM"}], "
     },
   );
 }
+
+// ── Nudge writer ────────────────────────────────────────────────────────────
+
+export type NudgeContext = { coach: CoachStyle; friend: string; friendRank: number; friendPoints: number; myRank: number; myPoints: number; friendActiveToday: boolean; friendStreak: number };
+
+const NUDGE_VOICE: Record<CoachStyle, string> = {
+  hype: "loud, upbeat trash talk that still cheers them on (Hype Man)",
+  calm: "warm and gently competitive (Calm Mentor)",
+  roast: "a playful roast of their slacking, never of who they are (Savage Roaster)",
+};
+
+export async function writeNudge(c: NudgeContext) {
+  const standing =
+    c.myRank < c.friendRank
+      ? `You're ahead of them: #${c.myRank} with ${c.myPoints} pts vs their #${c.friendRank} with ${c.friendPoints}.`
+      : c.myRank > c.friendRank
+        ? `They're ahead of you: #${c.friendRank} with ${c.friendPoints} pts vs your #${c.myRank} with ${c.myPoints}.`
+        : `You're level on ${c.myPoints} pts.`;
+  return callAI<{ message: string }>(
+    {
+      system: GUARDRAILS,
+      temperature: 0.9,
+      prompt: `Write a one-line nudge from one friend to another in a to-do app where friends compete for weekly points. It should make them want to go and finish a task.
+Friend's first name: ${redact(c.friend, 40)}
+This week: ${standing}
+${c.friendActiveToday ? "They've done something today." : "They haven't finished anything today."}${c.friendStreak > 1 ? ` They're on a ${c.friendStreak}-day streak.` : ""}
+
+Voice: ${NUDGE_VOICE[c.coach]}. Under 100 characters, max one emoji, no hashtags, no quotation marks. Don't invent tasks or facts.
+
+Reply as {"message": "..."}.`,
+    },
+    (raw) => {
+      const message = cleanText((raw as Record<string, unknown>)?.message, 200)?.replace(/^["“']|["”']$/g, "");
+      return message && message.length <= 120 ? { message } : null;
+    },
+  );
+}
+
+// ── Coach recap ─────────────────────────────────────────────────────────────
+
+export type RecapContext = { coach: CoachStyle; name: string; done: string[]; left: number; pointsToday: number; streak: number; rank: number | null; gap: string | null };
+
+const RECAP_VOICE: Record<CoachStyle, string> = {
+  hype: "Hype Man: loud, upbeat, celebrates every win",
+  calm: "Calm Mentor: steady, kind, encourages rest as well as effort",
+  roast: "Savage Roaster: playful roasting of procrastination, never of the person; still ends on a push",
+};
+
+export async function coachRecap(c: RecapContext) {
+  const done = c.done.slice(0, 6).map((t) => `- ${redact(t, 80)}`);
+  return callAI<{ message: string }>(
+    {
+      system: GUARDRAILS,
+      temperature: 0.8,
+      prompt: `Write the end-of-day recap from the user's coach. Speak to them directly.
+Coach: ${RECAP_VOICE[c.coach]}
+Name: ${redact(c.name, 40)}
+Finished today (${c.done.length}):
+${done.length ? done.join("\n") : "- nothing"}
+Still open for today: ${c.left}
+Points today: ${c.pointsToday}
+Streak: ${c.streak} day${c.streak === 1 ? "" : "s"}
+${c.rank ? `Weekly rank among friends: #${c.rank}${c.gap ? ` (${c.gap})` : ""}` : "No friends on the board yet."}
+
+2 or 3 short sentences, under 240 characters in all, max one emoji. Mention one real thing from above. End with what to do tomorrow or tonight.
+
+Reply as {"message": "..."}.`,
+    },
+    (raw) => {
+      const message = cleanText((raw as Record<string, unknown>)?.message, 400);
+      return message && message.length <= 320 ? { message } : null;
+    },
+  );
+}

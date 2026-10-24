@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { AIUnavailableError } from "@/lib/ai/provider";
-import { breakDown, planDay, scoreDifficulty, type PlanTask } from "@/lib/ai/features";
+import { breakDown, coachRecap, planDay, scoreDifficulty, writeNudge, type PlanTask } from "@/lib/ai/features";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { isCoach } from "@/lib/theme";
@@ -11,7 +11,8 @@ import { isCoach } from "@/lib/theme";
  * signed-in user; ratings and quotas are written with the service key so
  * clients can't set them. Breakdown and Plan my day use the daily allowance;
  * scoring is free but cached per task, so edits that don't change the task
- * never re-bill.
+ * never re-bill. Nudge writing uses the allowance too; the coach recap is
+ * free but written once per user per day.
  */
 
 const DAILY_LIMIT = 10;
@@ -22,7 +23,26 @@ type Body =
   | { action: "score"; taskId: string }
   | { action: "breakdown"; title: string; notes?: string | null }
   | { action: "plan" }
+  | { action: "nudge"; friendId: string }
+  | { action: "recap" }
   | { action: "quota" };
+
+type BoardRow = { id: string; display_name: string | null; username: string | null; points: number; streak_count: number; streak_last_on: string | null; is_me: boolean; rank: number };
+
+/** The current date and time in the user's timezone. */
+function localNow(tz: string) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value]),
+  );
+  return { today: `${parts.year}-${parts.month}-${parts.day}`, now: `${parts.hour}:${parts.minute}`, hour: Number(parts.hour) };
+}
+const localDate = (iso: string, tz: string) => new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(new Date(iso));
+const firstName = (r: Pick<BoardRow, "display_name" | "username">) => r.display_name?.split(" ")[0] ?? r.username ?? "your friend";
+
+/** From 6 pm local the coach can sum up the day. */
+const RECAP_HOUR = 18;
 
 const json = (body: unknown, status = 200) => NextResponse.json(body, { status });
 const unavailable = () => json({ error: "unavailable", message: "The coach is taking a breather. Try again in a minute." }, 503);
@@ -145,14 +165,7 @@ export async function POST(request: NextRequest) {
         .eq("id", user.id)
         .single();
       if (!profile) return json({ error: "not_found" }, 404);
-      const tz = profile.timezone || "UTC";
-      const parts = Object.fromEntries(
-        new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
-          .formatToParts(new Date())
-          .map((p) => [p.type, p.value]),
-      );
-      const today = `${parts.year}-${parts.month}-${parts.day}`;
-      const now = `${parts.hour}:${parts.minute}`;
+      const { today, now } = localNow(profile.timezone || "UTC");
 
       const { data: rows } = await admin
         .from("tasks")
@@ -187,6 +200,86 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         if (!(err instanceof AIUnavailableError)) throw err;
         await refundAction();
+        return unavailable();
+      }
+    }
+
+    case "nudge": {
+      if (!UUID.test(body.friendId) || body.friendId === user.id) return json({ error: "bad_request" }, 400);
+      // The board only lists accepted friends, so it doubles as the friendship check.
+      const [{ data: board }, { data: me }] = await Promise.all([
+        supabase.rpc("weekly_board"),
+        admin.from("profiles").select("coach_style, timezone").eq("id", user.id).single(),
+      ]);
+      const rows = (board ?? []) as BoardRow[];
+      const friend = rows.find((r) => r.id === body.friendId && !r.is_me);
+      const mine = rows.find((r) => r.is_me);
+      if (!friend || !mine) return json({ error: "not_friends", message: "You can only nudge friends." }, 403);
+
+      const remaining = await spendAction();
+      if (remaining < 0) return limitReached();
+      try {
+        const { message } = await writeNudge({
+          coach: isCoach(me?.coach_style) ? me.coach_style : "hype",
+          friend: firstName(friend),
+          friendRank: friend.rank,
+          friendPoints: friend.points,
+          myRank: mine.rank,
+          myPoints: mine.points,
+          friendActiveToday: friend.streak_last_on === localNow(me?.timezone || "UTC").today,
+          friendStreak: friend.streak_count,
+        });
+        return json({ message, remaining });
+      } catch (err) {
+        if (!(err instanceof AIUnavailableError)) throw err;
+        await refundAction();
+        return unavailable();
+      }
+    }
+
+    case "recap": {
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("display_name, username, timezone, coach_style, streak_count")
+        .eq("id", user.id)
+        .single();
+      if (!profile) return json({ error: "not_found" }, 404);
+      const tz = profile.timezone || "UTC";
+      const { today, hour } = localNow(tz);
+
+      const { data: saved } = await admin.from("coach_recaps").select("message").eq("user_id", user.id).eq("day", today).maybeSingle();
+      if (saved) return json({ message: saved.message, day: today, cached: true });
+      if (hour < RECAP_HOUR) return json({ error: "too_early", message: "The recap arrives at 6 pm." }, 425);
+
+      const since = new Date(Date.now() - 36 * 3_600_000).toISOString();
+      const [{ data: done }, { count: left }, { data: events }, { data: board }] = await Promise.all([
+        admin.from("tasks").select("title, completed_at").eq("user_id", user.id).gte("completed_at", since).order("completed_at"),
+        admin.from("tasks").select("id", { count: "exact", head: true }).eq("user_id", user.id).is("completed_at", null).lte("due_on", today),
+        admin.from("point_events").select("amount").eq("user_id", user.id).eq("day", today),
+        supabase.rpc("weekly_board"),
+      ]);
+      const rows = (board ?? []) as BoardRow[];
+      const i = rows.findIndex((r) => r.is_me);
+      const ahead = i > 0 ? rows[i - 1] : null;
+      const gap = ahead ? (ahead.points === rows[i].points ? `tied with ${firstName(ahead)}` : `${ahead.points - rows[i].points} pts behind ${firstName(ahead)}`) : rows.length > 1 ? "top of the board" : null;
+
+      try {
+        const { message } = await coachRecap({
+          coach: isCoach(profile.coach_style) ? profile.coach_style : "hype",
+          name: firstName(profile),
+          done: (done ?? []).filter((t) => localDate(t.completed_at, tz) === today).map((t) => t.title),
+          left: left ?? 0,
+          pointsToday: (events ?? []).reduce((n, e) => n + e.amount, 0),
+          streak: profile.streak_count ?? 0,
+          rank: rows.length > 1 && i >= 0 ? rows[i].rank : null,
+          gap,
+        });
+        // Two tabs at once: keep whichever landed first.
+        await admin.from("coach_recaps").upsert({ user_id: user.id, day: today, message }, { onConflict: "user_id,day", ignoreDuplicates: true });
+        const { data: kept } = await admin.from("coach_recaps").select("message").eq("user_id", user.id).eq("day", today).maybeSingle();
+        return json({ message: kept?.message ?? message, day: today });
+      } catch (err) {
+        if (!(err instanceof AIUnavailableError)) throw err;
         return unavailable();
       }
     }

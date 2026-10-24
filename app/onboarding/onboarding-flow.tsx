@@ -49,8 +49,8 @@ export function OnboardingFlow({ profile }: { profile: Profile }) {
   const [coach, setCoach] = useState<CoachStyle>(profile.coach_style);
   const [accent, setAccent] = useState<Accent>(profile.accent);
   const [theme, setTheme] = useState<Theme>(profile.theme);
-  const [wake, setWake] = useState(profile.wake_time.slice(0, 5));
-  const [goal, setGoal] = useState(profile.weekly_goal);
+  const [wake, setWake] = useState((profile.wake_time ?? "07:00").slice(0, 5));
+  const [goal, setGoal] = useState(profile.weekly_goal ?? 500);
   const [error, setError] = useState<string | null>(null);
   const [saving, startSaving] = useTransition();
 

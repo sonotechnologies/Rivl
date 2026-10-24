@@ -71,7 +71,13 @@ Build steps 1–7 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] "Looks sus": two flags put a post's points on hold until the owner adds a photo
 - [x] `/api/cron/cleanup-proofs` runs daily (vercel.json) and deletes photos older than 7 days; the tick and points stay
 
-Not yet: coach recap and nudges, push, focus timer.
+**9. Coach and nudges**
+- [x] Tap a friend on the board (or "Nudge back" on the feed) to nudge them: four preset lines, or one the AI writes in your coach's voice (1 AI action)
+- [x] 3 nudges per friend per day, friends only, max 120 characters (`send_nudge`)
+- [x] Nudges you receive: a toast with the sender's avatar shaking, a dot on the Feed tab, and a strip at the top of the feed
+- [x] From 6 pm, the coach bubble on Today becomes an AI recap of your day (written once per day, saved in `coach_recaps`); the static lines are the fallback
+
+Not yet: push notifications, focus timer and weekly recap card.
 
 ## Getting started
 

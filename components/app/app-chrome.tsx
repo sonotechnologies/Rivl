@@ -1,6 +1,9 @@
 "use client";
 
 import { TrophyCelebration } from "@/components/challenges/trophy-celebration";
+import { Avatar } from "@/components/friends/avatar";
+import { NudgeSheet } from "@/components/nudges/nudge-sheet";
+import { NudgeWatcher } from "@/components/nudges/nudge-watcher";
 import { PlanSheet } from "@/components/tasks/plan-sheet";
 import { QuickAddSheet } from "@/components/tasks/quick-add-sheet";
 import { TaskOptionsSheet } from "@/components/tasks/task-options-sheet";
@@ -21,7 +24,11 @@ export function AppChrome() {
             role="status"
             className="flex min-h-11 animate-toast-in items-center gap-2.5 rounded-full border border-line bg-surface-2 py-2 pr-4 pl-2 shadow-[0_12px_32px_rgba(0,0,0,.35)]"
           >
-            {toast.icon ? (
+            {toast.who ? (
+              <span className="flex-none animate-shake">
+                <Avatar name={toast.who.name} accent={toast.who.accent} size={32} />
+              </span>
+            ) : toast.icon ? (
               <span className="grid size-8 flex-none place-items-center rounded-full bg-[color-mix(in_oklab,var(--accent)_18%,var(--surface))] text-accent-text">
                 <span className="material-symbol text-lg" aria-hidden>
                   {toast.icon}
@@ -35,6 +42,8 @@ export function AppChrome() {
       {sheet?.kind === "add" ? <QuickAddSheet /> : null}
       {sheet?.kind === "options" ? <TaskOptionsSheet taskId={sheet.taskId} /> : null}
       {sheet?.kind === "plan" ? <PlanSheet /> : null}
+      {sheet?.kind === "nudge" ? <NudgeSheet friendId={sheet.friendId} /> : null}
+      <NudgeWatcher />
       <TrophyCelebration />
       <BadgeCelebration />
     </>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useBoard } from "@/components/app/app-context";
+import { useApp, useBoard } from "@/components/app/app-context";
 import { ChallengeCarousel } from "@/components/challenges/challenge-card";
 import { Avatar } from "@/components/friends/avatar";
 import { gapText, nameOf, resetCountdown, type BoardRow, type Move } from "@/lib/board";
@@ -34,7 +34,7 @@ export function BoardView({ compact = false, onMeVisible }: { compact?: boolean;
         <>
           <Podium rows={rows.slice(0, 3)} moved={moved} />
           {rows.length > 3 ? <RankedList rows={rows.slice(3)} moved={moved} onMeVisible={onMeVisible} /> : null}
-          <p className="px-1 text-caption text-muted">Resets Monday at midnight. Finish the week #1 to earn Giant Slayer.</p>
+          <p className="px-1 text-caption text-muted">Tap a friend to nudge them. Resets Monday at midnight; finish the week #1 to earn Giant Slayer.</p>
         </>
       )}
       {!compact && rows && rows.length > 1 ? <ChallengeCarousel /> : null}
@@ -73,6 +73,7 @@ function MoveArrow({ move, size = "text-base" }: { move?: Move; size?: string })
 }
 
 function Podium({ rows, moved }: { rows: BoardRow[]; moved: Record<string, Move> }) {
+  const { openNudge } = useApp();
   // Second, first, third, so #1 stands in the middle.
   const order = [1, 0, 2];
   return (
@@ -83,14 +84,22 @@ function Podium({ rows, moved }: { rows: BoardRow[]; moved: Record<string, Move>
         if (!r) return <li key={i} aria-hidden />;
         return (
           <li key={r.id} className="flex flex-col items-center gap-2" style={{ order: order.indexOf(i) }}>
-            <Avatar name={r.display_name ?? r.username ?? "?"} accent={r.accent} size={first ? 68 : 56} ring={RINGS[i]} glow={first} />
-            <div className="text-center">
-              <div className={`flex items-center justify-center gap-0.5 text-body-sm font-semibold ${r.is_me ? "text-accent-text" : ""}`}>
-                {nameOf(r)}
-                <MoveArrow move={moved[r.id]} />
-              </div>
-              <div className="font-display text-body-sm font-bold text-muted tabular-nums">{r.points.toLocaleString("en-GB")}</div>
-            </div>
+            <button
+              type="button"
+              disabled={r.is_me}
+              onClick={() => openNudge(r.id)}
+              aria-label={r.is_me ? undefined : `Nudge ${nameOf(r)}, ${r.points} points`}
+              className="flex flex-col items-center gap-2 rounded-card disabled:cursor-default"
+            >
+              <Avatar name={r.display_name ?? r.username ?? "?"} accent={r.accent} size={first ? 68 : 56} ring={RINGS[i]} glow={first} />
+              <span className="text-center">
+                <span className={`flex items-center justify-center gap-0.5 text-body-sm font-semibold ${r.is_me ? "text-accent-text" : ""}`}>
+                  {nameOf(r)}
+                  <MoveArrow move={moved[r.id]} />
+                </span>
+                <span className="block font-display text-body-sm font-bold text-muted tabular-nums">{r.points.toLocaleString("en-GB")}</span>
+              </span>
+            </button>
             <div
               className={`flex w-full justify-center rounded-t-card pt-2.5 font-display text-hero leading-none font-bold ${first ? "bg-accent text-on-accent" : "border border-b-0 border-line bg-surface-2"} ${r.is_me && !first ? "border-accent" : ""}`}
               style={{ height: BLOCK_HEIGHTS[i] }}
@@ -107,6 +116,7 @@ function Podium({ rows, moved }: { rows: BoardRow[]; moved: Record<string, Move>
 
 /** Ranks 4 and below. Rows glide to their new place when the order changes. */
 function RankedList({ rows, moved, onMeVisible }: { rows: BoardRow[]; moved: Record<string, Move>; onMeVisible?: (v: boolean) => void }) {
+  const { openNudge } = useApp();
   const refs = useRef(new Map<string, HTMLLIElement>());
   const last = useRef(new Map<string, number>());
 
@@ -144,13 +154,21 @@ function RankedList({ rows, moved, onMeVisible }: { rows: BoardRow[]; moved: Rec
             if (el) refs.current.set(r.id, el);
             else refs.current.delete(r.id);
           }}
-          className={`flex min-h-[50px] items-center gap-3 rounded-card bg-surface px-3.5 ${r.is_me ? "border-[1.5px] border-accent" : "border border-line"}`}
+          className={`rounded-card bg-surface ${r.is_me ? "border-[1.5px] border-accent" : "border border-line"}`}
         >
-          <span className="w-5 font-display text-body font-bold text-muted tabular-nums">{r.rank}</span>
-          <Avatar name={r.display_name ?? r.username ?? "?"} accent={r.accent} size={36} />
-          <span className="flex-1 truncate text-[0.9375rem] font-medium">{nameOf(r)}</span>
-          <MoveArrow move={moved[r.id]} size="text-lg" />
-          <span className="font-display text-body font-bold tabular-nums">{r.points.toLocaleString("en-GB")}</span>
+          <button
+            type="button"
+            disabled={r.is_me}
+            onClick={() => openNudge(r.id)}
+            aria-label={r.is_me ? undefined : `Nudge ${nameOf(r)}, rank ${r.rank}, ${r.points} points`}
+            className="flex min-h-[50px] w-full items-center gap-3 px-3.5 text-left disabled:cursor-default"
+          >
+            <span className="w-5 font-display text-body font-bold text-muted tabular-nums">{r.rank}</span>
+            <Avatar name={r.display_name ?? r.username ?? "?"} accent={r.accent} size={36} />
+            <span className="flex-1 truncate text-[0.9375rem] font-medium">{nameOf(r)}</span>
+            <MoveArrow move={moved[r.id]} size="text-lg" />
+            <span className="font-display text-body font-bold tabular-nums">{r.points.toLocaleString("en-GB")}</span>
+          </button>
         </li>
       ))}
     </ol>

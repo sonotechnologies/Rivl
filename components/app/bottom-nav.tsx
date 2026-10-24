@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useNudges } from "./app-context";
 
 const LEFT = [
   { href: "/today", icon: "today", label: "Today" },
@@ -14,11 +15,12 @@ const RIGHT = [
 
 /** Four tabs plus the raised accent "+" in the middle. */
 export function BottomNav({ onAdd }: { onAdd?: () => void }) {
-  return <NavBar pathname={usePathname()} onAdd={onAdd} />;
+  const { unseen } = useNudges();
+  return <NavBar pathname={usePathname()} onAdd={onAdd} dots={unseen ? ["/feed"] : []} />;
 }
 
 /** The bar alone, for loading states where the URL can't be read yet. */
-export function NavBar({ pathname, onAdd }: { pathname?: string; onAdd?: () => void }) {
+export function NavBar({ pathname, onAdd, dots = [] }: { pathname?: string; onAdd?: () => void; dots?: string[] }) {
   const tab = ({ href, icon, label }: (typeof LEFT)[number]) => {
     const on = pathname !== undefined && (pathname === href || pathname.startsWith(`${href}/`));
     return (
@@ -26,11 +28,13 @@ export function NavBar({ pathname, onAdd }: { pathname?: string; onAdd?: () => v
         key={href}
         href={href}
         aria-current={on ? "page" : undefined}
-        className={`flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold ${on ? "text-accent-text" : "text-muted"}`}
+        aria-label={dots.includes(href) ? `${label}, new nudges` : undefined}
+        className={`relative flex h-14 min-w-14 flex-col items-center justify-center gap-0.5 text-[0.6875rem] font-semibold ${on ? "text-accent-text" : "text-muted"}`}
       >
         <span className={`material-symbol text-2xl ${on ? "" : "icon-outline"}`} aria-hidden>
           {icon}
         </span>
+        {dots.includes(href) ? <span className="absolute top-2 right-3 size-2.5 rounded-full bg-danger ring-2 ring-surface" aria-hidden /> : null}
         {label}
       </Link>
     );

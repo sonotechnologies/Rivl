@@ -7,6 +7,7 @@ import { RankStrip } from "@/components/board/rank-strip";
 import { SyncStatus } from "@/components/tasks/sync-status";
 import { DoneRow, TaskRow } from "@/components/tasks/task-row";
 import { coachLine, type CoachMoment } from "@/lib/coach-lines";
+import { useRecap } from "@/components/coach/use-recap";
 import { formatDay, greeting, toISODate, todayISO, weekStartISO } from "@/lib/dates";
 import { displayStreak, pointTotals, type StreakState } from "@/lib/tasks/points";
 import type { Subtask, Task } from "@/lib/tasks/types";
@@ -32,6 +33,7 @@ export function TodayScreen() {
   const view = useTasks();
   const [doneOpen, setDoneOpen] = useState(false);
   const [upcomingOpen, setUpcomingOpen] = useState(false);
+  const recap = useRecap(profile.id, view.online);
 
   if (!view.loaded) return <TodaySkeleton />;
 
@@ -91,7 +93,9 @@ export function TodayScreen() {
         </div>
       </div>
 
-      <CoachBubble coach={profile.coach_style}>{coachLine(profile.coach_style, moment)}</CoachBubble>
+      <CoachBubble coach={profile.coach_style} note={recap ? "Today's recap" : undefined}>
+        {recap ?? coachLine(profile.coach_style, moment)}
+      </CoachBubble>
 
       {nowOpen > 0 ? (
         <button

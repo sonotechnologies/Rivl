@@ -9,12 +9,16 @@ export type AIError = { error: string; message: string; remaining?: number };
 export type ScoreResult = { difficulty: Difficulty; reason: string | null };
 export type BreakdownResult = { steps: { title: string; minutes: number }[]; remaining: number };
 export type PlanResult = { blocks: { taskId: string; start: string; end: string }[]; tip: string; remaining: number; today: string };
+export type NudgeResult = { message: string; remaining: number };
+export type RecapResult = { message: string; day: string };
 export type QuotaResult = { remaining: number; limit: number };
 
 type Request =
   | { action: "score"; taskId: string }
   | { action: "breakdown"; title: string; notes?: string | null }
   | { action: "plan" }
+  | { action: "nudge"; friendId: string }
+  | { action: "recap" }
   | { action: "quota" };
 
 const OFFLINE: AIError = { error: "offline", message: "AI needs a connection. Try again when you're back online." };
@@ -41,5 +45,7 @@ export const ai = {
   score: (taskId: string) => call<ScoreResult>({ action: "score", taskId }),
   breakdown: (title: string, notes?: string | null) => call<BreakdownResult>({ action: "breakdown", title, notes }),
   plan: () => call<PlanResult>({ action: "plan" }),
+  nudge: (friendId: string) => call<NudgeResult>({ action: "nudge", friendId }),
+  recap: () => call<RecapResult>({ action: "recap" }),
   quota: () => call<QuotaResult>({ action: "quota" }),
 };

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useApp, useTasks } from "@/components/app/app-context";
 import { Avatar } from "@/components/friends/avatar";
+import { NudgeStrip } from "@/components/nudges/nudge-strip";
 import { Sheet } from "@/components/ui/sheet";
 import { ago, EMOJI, EMOJI_LABELS, feed, PROOF_POINTS, type Emoji, type Post } from "@/lib/feed";
 
@@ -64,6 +65,7 @@ export function FeedScreen() {
   return (
     <div className="grid auto-rows-max grid-cols-[minmax(0,1fr)] gap-3">
       <h1 className="pt-1 font-display text-heading font-bold tracking-[-0.02em]">Feed</h1>
+      <NudgeStrip />
       {!online && !posts ? (
         <p className="rounded-card border border-line bg-surface p-4 text-body-sm text-muted">The feed needs a connection. Your tasks still work offline.</p>
       ) : error && !posts ? (

@@ -4,23 +4,26 @@ import { createContext, use, useCallback, useMemo, useRef, useState, useSyncExte
 import type { Profile } from "@/lib/auth";
 import { getChallengeStore, type Challenge } from "@/lib/challenges";
 import { getBoardStore, rankWithMe, type BoardView } from "@/lib/board";
+import { getNudgeStore, type NudgeView } from "@/lib/nudges";
 import { todayISO, weekStartISO } from "@/lib/dates";
 import { expectedPoints, isHard, pointTotals } from "@/lib/tasks/points";
 import { getTaskStore, type TaskStore, type TaskView } from "@/lib/tasks/store";
 
-type Toast = { id: number; text: string; icon?: string };
+/** `who` swaps the icon for that person's avatar, which shakes once (a nudge arriving). */
+type Toast = { id: number; text: string; icon?: string; who?: { name: string; accent: string } };
 
 type AppContextValue = {
   profile: Profile;
   store: TaskStore;
   /** Which bottom sheet is open: quick add, or options for a task id. */
-  sheet: { kind: "add" } | { kind: "options"; taskId: string } | { kind: "plan" } | null;
+  sheet: { kind: "add" } | { kind: "options"; taskId: string } | { kind: "plan" } | { kind: "nudge"; friendId: string } | null;
   openQuickAdd: () => void;
   openPlan: () => void;
   openOptions: (taskId: string) => void;
+  openNudge: (friendId: string) => void;
   closeSheet: () => void;
   toast: Toast | null;
-  showToast: (text: string, icon?: string) => void;
+  showToast: (text: string, icon?: string, who?: Toast["who"]) => void;
   /** Tasks mid-celebration: checkbox popped, points floating, about to move to Done. */
   completing: ReadonlySet<string>;
   /** Completes a task with the full win moment (haptic, pop, +pts, then slide to Done). */
@@ -39,9 +42,9 @@ export function AppProvider({ profile, children }: { profile: Profile; children:
   const toastTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [completing, setCompleting] = useState<ReadonlySet<string>>(new Set());
 
-  const showToast = useCallback((text: string, icon?: string) => {
+  const showToast = useCallback((text: string, icon?: string, who?: Toast["who"]) => {
     clearTimeout(toastTimer.current);
-    setToast({ id: Date.now(), text, icon });
+    setToast({ id: Date.now(), text, icon, who });
     toastTimer.current = setTimeout(() => setToast(null), 2800);
   }, []);
 
@@ -76,6 +79,7 @@ export function AppProvider({ profile, children }: { profile: Profile; children:
       openQuickAdd: () => setSheet({ kind: "add" }),
       openPlan: () => setSheet({ kind: "plan" }),
       openOptions: (taskId) => setSheet({ kind: "options", taskId }),
+      openNudge: (friendId) => setSheet({ kind: "nudge", friendId }),
       closeSheet: () => setSheet(null),
       toast,
       showToast,
@@ -129,4 +133,14 @@ export function useChallenges() {
   const { profile } = useApp();
   const store = getChallengeStore(profile.id);
   return { ...useSyncExternalStore(store.subscribe, store.getView, getServerChallenges), refresh: () => store.refresh() };
+}
+
+const SERVER_NUDGES: NudgeView = { list: null, unseen: 0 };
+const getServerNudges = () => SERVER_NUDGES;
+
+/** Nudges you've received, kept live. */
+export function useNudges() {
+  const { profile } = useApp();
+  const store = getNudgeStore(profile.id);
+  return { ...useSyncExternalStore(store.subscribe, store.getView, getServerNudges), markSeen: () => store.markSeen() };
 }
