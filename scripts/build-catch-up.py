@@ -23,4 +23,6 @@ header = """-- Rivl catch-up: brings any Supabase database up to date with the a
 -- (Generated from supabase/migrations/*.sql; those stay the source of truth.)
 
 """
-open(out, 'w').write(header + '\n\n'.join(parts))
+# A last line to check for: if it's missing from your paste, the copy was cut off.
+footer = "\n\n-- If you can see this line, you copied the whole file.\nselect 'catch-up complete';\n"
+open(out, 'w').write(header + '\n\n'.join(parts) + footer)

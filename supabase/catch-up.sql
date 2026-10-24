@@ -1263,3 +1263,7 @@ exception when others then
   raise notice 'Realtime publication not updated (%). The board falls back to refreshing every 30 seconds.', sqlerrm;
 end;
 $$;
+
+
+-- If you can see this line, you copied the whole file.
+select 'catch-up complete';
