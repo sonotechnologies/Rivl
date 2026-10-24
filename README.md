@@ -62,7 +62,7 @@ Not yet: challenges (step 7), feed, coach recap and nudges, push, focus timer.
 
 ## Getting started
 
-1. Create a Supabase project and run each file in `supabase/migrations/` in order (SQL editor, or `supabase db push`).
+1. Create a Supabase project and run each file in `supabase/migrations/` in order (SQL editor, or `supabase db push`). If you're not sure which have run, paste `supabase/catch-up.sql` into the SQL editor instead: it applies everything that's missing and is safe to run any number of times. Regenerate it after adding a migration.
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
    - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
