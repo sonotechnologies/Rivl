@@ -159,6 +159,53 @@ body {
   font-feature-settings: "liga";
 }
 
+/* Motion, from the app prototype. Every win lands within 300 ms. */
+@keyframes pop {
+  0% { transform: scale(0.4); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+@keyframes float-up {
+  0% { opacity: 0; transform: translateY(6px); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-30px); }
+}
+@keyframes burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.5); opacity: 0; }
+}
+@keyframes slide-out {
+  to { transform: translateX(48px); opacity: 0; }
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes toast-in {
+  from { transform: translateY(-16px); opacity: 0; }
+}
+@keyframes flicker {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12) rotate(-4deg); }
+}
+
+@theme inline {
+  --animate-pop: pop 320ms cubic-bezier(0.3, 1.6, 0.5, 1);
+  --animate-float-up: float-up 620ms ease-out forwards;
+  --animate-burst: burst 640ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  --animate-slide-out: slide-out 220ms ease-in 420ms forwards;
+  --animate-sheet-up: sheet-up 240ms cubic-bezier(0.2, 0.8, 0.3, 1);
+  --animate-fade-in: fade-in 180ms ease-out;
+  --animate-toast-in: toast-in 220ms ease-out;
+  --animate-flicker: flicker 1.6s ease-in-out infinite;
+}
+
+.icon-outline {
+  font-variation-settings: "FILL" 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

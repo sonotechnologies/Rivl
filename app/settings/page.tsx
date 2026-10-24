@@ -12,8 +12,8 @@ export default function SettingsPage() {
     <main className="mx-auto flex w-full max-w-[480px] flex-col gap-6 px-4 pt-4 pb-12">
       <header className="flex items-center gap-2">
         <Link
-          href="/today"
-          aria-label="Back to Today"
+          href="/me"
+          aria-label="Back to Me"
           className="-ml-2 grid size-11 place-items-center rounded-full text-ink hover:bg-surface-2"
         >
           <span className="material-symbol text-2xl" aria-hidden>

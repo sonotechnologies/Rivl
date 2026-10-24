@@ -6,18 +6,30 @@ Stack: Next.js 16 (App Router, Cache Components) · TypeScript · Tailwind CSS v
 
 ## Status
 
-Build step 1 of 12 (**Foundation**) from the build brief:
+Build steps 1–2 of 12 from the build brief.
 
+**1. Foundation**
 - [x] Next.js + Tailwind + theme tokens (dark/light, six accents, coach tints), brand components
 - [x] `/brand`: the brand and theme system sheet from the Claude Design handoff
-- [x] Supabase clients, session-refreshing `proxy.ts`, Google + email magic link sign-in
+- [x] Supabase clients, session-refreshing `proxy.ts`, email magic link sign-in (Google behind a flag)
 - [x] `profiles` table with RLS and a sign-up trigger; settings for theme, accent, coach, username, bio
 - [x] PWA manifest, icons, install prompt (Android/desktop button, iPhone instructions)
-- [ ] Service worker and offline cache (Serwist), which comes with step 2, Tasks
+
+**2. Tasks**
+- [x] `tasks` and `subtasks` tables with RLS, column grants and server-owned timestamps
+- [x] Today screen from the design: points card, coach bubble, Overdue · Today · Upcoming · Done
+- [x] Quick add sheet (centre +, or `/add`), task options sheet, swipe right to complete and left for options
+- [x] Win moment: checkbox pop, floating +pts, confetti on difficulty 4–5, haptics, reduced-motion fallback
+- [x] Task detail (`/task/[id]`): title, difficulty, date and time, repeat, category, notes, steps, share toggle, delete
+- [x] Repeating tasks and daily habits: the database schedules the next one when you finish (overdue habits skip ahead)
+- [x] Offline: tasks live in IndexedDB with an outbox that syncs when you're back; a service worker keeps screens available
+
+Not yet: AI difficulty scoring and Plan my day (step 3), real points with caps and streaks (step 4), board, feed and friends.
+Until step 4, the points on Today are the base points of what you've finished; the server will apply bonuses and caps.
 
 ## Getting started
 
-1. Create a Supabase project and run `supabase/migrations/20261024000000_profiles.sql` (SQL editor, or `supabase db push`).
+1. Create a Supabase project and run each file in `supabase/migrations/` in order (SQL editor, or `supabase db push`).
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
    - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
@@ -47,9 +59,10 @@ Accent-coloured text in dark mode uses each accent's base hex, except Nova, whic
 ## Layout
 
 ```
-app/            routes: / · /login · /auth/* · /today · /settings · /brand · manifest
+app/            routes: / · /login · /auth/* · (app)/ today, add, task/[id], board, feed, me · /settings · /brand
 components/     brand/ (Logo, AppIcon, CoachBubble) · ui/ (Button) · install prompt · theme sync
-lib/            theme constants, contrast maths, auth data access, Supabase clients
+lib/            theme, dates, auth data access, Supabase clients, tasks/ (offline store, types, points)
+public/sw.js    service worker (app shell and visited screens; task data syncs via lib/tasks/store.ts)
 supabase/       SQL migrations
 design/         Claude Design handoff bundle (prototypes, chats, design brief)
 ```

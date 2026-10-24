@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
+import { clearOfflineData } from "@/components/app/service-worker";
 import { CoachBubble } from "@/components/brand/coach-bubble";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/lib/auth";
@@ -168,7 +169,17 @@ export function SettingsForm({ profile }: { profile: Profile }) {
         </form>
       </section>
 
-      <form action="/auth/signout" method="post">
+      <form
+        action="/auth/signout"
+        method="post"
+        onSubmit={async (e) => {
+          // Clear this device's offline copies first, then let the form post.
+          e.preventDefault();
+          const form = e.currentTarget;
+          await clearOfflineData().catch(() => {});
+          form.submit();
+        }}
+      >
         <Button type="submit" variant="ghost" className="w-full">
           Sign out
         </Button>

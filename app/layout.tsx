@@ -21,9 +21,13 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["500"],
 });
 
-// Only the icons we use, so the icon font stays tiny. Keep names alphabetical.
-const ICONS = ["campaign", "check", "chevron_left", "download", "eco", "ios_share", "local_fire_department", "mail", "settings"];
-const ICON_FONT_URL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0&icon_names=${ICONS.join(",")}&display=block`;
+// Only the icons we use, so the icon font stays tiny.
+const ICONS = [
+  "add", "campaign", "check", "check_circle", "chevron_left", "close", "cloud_off", "delete", "download",
+  "dynamic_feed", "eco", "edit", "event_upcoming", "expand_less", "expand_more", "ios_share", "leaderboard",
+  "local_fire_department", "mail", "more_horiz", "person", "repeat", "schedule", "settings", "sync", "task_alt", "today",
+];
+const ICON_FONT_URL = `https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400..700,0..1,0&icon_names=${[...ICONS].sort().join(",")}&display=block`;
 
 export const metadata: Metadata = {
   title: { default: "Rivl", template: "%s · Rivl" },
