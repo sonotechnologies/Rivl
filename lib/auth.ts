@@ -22,9 +22,11 @@ export type Profile = {
   onboarded_at: string | null;
   /** New tasks start shared to the feed. */
   share_by_default: boolean;
+  /** Push kinds switched off (missing means on). */
+  push_prefs: Record<string, boolean>;
 };
 
-const PROFILE_COLUMNS = "id, username, display_name, avatar_url, bio, timezone, coach_style, theme, accent, streak_count, wake_time, sleep_time, weekly_goal, onboarded_at, share_by_default";
+const PROFILE_COLUMNS = "id, username, display_name, avatar_url, bio, timezone, coach_style, theme, accent, streak_count, wake_time, sleep_time, weekly_goal, onboarded_at, share_by_default, push_prefs";
 
 /** Postgres/PostgREST codes that mean the database is missing a migration. */
 const SCHEMA_CODES = new Set(["42703", "42P01", "42883", "PGRST200", "PGRST202", "PGRST204"]);

@@ -13,7 +13,9 @@ function isTimeZone(tz: string) {
   }
 }
 
-type Preferences = Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle; wake_time: string; sleep_time: string; weekly_goal: number; share_by_default: boolean }>;
+type Preferences = Partial<{ theme: Theme; accent: Accent; coach_style: CoachStyle; wake_time: string; sleep_time: string; weekly_goal: number; share_by_default: boolean; push_prefs: Record<string, boolean> }>;
+
+const PUSH_KIND_IDS = ["nudge", "challenge", "friend", "streak", "weekly"];
 
 const isTime = (v: unknown): v is string => typeof v === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
 
@@ -33,6 +35,11 @@ export async function savePreferences(prefs: Preferences) {
   if (isTime(prefs.wake_time)) values.wake_time = prefs.wake_time;
   if (isTime(prefs.sleep_time)) values.sleep_time = prefs.sleep_time;
   if (typeof prefs.share_by_default === "boolean") values.share_by_default = prefs.share_by_default;
+  if (prefs.push_prefs && typeof prefs.push_prefs === "object") {
+    values.push_prefs = Object.fromEntries(
+      Object.entries(prefs.push_prefs).filter(([k, v]) => PUSH_KIND_IDS.includes(k) && typeof v === "boolean"),
+    );
+  }
   if (prefs.weekly_goal && [300, 500, 800].includes(prefs.weekly_goal)) values.weekly_goal = prefs.weekly_goal;
   if (Object.keys(values).length === 0) return { error: "Nothing to save." };
   return updateOwnProfile(values);

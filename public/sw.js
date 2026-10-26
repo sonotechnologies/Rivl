@@ -98,3 +98,37 @@ self.addEventListener("fetch", (event) => {
   if (request.headers.get("RSC") === "1" || url.searchParams.has("_rsc")) return;
   if (url.pathname === "/manifest.webmanifest") event.respondWith(staleWhileRevalidate(request, STATIC));
 });
+
+// Web push (/api/push/flush sends { title, body, url, tag }).
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data?.text() };
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || "Rivl", {
+      body: data.body || "",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/badge-96.png",
+      // Same kind replaces the last one instead of stacking up.
+      tag: data.tag,
+      renotify: Boolean(data.tag),
+      data: { url: data.url || "/today" },
+    }),
+  );
+});
+
+// Tapping a notification opens Rivl on the right screen, reusing an open window.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = new URL(event.notification.data?.url || "/today", self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      const open = windows.find((w) => new URL(w.url).origin === self.location.origin);
+      if (!open) return self.clients.openWindow(url);
+      return open.focus().then((w) => (w && "navigate" in w ? w.navigate(url) : w));
+    }),
+  );
+});

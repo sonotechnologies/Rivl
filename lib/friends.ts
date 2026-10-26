@@ -1,5 +1,6 @@
 "use client";
 
+import { sendDuePushes } from "@/lib/push/client";
 import { createClient } from "@/lib/supabase/client";
 
 // Browser side of the friends functions in supabase/migrations/20261024400000_friends.sql.
@@ -24,8 +25,9 @@ export const friends = {
   list: () => rpc<Friend[]>("my_friends"),
   requests: () => rpc<Request[]>("my_friend_requests"),
   search: (q: string) => rpc<FoundPerson[]>("search_profiles", { p_query: q }),
-  request: (id: string) => rpc<string>("send_friend_request", { p_other: id }),
-  respond: (friendshipId: string, accept: boolean) => rpc<string>("respond_friend_request", { p_friendship: friendshipId, p_accept: accept }),
+  request: (id: string) => rpc<string>("send_friend_request", { p_other: id }).finally(sendDuePushes),
+  respond: (friendshipId: string, accept: boolean) =>
+    rpc<string>("respond_friend_request", { p_friendship: friendshipId, p_accept: accept }).finally(sendDuePushes),
   remove: (id: string) => rpc<string>("remove_friend", { p_other: id }),
   block: (id: string) => rpc<string>("block_user", { p_other: id }),
   report: (id: string, reason: string) => rpc<string>("report_user", { p_other: id, p_reason: reason }),

@@ -4,6 +4,7 @@ import { TrophyCelebration } from "@/components/challenges/trophy-celebration";
 import { Avatar } from "@/components/friends/avatar";
 import { NudgeSheet } from "@/components/nudges/nudge-sheet";
 import { NudgeWatcher } from "@/components/nudges/nudge-watcher";
+import { PushSync } from "@/components/push/push-sync";
 import { PlanSheet } from "@/components/tasks/plan-sheet";
 import { QuickAddSheet } from "@/components/tasks/quick-add-sheet";
 import { TaskOptionsSheet } from "@/components/tasks/task-options-sheet";
@@ -44,6 +45,7 @@ export function AppChrome() {
       {sheet?.kind === "plan" ? <PlanSheet /> : null}
       {sheet?.kind === "nudge" ? <NudgeSheet friendId={sheet.friendId} /> : null}
       <NudgeWatcher />
+      <PushSync />
       <TrophyCelebration />
       <BadgeCelebration />
     </>

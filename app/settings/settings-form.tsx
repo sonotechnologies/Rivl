@@ -3,6 +3,7 @@
 import { useActionState, useState, useTransition } from "react";
 import { clearOfflineData } from "@/components/app/service-worker";
 import { CoachBubble } from "@/components/brand/coach-bubble";
+import { NotificationSettings } from "@/components/settings/notification-settings";
 import { Button } from "@/components/ui/button";
 import type { Profile } from "@/lib/auth";
 import { ACCENTS, applyTheme, COACHES, THEMES, type Accent, type CoachStyle, type Theme } from "@/lib/theme";
@@ -187,6 +188,8 @@ export function SettingsForm({ profile }: { profile: Profile }) {
           ))}
         </div>
       </section>
+
+      <NotificationSettings prefs={profile.push_prefs ?? {}} />
 
       <section className="flex flex-col gap-4" aria-labelledby="privacy">
         <h2 id="privacy" className={sectionTitle}>

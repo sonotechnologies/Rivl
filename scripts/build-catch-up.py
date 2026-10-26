@@ -11,8 +11,8 @@ for path in sorted(glob.glob(os.path.join(src_dir, '*.sql'))):
     s = re.sub(r'\bcreate function\b', 'create or replace function', s)
     s = re.sub(r'\badd column (?!if not exists)', 'add column if not exists ', s)
     # Triggers and policies can't be "if not exists": drop and recreate.
-    s = re.sub(r'(?m)^create trigger (\w+)\n(\s+(?:before|after)[^\n]*?\bon ([\w.]+))',
-               lambda m: f'drop trigger if exists {m.group(1)} on {m.group(3)};\ncreate trigger {m.group(1)}\n{m.group(2)}', s)
+    s = re.sub(r'(?m)^create trigger (\w+)(\s+(?:before|after)[^;]*?\bon\s+([\w.]+))',
+               lambda m: f'drop trigger if exists {m.group(1)} on {m.group(3)};\ncreate trigger {m.group(1)}{m.group(2)}', s)
     s = re.sub(r'(?m)^create policy ("[^"]+")(\s+on ([\w.]+))',
                lambda m: f'drop policy if exists {m.group(1)} on {m.group(3)};\ncreate policy {m.group(1)}{m.group(2)}', s)
     s = re.sub(r"(insert into public\.achievements[\s\S]*?\);)\n", lambda m: m.group(1)[:-1] + "\non conflict (id) do nothing;\n", s, count=1)

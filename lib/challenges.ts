@@ -1,6 +1,7 @@
 "use client";
 
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { sendDuePushes } from "@/lib/push/client";
 import { createClient } from "@/lib/supabase/client";
 
 // Browser side of the challenge functions in supabase/migrations/20261024600000_challenges.sql.
@@ -51,9 +52,14 @@ export const challenges = {
       p_ends_at: endsAt.toISOString(),
     });
     if (error) throw new Error(error.message);
+    sendDuePushes();
     return data as string;
   },
-  respond: async (id: string, accept: boolean) => (await db().rpc("respond_challenge", { p_id: id, p_accept: accept })).data as string,
+  respond: async (id: string, accept: boolean) => {
+    const { data } = await db().rpc("respond_challenge", { p_id: id, p_accept: accept });
+    sendDuePushes();
+    return data as string;
+  },
   cancel: async (id: string) => (await db().rpc("cancel_challenge", { p_id: id })).data as string,
 };
 

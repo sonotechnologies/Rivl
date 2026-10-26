@@ -77,7 +77,13 @@ Build steps 1–7 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] Nudges you receive: a toast with the sender's avatar shaking, a dot on the Feed tab, and a strip at the top of the feed
 - [x] From 6 pm, the coach bubble on Today becomes an AI recap of your day (written once per day, saved in `coach_recaps`); the static lines are the fallback
 
-Not yet: push notifications, focus timer and weekly recap card.
+**10. Notifications**
+- [x] Web push for nudges, challenge invites/accepts/results, friend requests/accepts, the Monday result (9 am) and "streak at risk" (8 pm, via pg_cron)
+- [x] Max 5 a day, held back during your sleep hours, and each kind can be switched off (Settings → Notifications); a one-time "Turn on" card on Today
+- [x] Queued in the database (`push_queue`), sent by `/api/push/flush`: right after the action, when anyone opens the app, and every minute from Supabase (`supabase/push-schedule.sql`)
+- [x] Dead devices are removed automatically; on iPhone, push works once Rivl is added to the Home Screen
+
+Not yet: focus timer and weekly recap card.
 
 ## Getting started
 
@@ -85,7 +91,7 @@ Not yet: push notifications, focus timer and weekly recap card.
 2. In Supabase → Authentication:
    - URL configuration: set the Site URL and add `http://localhost:3000/auth/callback` and your production `https://…/auth/callback` to the redirect URLs.
    - Providers: enable Email. Google is optional for now: enable it in Supabase, then set `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true` to show the button.
-3. `cp .env.example .env.local` and fill in the project URL and publishable key, plus `SUPABASE_SECRET_KEY` and `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) for AI, and `CRON_SECRET` (any long random string) for the daily photo cleanup. In Vercel, add the same as environment variables.
+3. `cp .env.example .env.local` and fill in the project URL and publishable key, plus `SUPABASE_SECRET_KEY` and `GEMINI_API_KEY` (and optionally `GROQ_API_KEY`) for AI, `CRON_SECRET` (any long random string) for the daily photo cleanup and push schedule, and the VAPID keys for push (`npx web-push generate-vapid-keys`). After deploying, fill in and run `supabase/push-schedule.sql` once. In Vercel, add the same as environment variables.
 4. `npm install`, then `npm run dev`.
 
 `/` and `/brand` work without Supabase; sign-in shows a setup note until the env vars are set.

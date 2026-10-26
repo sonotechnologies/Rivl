@@ -8,6 +8,7 @@ import { SyncStatus } from "@/components/tasks/sync-status";
 import { DoneRow, TaskRow } from "@/components/tasks/task-row";
 import { coachLine, type CoachMoment } from "@/lib/coach-lines";
 import { useRecap } from "@/components/coach/use-recap";
+import { PushPrompt } from "@/components/push/push-prompt";
 import { formatDay, greeting, toISODate, todayISO, weekStartISO } from "@/lib/dates";
 import { displayStreak, pointTotals, type StreakState } from "@/lib/tasks/points";
 import type { Subtask, Task } from "@/lib/tasks/types";
@@ -96,6 +97,7 @@ export function TodayScreen() {
       <CoachBubble coach={profile.coach_style} note={recap ? "Today's recap" : undefined}>
         {recap ?? coachLine(profile.coach_style, moment)}
       </CoachBubble>
+      <PushPrompt />
 
       {nowOpen > 0 ? (
         <button

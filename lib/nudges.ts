@@ -1,6 +1,7 @@
 "use client";
 
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import { sendDuePushes } from "@/lib/push/client";
 import { createClient } from "@/lib/supabase/client";
 
 // Browser side of nudges (supabase/migrations/20261024800000_coach.sql).
@@ -27,6 +28,7 @@ export const nudges = {
   async send(to: string, message: string) {
     const { data, error } = await db().rpc("send_nudge", { p_to: to, p_message: message });
     if (error) throw new Error(error.message.includes("limit") ? "limit" : error.message.includes("not_friends") ? "not_friends" : "failed");
+    sendDuePushes();
     return data as number;
   },
   async left(to: string) {
