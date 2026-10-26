@@ -54,6 +54,12 @@ export function TaskOptionsSheet({ taskId }: { taskId: string }) {
           </span>
           Move to tomorrow
         </button>
+        <Link href={`/focus?task=${task.id}`} onClick={closeSheet} className={`${item} border-t border-line`}>
+          <span className="material-symbol icon-outline text-[1.375rem] text-muted" aria-hidden>
+            timer
+          </span>
+          Focus for 25 min · +5
+        </Link>
         <Link href={`/task/${task.id}`} onClick={closeSheet} className={`${item} border-t border-line`}>
           <span className="material-symbol icon-outline text-[1.375rem] text-muted" aria-hidden>
             edit

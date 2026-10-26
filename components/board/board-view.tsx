@@ -35,6 +35,14 @@ export function BoardView({ compact = false, onMeVisible }: { compact?: boolean;
           <Podium rows={rows.slice(0, 3)} moved={moved} />
           {rows.length > 3 ? <RankedList rows={rows.slice(3)} moved={moved} onMeVisible={onMeVisible} /> : null}
           <p className="px-1 text-caption text-muted">Tap a friend to nudge them. Resets Monday at midnight; finish the week #1 to earn Giant Slayer.</p>
+          {!compact ? (
+            <Link href="/recap" className="flex h-11 items-center justify-center gap-1.5 rounded-full border border-line text-body-sm font-semibold">
+              <span className="material-symbol text-lg text-accent-text" aria-hidden>
+                ios_share
+              </span>
+              Share your week
+            </Link>
+          ) : null}
         </>
       )}
       {!compact && rows && rows.length > 1 ? <ChallengeCarousel /> : null}

@@ -151,6 +151,18 @@ export function MeScreen() {
           </span>
           Friends
         </ButtonLink>
+        <ButtonLink href="/recap" variant="outline">
+          <span className="material-symbol text-xl" aria-hidden>
+            ios_share
+          </span>
+          Share your weekly recap
+        </ButtonLink>
+        <ButtonLink href="/focus" variant="outline">
+          <span className="material-symbol text-xl" aria-hidden>
+            timer
+          </span>
+          Focus for 25 min
+        </ButtonLink>
         <ButtonLink href="/settings" variant="ghost">
           Settings
         </ButtonLink>

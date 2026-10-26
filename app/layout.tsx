@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 // Only the icons we use, so the icon font stays tiny.
 const ICONS = [
-  "add", "notifications", "send", "arrow_back", "auto_awesome", "campaign", "chat", "check", "check_circle", "chevron_left", "cleaning_services",
+  "add", "play_arrow", "timer_off", "notifications", "send", "arrow_back", "auto_awesome", "campaign", "chat", "check", "check_circle", "chevron_left", "cleaning_services",
   "close", "cloud_off", "content_copy", "dark_mode", "delete", "download", "dynamic_feed", "eco", "edit", "event_upcoming",
   "expand_less", "expand_more", "fitness_center", "ios_share", "leaderboard", "light_mode", "local_fire_department", "lock",
   "mail", "military_tech", "more_horiz", "person", "repeat", "schedule", "settings", "swords", "sync", "task_alt", "today",

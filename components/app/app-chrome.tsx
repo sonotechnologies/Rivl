@@ -1,6 +1,7 @@
 "use client";
 
 import { TrophyCelebration } from "@/components/challenges/trophy-celebration";
+import { FocusPill } from "@/components/focus/focus-pill";
 import { Avatar } from "@/components/friends/avatar";
 import { NudgeSheet } from "@/components/nudges/nudge-sheet";
 import { NudgeWatcher } from "@/components/nudges/nudge-watcher";
@@ -46,6 +47,7 @@ export function AppChrome() {
       {sheet?.kind === "nudge" ? <NudgeSheet friendId={sheet.friendId} /> : null}
       <NudgeWatcher />
       <PushSync />
+      <FocusPill />
       <TrophyCelebration />
       <BadgeCelebration />
     </>

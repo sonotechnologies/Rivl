@@ -1,0 +1,3 @@
+Space Grotesk (c) The Space Grotesk Project Authors, and Inter (c) The Inter Project Authors.
+Both are licensed under the SIL Open Font License, Version 1.1: https://openfontlicense.org
+Used here to draw the shareable weekly recap card (app/recap/card).

@@ -253,6 +253,17 @@ function TaskForm({ task, subtasks }: { task: Task; subtasks: Subtask[] }) {
       </section>
 
       {done && task.is_shared ? <ProofButton taskId={task.id} /> : null}
+      {!done ? (
+        <Link
+          href={`/focus?task=${task.id}`}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-full border border-line font-semibold"
+        >
+          <span className="material-symbol text-xl text-accent-text" aria-hidden>
+            timer
+          </span>
+          Focus for 25 min · +5
+        </Link>
+      ) : null}
 
       <button
         type="button"

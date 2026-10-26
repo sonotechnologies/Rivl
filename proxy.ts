@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured, SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "@/lib/supabase/env";
 
 // Signed-in app routes. Everything else (/, /login, /brand, /invite/…) is public.
-const APP_ROUTES = ["/today", "/board", "/add", "/feed", "/me", "/task", "/challenge", "/friends", "/recap", "/settings", "/onboarding"];
+const APP_ROUTES = ["/today", "/board", "/add", "/feed", "/me", "/task", "/challenge", "/friends", "/recap", "/focus", "/settings", "/onboarding"];
 
 const isAppRoute = (path: string) => APP_ROUTES.some((r) => path === r || path.startsWith(`${r}/`));
 

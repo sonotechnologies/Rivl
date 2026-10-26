@@ -4,6 +4,7 @@ import { createContext, use, useCallback, useMemo, useRef, useState, useSyncExte
 import type { Profile } from "@/lib/auth";
 import { getChallengeStore, type Challenge } from "@/lib/challenges";
 import { getBoardStore, rankWithMe, type BoardView } from "@/lib/board";
+import { getFocusStore, type FocusView } from "@/lib/focus";
 import { getNudgeStore, type NudgeView } from "@/lib/nudges";
 import { todayISO, weekStartISO } from "@/lib/dates";
 import { expectedPoints, isHard, pointTotals } from "@/lib/tasks/points";
@@ -143,4 +144,14 @@ export function useNudges() {
   const { profile } = useApp();
   const store = getNudgeStore(profile.id);
   return { ...useSyncExternalStore(store.subscribe, store.getView, getServerNudges), markSeen: () => store.markSeen() };
+}
+
+const SERVER_FOCUS: FocusView = { loaded: false, running: null, today: 0, finished: null, error: null };
+const getServerFocus = () => SERVER_FOCUS;
+
+/** The focus timer: what's running, today's sessions, and the controls. */
+export function useFocus() {
+  const { profile } = useApp();
+  const store = getFocusStore(profile.id);
+  return { ...useSyncExternalStore(store.subscribe, store.getView, getServerFocus), store };
 }

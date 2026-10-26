@@ -83,7 +83,12 @@ Build steps 1–7 of 12 from the build brief, plus onboarding (pulled forward fr
 - [x] Queued in the database (`push_queue`), sent by `/api/push/flush`: right after the action, when anyone opens the app, and every minute from Supabase (`supabase/push-schedule.sql`)
 - [x] Dead devices are removed automatically; on iPhone, push works once Rivl is added to the Home Screen
 
-Not yet: focus timer and weekly recap card.
+**11. Focus timer and weekly recap**
+- [x] `/focus`: a 25-minute session timed by the server (+5 when it ends, up to 8 a day), from a task, its options, or the Me screen; keeps the screen awake, corrects for a phone clock that's off, and pays out even if you're on another screen (timer pill and toast)
+- [x] `/recap`: the 1080 × 1920 card from the design (rank, points, streak, top task, your theme and accent), drawn as a PNG by `/api/recap/card`; share straight to WhatsApp Status or Instagram Stories with your invite link, or download it
+- [x] Private top tasks stay off the card unless you switch them on; Monday's result push opens the recap
+
+Next: polish and launch (step 12).
 
 ## Getting started
 
